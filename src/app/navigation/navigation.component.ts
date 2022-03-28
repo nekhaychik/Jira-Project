@@ -11,6 +11,8 @@ export class NavigationComponent implements OnInit {
     'Statistics'
   ]
 
+  headerButton: string = 'Create';
+
   constructor() { }
 
   ngOnInit(): void {

@@ -13,6 +13,7 @@ header {
   margin: auto;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .logo {
@@ -24,4 +25,11 @@ header {
 .logo__title {
   color: $main-text-color;
   margin: 0;
+}
+
+app-navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-gap: 77px;
 }
