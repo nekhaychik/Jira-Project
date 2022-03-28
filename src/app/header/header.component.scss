@@ -13,13 +13,13 @@ header {
   margin: auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
 .logo {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 170px;
 }
 
 .logo__title {
@@ -32,4 +32,8 @@ app-navigation {
   justify-content: center;
   align-items: center;
   grid-gap: 77px;
+}
+
+app-avatar {
+  margin-left: auto;
 }
