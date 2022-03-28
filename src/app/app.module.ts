@@ -13,6 +13,7 @@ import { SvgImageComponent } from './svg-image/svg-image.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { ButtonComponent } from './button/button.component';
 import { AvatarComponent } from './avatar/avatar.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { AvatarComponent } from './avatar/avatar.component';
     SvgImageComponent,
     NavigationComponent,
     ButtonComponent,
-    AvatarComponent
+    AvatarComponent,
+    SidebarComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +34,7 @@ import { AvatarComponent } from './avatar/avatar.component';
     TuiNotificationsModule,
     TuiLinkModule,
     TuiButtonModule,
-    TuiAvatarModule
+    TuiAvatarModule,
   ],
   providers: [{provide: TUI_SANITIZER, useClass: NgDompurifySanitizer}],
   bootstrap: [AppComponent]
