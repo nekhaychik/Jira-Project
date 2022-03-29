@@ -1,0 +1,11 @@
+<div class="board">
+  <img class="board__background" src="{{srcIm}}" alt="">
+  <div class="board__header">
+    <h2 class="tui-text_h4 board__title">{{boardTitle}}</h2>
+    <div class="board__members">
+      <ng-container *ngFor="let name of members">
+        <app-avatar [name]="name"></app-avatar>
+      </ng-container>
+    </div>
+  </div>
+</div>

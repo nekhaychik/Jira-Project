@@ -14,6 +14,7 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { ButtonComponent } from './button/button.component';
 import { AvatarComponent } from './avatar/avatar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { BoardComponent } from './board/board.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { SidebarComponent } from './sidebar/sidebar.component';
     NavigationComponent,
     ButtonComponent,
     AvatarComponent,
-    SidebarComponent
+    SidebarComponent,
+    BoardComponent
   ],
   imports: [
     BrowserModule,
