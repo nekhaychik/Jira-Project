@@ -1,3 +1,8 @@
 <div class="sidebar">
-
+  <h2 class="tui-text_h4 board__title">Your boards</h2>
+  <div class="sidebar__boards">
+    <ng-container *ngFor="let board of boards">
+      <a tuiLink  href="#" class="sidebar__board-title">{{board}}</a>
+    </ng-container>
+  </div>
 </div>

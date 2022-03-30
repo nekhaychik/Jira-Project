@@ -7,6 +7,11 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent implements OnInit {
+  boards: string [] = [
+    'Board 1',
+    'Board 2',
+    'Board 3'
+  ]
 
   constructor() { }
 
