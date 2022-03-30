@@ -1,0 +1,29 @@
+@import 'src/styles';
+
+.board__lists {
+  display: flex;
+  grid-gap: 82px;
+  padding: 0 83px;
+}
+
+.mat-card {
+  width: 280px;
+  height: 450px;
+  background: white;
+}
+
+.mat-card-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.mat-card-title {
+  font: $cardHeaderFont;
+  color: $mainTextColor;
+}
+
+.mat-card-header .mat-card-title {
+  margin-bottom: 0;
+}
