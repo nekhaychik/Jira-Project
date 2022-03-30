@@ -1,3 +1,5 @@
+@import 'src/styles';
+
 $boardWidth: calc(100vw - 375px);
 $boardHeight: calc(100vh - 90px);
 $boardPadding: 42px 83px;
@@ -23,7 +25,8 @@ $boardPadding: 42px 83px;
 
 .board__title {
   margin: 0;
-  color: rgba(0, 0, 0, 0.55);;
+  font: $mainHeaderFont;
+  color: $mainTextColor;
 }
 
 .board__members {

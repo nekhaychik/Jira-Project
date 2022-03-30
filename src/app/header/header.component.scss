@@ -1,9 +1,12 @@
-$header-background: var(--tui-support-02);
-$main-text-color: #FDF2E4;
+@import "src/styles";
+
+$logoFont: var(--tui-font-heading-1);
+$headerBackground: var(--tui-primary);
+$mainTextColor: #FDF2E4;
 
 header {
-  background: $header-background;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  background: $headerBackground;
+  box-shadow: $boxShadow;
   padding: 0 95px;
 }
 
@@ -23,7 +26,8 @@ header {
 }
 
 .logo__title {
-  color: $main-text-color;
+  font: $logoFont;
+  color: $mainTextColor;
   margin: 0;
 }
 

@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+$mainHeaderFont: var(--tui-font-heading-4);
+$mainTextFont: var(--tui-font-text-xl);
+$cardHeaderFont: var(--tui-font-heading-5);
+$mainTextColor: var(--tui-text-01);
+$secondaryTextColor: var(--tui-text-02);
+$boxShadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
