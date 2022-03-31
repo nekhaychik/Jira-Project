@@ -9,10 +9,11 @@
           <button tuiIconButton icon="tuiIconPlus" size="s"></button>
         </mat-card-header>
         <mat-card-content>
-
+          <ng-container *ngFor="let card of cards">
+            <app-task-card [card]="card"></app-task-card>
+          </ng-container>
         </mat-card-content>
       </mat-card>
-
     </ng-container>
   </ng-container>
 </div>

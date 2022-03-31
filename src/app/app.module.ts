@@ -17,6 +17,9 @@ import { AvatarComponent } from './avatar/avatar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { BoardComponent } from './board/board.component';
 import { BoardListComponent } from './board-list/board-list.component';
+import { TaskCardComponent } from "./task-card/task-card.component";
+import {MatChipsModule} from "@angular/material/chips";
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
   declarations: [
@@ -28,7 +31,8 @@ import { BoardListComponent } from './board-list/board-list.component';
     AvatarComponent,
     SidebarComponent,
     BoardComponent,
-    BoardListComponent
+    BoardListComponent,
+    TaskCardComponent
   ],
   imports: [
     BrowserModule,
@@ -41,6 +45,8 @@ import { BoardListComponent } from './board-list/board-list.component';
     TuiButtonModule,
     TuiAvatarModule,
     MatCardModule,
+    MatChipsModule,
+    MatIconModule,
   ],
   providers: [{provide: TUI_SANITIZER, useClass: NgDompurifySanitizer}],
   bootstrap: [AppComponent]

@@ -1,0 +1,22 @@
+<mat-card class="card" *ngIf="card">
+  <mat-card-title class="card__title">
+    {{card.name}}
+  </mat-card-title>
+  <mat-card-content>
+    <div class="card__checklist" *ngIf="card.checklist">
+      <mat-icon aria-hidden="false" aria-label="Example home icon">list</mat-icon>
+      <p class="card__checklist-number">{{card.checklist}}</p>
+    </div>
+    <div class="card__footer">
+      <mat-chip-list aria-label="Fish selection">
+        <mat-chip class="chip__priority">{{card.priority}}</mat-chip>
+        <ng-container *ngIf="card.dueDate">
+          <mat-chip class="chip__date">{{card.dueDate}}</mat-chip>
+        </ng-container>
+      </mat-chip-list>
+      <ng-container *ngIf="card.member">
+        <app-avatar [name]="card.member"></app-avatar>
+      </ng-container>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { List } from 'src/app/board-list/models/list';
 import { LISTS } from 'src/app/mock-lists';
-import {FormControl, FormGroup} from '@angular/forms';
+import { Card } from 'src/app/task-card/models/card';
+import { CARDS } from 'src/app/mock-cards';
 
 @Component({
   selector: 'app-board-list',
@@ -12,21 +13,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 export class BoardListComponent implements OnInit {
   lists: List[] = LISTS;
 
-  testForm = new FormGroup({
-    testValue: new FormControl(true),
-  });
-
-  skeletonVisible = false;
-  lightMode = false;
-  placeholder = 'Some paragraph with information';
-
-  showSkeleton() {
-    this.skeletonVisible = !this.skeletonVisible;
-  }
-
-  toggleLight() {
-    this.lightMode = !this.lightMode;
-  }
+  cards: Card[] = CARDS;
 
   constructor() { }
 

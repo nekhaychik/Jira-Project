@@ -1,0 +1,46 @@
+@import "src/styles";
+
+.card {
+  margin: 16px 0;
+  background: var(--tui-secondary);
+}
+
+
+.card__title {
+  display: block;
+  font: var(--tui-font-heading-6);
+}
+
+.card__checklist {
+  display: flex;
+  align-items: center;
+  grid-gap: 10px;
+  margin-bottom: 8px;
+}
+
+.card__checklist-number {
+  margin: 0;
+}
+
+.mat-chip {
+  border: 1px solid var(--tui-positive);
+  color: var(--tui-positive);
+}
+
+.chip__priority {
+  border: 1px solid var(--tui-positive);
+  color: var(--tui-positive);
+}
+
+.chip__date {
+  border: 1px solid var(--tui-positive);
+  background: var(--tui-positive);
+  color: $mainTextColor;
+}
+
+.card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
