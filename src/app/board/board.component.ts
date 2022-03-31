@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { List } from 'src/app/board-list/models/list';
+import { LISTS } from 'src/app/mock-lists';
 
 @Component({
   selector: 'app-board',
@@ -12,7 +14,9 @@ export class BoardComponent implements OnInit {
     'Irina Nekhaychik',
     'Vlad Yaromchik',
     'Ivan Glaz'
-  ]
+  ];
+  lists: List[] = LISTS;
+  buttonAdd = 'Add';
 
   constructor() { }
 

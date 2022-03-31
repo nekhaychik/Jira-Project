@@ -1,19 +1,17 @@
-<div class="board__lists">
-  <ng-container *ngIf="lists.length">
-    <ng-container *ngFor="let list of lists">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            {{list.name}}
-          </mat-card-title>
-          <button tuiIconButton icon="tuiIconPlus" size="s"></button>
-        </mat-card-header>
-        <mat-card-content>
-          <ng-container *ngFor="let card of cards">
-            <app-task-card [card]="card"></app-task-card>
-          </ng-container>
-        </mat-card-content>
-      </mat-card>
-    </ng-container>
-  </ng-container>
-</div>
+<ng-container *ngIf="list">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        {{list.name}}
+      </mat-card-title>
+      <button tuiIconButton icon="tuiIconPlus" size="s"></button>
+    </mat-card-header>
+    <mat-card-content>
+      <ng-container *ngFor="let card of cards">
+        <ng-container *ngIf="card.id === list.id">
+          <app-task-card [card]="card"></app-task-card>
+        </ng-container>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
+</ng-container>

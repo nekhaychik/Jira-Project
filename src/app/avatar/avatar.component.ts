@@ -6,6 +6,7 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./avatar.component.scss']
 })
 export class AvatarComponent implements OnInit {
+
   @Input() name: string = 'Irina Nekhaychik';
 
   constructor() { }

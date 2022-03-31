@@ -6,12 +6,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./navigation.component.scss']
 })
 export class NavigationComponent implements OnInit {
+
   headerNav: string[] = [
     'Your boards',
     'Statistics'
-  ]
+  ];
 
-  headerButton: string = 'Create';
+  buttonContent: string = 'Create';
+
+  buttonAppearance: string = 'secondary';
 
   constructor() { }
 

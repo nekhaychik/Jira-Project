@@ -2,7 +2,7 @@
 
 $logoFont: var(--tui-font-heading-1);
 $headerBackground: var(--tui-primary);
-$mainTextColor: #FDF2E4;
+$headerTextColor: #FDF2E4;
 
 header {
   background: $headerBackground;
@@ -27,7 +27,7 @@ header {
 
 .logo__title {
   font: $logoFont;
-  color: $mainTextColor;
+  color: $headerTextColor;
   margin: 0;
 }
 

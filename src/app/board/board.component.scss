@@ -35,3 +35,16 @@ $boardPadding: 42px 83px;
   align-items: center;
   grid-gap: 24px;
 }
+
+.board__lists {
+  display: flex;
+  justify-content: left;
+  grid-gap: 82px;
+  padding: 0 83px;
+}
+//
+//.add {
+//  box-sizing: content-box;
+//  border: 2px solid $mainTextColor;
+//  box-shadow: $boxShadow;
+//}

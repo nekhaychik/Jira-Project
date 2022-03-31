@@ -10,6 +10,7 @@ import { ChangeDetectionStrategy, Component, OnInit, Input } from '@angular/core
 export class ButtonComponent implements OnInit {
 
   @Input() content: string = '';
+  @Input() appearance: string = 'primary';
 
   constructor() { }
 
