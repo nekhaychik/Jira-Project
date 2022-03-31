@@ -6,12 +6,14 @@
       </mat-card-title>
       <button tuiIconButton icon="tuiIconPlus" size="s"></button>
     </mat-card-header>
-    <mat-card-content>
-      <ng-container *ngFor="let card of cards">
-        <ng-container *ngIf="card.id === list.id">
-          <app-task-card [card]="card"></app-task-card>
+    <tui-scrollbar [hidden]="true">
+      <mat-card-content>
+        <ng-container *ngFor="let card of cards">
+          <ng-container *ngIf="card.id === list.id">
+            <app-task-card [card]="card"></app-task-card>
+          </ng-container>
         </ng-container>
-      </ng-container>
-    </mat-card-content>
+      </mat-card-content>
+    </tui-scrollbar>
   </mat-card>
 </ng-container>

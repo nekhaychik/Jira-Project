@@ -6,13 +6,15 @@
       <ng-container *ngFor="let name of members">
         <app-avatar [name]="name"></app-avatar>
       </ng-container>
-      <button class="add" tuiIconButton icon="tuiIconUser" size="m" shape="rounded"></button>
+      <button tuiIconButton icon="tuiIconPlus" style="width: 48px; height: 48px;" shape="rounded"></button>
     </div>
   </div>
-  <div class="board__lists">
-    <ng-container *ngFor="let list of lists">
-      <app-board-list [list]="list"></app-board-list>
-    </ng-container>
-    <app-button [content]="buttonAdd"></app-button>
-  </div>
+  <tui-scrollbar [hidden]="true">
+    <div class="board__lists">
+      <ng-container *ngFor="let list of lists">
+        <app-board-list [list]="list"></app-board-list>
+      </ng-container>
+      <app-button [content]="buttonAdd"></app-button>
+    </div>
+  </tui-scrollbar>
 </div>

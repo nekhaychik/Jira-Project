@@ -8,6 +8,8 @@ import { Card } from 'src/app/task-card/models/card';
 })
 export class TaskCardComponent implements OnInit {
   @Input() card: Card | undefined;
+   critical: string = 'critical';
+   blocked: string = 'blocked';
 
   constructor() { }
 

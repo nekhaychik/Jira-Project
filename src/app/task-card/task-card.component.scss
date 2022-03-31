@@ -1,7 +1,7 @@
 @import "src/styles";
 
 .card {
-  margin: 16px 0;
+  margin: 16px 0 0;
   background: var(--tui-secondary);
 }
 
@@ -44,3 +44,12 @@
   align-items: flex-end;
 }
 
+.critical {
+  border: 1px solid var(--tui-negative);
+  color: var(--tui-negative);
+}
+
+.blocked {
+  border: 1px solid var(--tui-warning-fill);
+  color: var(--tui-warning-fill);
+}

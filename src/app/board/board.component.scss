@@ -2,7 +2,7 @@
 
 $boardWidth: calc(100vw - 375px);
 $boardHeight: calc(100vh - 90px);
-$boardPadding: 42px 83px;
+$boardPadding: 42px 30px;
 
 .board {
   width: $boardWidth;
@@ -21,6 +21,7 @@ $boardPadding: 42px 83px;
   display: flex;
   align-items: center;
   grid-gap: 39px;
+
 }
 
 .board__title {
@@ -39,12 +40,10 @@ $boardPadding: 42px 83px;
 .board__lists {
   display: flex;
   justify-content: left;
-  grid-gap: 82px;
-  padding: 0 83px;
+  grid-gap: 40px;
+  margin: 0 30px;
 }
-//
-//.add {
-//  box-sizing: content-box;
-//  border: 2px solid $mainTextColor;
-//  box-shadow: $boxShadow;
-//}
+
+button {
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+}

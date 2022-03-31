@@ -1,15 +1,12 @@
 @import 'src/styles';
 
-.board__lists {
-  display: flex;
-  grid-gap: 82px;
-  padding: 0 83px;
-}
-
 .mat-card {
+  box-sizing: border-box;
   width: 280px;
-  height: 450px;
+  max-height: calc(100vh - 132px - 90px - 32px);
+  height: fit-content;
   background: white;
+  margin-bottom: 32px;
 }
 
 .mat-card-header {
@@ -26,4 +23,15 @@
 
 .mat-card-header .mat-card-title {
   margin-bottom: 0;
+}
+
+.mat-card-content {
+  height: inherit;
+  max-height: calc(100vh - 132px - 90px - 32px - 75px);
+  margin-bottom: 0;
+}
+
+tui-scrollbar {
+  height: inherit;
+  max-height: calc(100vh - 132px - 90px - 32px - 75px);
 }
