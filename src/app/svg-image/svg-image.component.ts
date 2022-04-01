@@ -7,7 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class SvgImageComponent implements OnInit {
 
-  @Input() imageSrc: string = '';
+  @Input() public imagePath: string = '';
 
   constructor() { }
 

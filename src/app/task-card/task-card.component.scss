@@ -1,14 +1,19 @@
-@import "src/styles";
+@import 'src/styles';
+
+$cardBackground: var(--tui-secondary);
+$cardTextFont: var(--tui-font-heading-6);
+$statusNormalColor: var(--tui-positive);
+$statusCriticalColor: var(--tui-negative);
+$statusBlockedColor: var(--tui-warning-fill);
 
 .card {
   margin: 16px 0 0;
-  background: var(--tui-secondary);
+  background: $cardBackground;
 }
-
 
 .card__title {
   display: block;
-  font: var(--tui-font-heading-6);
+  font: $cardTextFont;
 }
 
 .card__checklist {
@@ -22,34 +27,24 @@
   margin: 0;
 }
 
-.mat-chip {
-  border: 1px solid var(--tui-positive);
-  color: var(--tui-positive);
-}
-
 .chip__priority {
-  border: 1px solid var(--tui-positive);
-  color: var(--tui-positive);
+  background: none;
+  border: 1px solid $statusNormalColor;
+  color: $statusNormalColor;
 }
 
-.chip__date {
-  border: 1px solid var(--tui-positive);
-  background: var(--tui-positive);
-  color: $mainTextColor;
+.critical {
+  border: 1px solid $statusCriticalColor;
+  color: $statusCriticalColor;
+}
+
+.blocked {
+  border: 1px solid $statusBlockedColor;
+  color: $statusBlockedColor;
 }
 
 .card__footer {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-}
-
-.critical {
-  border: 1px solid var(--tui-negative);
-  color: var(--tui-negative);
-}
-
-.blocked {
-  border: 1px solid var(--tui-warning-fill);
-  color: var(--tui-warning-fill);
 }

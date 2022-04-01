@@ -1,0 +1,9 @@
+@import 'src/app/header/header.component';
+
+.nav__link {
+  font: $mainTextFont;
+  color: $headerTextColor;
+  &:hover {
+    color: $headerTextHoverColor;
+  }
+}

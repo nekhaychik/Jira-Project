@@ -1,18 +1,15 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Board } from '../board/models/board';
+import { BOARDS } from '../mock-boards';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent implements OnInit {
 
-  boards: string [] = [
-    'Board 1',
-    'Board 2',
-    'Board 3'
-  ];
+  public boards: Board[] = BOARDS;
 
   constructor() { }
 

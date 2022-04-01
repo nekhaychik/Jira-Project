@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { List } from 'src/app/board-list/models/list';
 import { Card } from 'src/app/task-card/models/card';
 import { CARDS } from 'src/app/mock-cards';
+import { Icon } from '../enums';
 
 @Component({
   selector: 'app-board-list',
@@ -9,9 +10,10 @@ import { CARDS } from 'src/app/mock-cards';
   styleUrls: ['./board-list.component.scss'],
 })
 export class BoardListComponent implements OnInit {
-  @Input() list: List | undefined;
 
-  cards: Card[] = CARDS;
+  @Input() public list: List | undefined;
+  public cards: Card[] = CARDS;
+  public icon: typeof Icon = Icon;
 
   constructor() { }
 

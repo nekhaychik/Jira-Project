@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { USERS } from 'src/app/mock-users';
 
 @Component({
   selector: 'app-header',
@@ -7,7 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  logoSrc: string = 'assets/logo.svg';
+  public logoPath: string = 'assets/logo.svg';
+  public userName: string = USERS[0];
 
   constructor() { }
 

@@ -1,1 +1,3 @@
-<img src="{{imageSrc}}" alt="{{imageSrc.slice(imageSrc.lastIndexOf('/') + 1, imageSrc.lastIndexOf('.'))}}">
+<img [src]="imagePath"
+     [alt]="imagePath.slice(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('.'))"
+>

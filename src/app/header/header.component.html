@@ -1,10 +1,10 @@
 <header>
   <div class="wrapper">
     <div class="logo">
-      <app-svg-image [imageSrc]='logoSrc'></app-svg-image>
+      <app-svg-image [imagePath]="logoPath"></app-svg-image>
       <h1 class="logo__title">Kanban</h1>
     </div>
     <app-navigation></app-navigation>
-    <app-avatar></app-avatar>
+    <app-avatar [name]="userName"></app-avatar>
   </div>
 </header>

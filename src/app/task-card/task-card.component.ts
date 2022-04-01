@@ -1,5 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Card } from 'src/app/task-card/models/card';
+import { Status } from '../enums';
 
 @Component({
   selector: 'app-task-card',
@@ -7,11 +8,12 @@ import { Card } from 'src/app/task-card/models/card';
   styleUrls: ['./task-card.component.scss']
 })
 export class TaskCardComponent implements OnInit {
-  @Input() card: Card | undefined;
-   critical: string = 'critical';
-   blocked: string = 'blocked';
 
-  constructor() { }
+  @Input() public card: Card | undefined;
+  public status: typeof Status = Status;
+
+  constructor() {
+  }
 
   ngOnInit(): void {
   }

@@ -1,12 +1,13 @@
 @import 'src/styles';
 
 $boardPadding: 42px 96px;
+$sidebarBackground: #FFFFFF;
 
 .sidebar {
   box-sizing: border-box;
   width: 375px;
   height: calc(100vh - 90px);
-  background: #FFFFFF;
+  background: $sidebarBackground;
   box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);
   padding: $boardPadding;
 }

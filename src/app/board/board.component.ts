@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { List } from 'src/app/board-list/models/list';
-import { LISTS } from 'src/app/mock-lists';
+import { Board } from './models/board';
+import { BOARDS } from '../mock-boards';
+import { Icon, Shape } from '../enums';
 
 @Component({
   selector: 'app-board',
@@ -8,15 +9,13 @@ import { LISTS } from 'src/app/mock-lists';
   styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit {
-  srcIm: string = 'assets/background.png';
-  boardTitle: string = 'Board 1';
-  members: string[] = [
-    'Irina Nekhaychik',
-    'Vlad Yaromchik',
-    'Ivan Glaz'
-  ];
-  lists: List[] = LISTS;
-  buttonAdd = 'Add';
+
+  public board: Board = BOARDS[0];
+  public imagePath: string = 'assets/background.png';
+  public buttonContent: string = 'Add';
+  public buttonSize: string = 'width: 48px; height: 48px;';
+  public icon: typeof Icon = Icon;
+  public shape: typeof Shape = Shape;
 
   constructor() { }
 

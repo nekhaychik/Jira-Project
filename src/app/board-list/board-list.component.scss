@@ -21,6 +21,11 @@
   color: $mainTextColor;
 }
 
+tui-scrollbar {
+  height: inherit;
+  max-height: calc(100vh - 132px - 90px - 32px - 75px);
+}
+
 .mat-card-header .mat-card-title {
   margin-bottom: 0;
 }
@@ -29,9 +34,4 @@
   height: inherit;
   max-height: calc(100vh - 132px - 90px - 32px - 75px);
   margin-bottom: 0;
-}
-
-tui-scrollbar {
-  height: inherit;
-  max-height: calc(100vh - 132px - 90px - 32px - 75px);
 }

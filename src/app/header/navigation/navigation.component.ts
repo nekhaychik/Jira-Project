@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ButtonAppearance } from '../../enums';
 
 @Component({
   selector: 'app-navigation',
@@ -7,14 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavigationComponent implements OnInit {
 
-  headerNav: string[] = [
+  public navigationLinks: string[] = [
     'Your boards',
     'Statistics'
   ];
-
-  buttonContent: string = 'Create';
-
-  buttonAppearance: string = 'secondary';
+  public buttonContent: string = 'Create';
+  public buttonAppearance: ButtonAppearance = ButtonAppearance.Secondary;
 
   constructor() { }
 

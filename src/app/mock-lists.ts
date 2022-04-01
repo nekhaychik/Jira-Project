@@ -7,4 +7,4 @@ export const LISTS: List[] = [
   { id: 4, name: 'done' },
   { id: 5, name: 'Verify' },
   { id: 6, name: 'Done' }
-]
+];

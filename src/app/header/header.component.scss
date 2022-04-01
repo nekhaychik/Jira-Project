@@ -1,8 +1,9 @@
-@import "src/styles";
+@import 'src/styles';
 
 $logoFont: var(--tui-font-heading-1);
 $headerBackground: var(--tui-primary);
 $headerTextColor: #FDF2E4;
+$headerTextHoverColor: rgba(253, 242, 228, 0.6);
 
 header {
   background: $headerBackground;

@@ -7,7 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class AvatarComponent implements OnInit {
 
-  @Input() name: string = 'Irina Nekhaychik';
+  @Input() public name: string = '';
 
   constructor() { }
 
