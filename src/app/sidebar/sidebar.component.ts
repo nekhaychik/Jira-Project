@@ -16,4 +16,8 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  public trackByFn(index: number, item: Board): number {
+    return index;
+  }
+
 }

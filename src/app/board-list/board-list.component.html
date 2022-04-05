@@ -8,7 +8,7 @@
     </mat-card-header>
     <tui-scrollbar [hidden]="true">
       <mat-card-content>
-        <ng-container *ngFor="let card of cards">
+        <ng-container *ngFor="let card of cards; trackBy: trackByFn">
           <ng-container *ngIf="card.id === list.id">
             <app-task-card [card]="card"></app-task-card>
           </ng-container>

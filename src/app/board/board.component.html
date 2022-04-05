@@ -3,7 +3,7 @@
   <div class="board__header">
     <h2 class="board__title">{{board.name}}</h2>
     <div class="board__members">
-      <ng-container *ngFor="let name of board.members">
+      <ng-container *ngFor="let name of board.members; trackBy: trackByFn">
         <app-avatar [name]="name"></app-avatar>
       </ng-container>
       <button tuiIconButton [icon]="icon.IconPlus" [style]="buttonSize" [shape]="shape.Rounded"></button>
@@ -12,7 +12,7 @@
   <tui-scrollbar [hidden]="true">
     <div class="board__lists">
       <ng-container *ngIf="board.lists">
-        <ng-container *ngFor="let list of board.lists">
+        <ng-container *ngFor="let list of board.lists; trackBy: trackByFn">
           <app-board-list [list]="list"></app-board-list>
         </ng-container>
       </ng-container>

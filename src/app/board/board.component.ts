@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Board } from './models/board';
 import { BOARDS } from '../mock-boards';
 import { Icon, Shape } from '../enums';
+import {List} from "../board-list/models/list";
 
 @Component({
   selector: 'app-board',
@@ -20,6 +21,10 @@ export class BoardComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  public trackByFn (index: number, item: string | List): number {
+    return index;
   }
 
 }

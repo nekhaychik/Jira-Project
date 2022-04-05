@@ -20,4 +20,8 @@ export class BoardListComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  public trackByFn (index: number, item: Card): number {
+    return index;
+  }
+
 }
