@@ -1,10 +1,12 @@
 export enum ButtonAppearance {
   Primary = 'primary',
-  Secondary = 'secondary'
+  Secondary = 'secondary',
+  Flat = 'flat'
 }
 
 export enum Icon {
-  IconPlus = 'tuiIconPlus'
+  IconPlus = 'tuiIconPlus',
+  IconMoreVertLarge = 'tuiIconMoreVertLarge'
 }
 
 export enum Shape {
