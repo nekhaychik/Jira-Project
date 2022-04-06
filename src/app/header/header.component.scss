@@ -8,11 +8,11 @@ $headerTextHoverColor: rgba(253, 242, 228, 0.6);
 header {
   background: $headerBackground;
   box-shadow: $boxShadow;
-  padding: 0 95px;
+  padding: 0 30px;
 }
 
 .wrapper {
-  max-width: 1410px;
+  //max-width: 1410px;
   height: 90px;
   margin: auto;
   display: flex;

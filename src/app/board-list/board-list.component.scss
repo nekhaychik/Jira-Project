@@ -23,7 +23,7 @@
 
 tui-scrollbar {
   height: inherit;
-  max-height: calc(100vh - 132px - 90px - 32px - 75px);
+  max-height: calc(100vh - 132px - 90px - 32px - 75px - 74px);
 }
 
 .mat-card-header .mat-card-title {
@@ -32,6 +32,6 @@ tui-scrollbar {
 
 .mat-card-content {
   height: inherit;
-  max-height: calc(100vh - 132px - 90px - 32px - 75px);
+  max-height: calc(100vh - 132px - 90px - 32px - 75px - 74px);
   margin-bottom: 0;
 }
