@@ -27,6 +27,10 @@ $statusBlockedColor: var(--tui-warning-fill);
   margin: 0;
 }
 
+.mat-chip.mat-standard-chip::after {
+  background: transparent;
+}
+
 .chip__priority {
   background: none;
   border: 1px solid $statusNormalColor;
