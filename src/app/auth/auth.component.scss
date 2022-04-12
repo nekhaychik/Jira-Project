@@ -1,0 +1,11 @@
+.auth-background {
+  height: 100vh;
+  width: 100vw;
+  background: url("background.jpg");
+}
+
+app-button {
+  position: absolute;
+  top: calc(50% - 16px);
+  left: calc(50% - 88.5px);
+}

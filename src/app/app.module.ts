@@ -28,6 +28,8 @@ import { BoardListComponent } from './board-list/board-list.component';
 import { TaskCardComponent } from './task-card/task-card.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthComponent } from './auth/auth.component';
+import { MainPageComponent } from './main-page/main-page.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,9 @@ import { MatIconModule } from '@angular/material/icon';
     SidebarComponent,
     BoardComponent,
     BoardListComponent,
-    TaskCardComponent
+    TaskCardComponent,
+    AuthComponent,
+    MainPageComponent
   ],
   imports: [
     BrowserModule,
