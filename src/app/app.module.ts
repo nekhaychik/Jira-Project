@@ -31,6 +31,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthComponent } from './auth/auth.component';
 import { MainPageComponent } from './main-page/main-page.component';
 
+import { environment } from '../environments/environment';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -60,6 +66,10 @@ import { MainPageComponent } from './main-page/main-page.component';
     MatChipsModule,
     MatIconModule,
     TuiScrollbarModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
+    AngularFireStorageModule
   ],
   providers: [ { provide: TUI_SANITIZER, useClass: NgDompurifySanitizer } ],
   bootstrap: [ AppComponent ]
