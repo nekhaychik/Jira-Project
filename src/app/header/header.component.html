@@ -4,7 +4,10 @@
       <app-svg-image [imagePath]="logoPath"></app-svg-image>
       <h1 class="logo__title">Kanban</h1>
     </div>
-    <app-navigation></app-navigation>
-    <app-avatar [name]="userName"></app-avatar>
+    <ng-container *ngIf="user">
+      <app-navigation></app-navigation>
+      <app-avatar [name]="userName"></app-avatar>
+      <app-button [content]=buttonContent [buttonAppearance]="buttonAppearance" (click)="logout()"></app-button>
+    </ng-container>
   </div>
 </header>
