@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, NgIterable, OnInit} from '@angular/core';
 import { Board } from '../board/models/board';
 import { BOARDS } from '../mock-boards';
+import {Observable} from "rxjs";
+import {BoardStore, CardStore, ID} from "../services/types";
+import {Collection} from "../enums";
+import {CrudService} from "../services/crud/crud.service";
 
 @Component({
   selector: 'app-sidebar',
@@ -9,14 +13,14 @@ import { BOARDS } from '../mock-boards';
 })
 export class SidebarComponent implements OnInit {
 
-  public boards: Board[] = BOARDS;
+  public boards: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
 
-  constructor() { }
+  constructor(private crudService: CrudService) { }
 
   ngOnInit(): void {
   }
 
-  public trackByFn(index: number, item: Board): number {
+  public trackByFn(index: number, item: any): number {
     return index;
   }
 

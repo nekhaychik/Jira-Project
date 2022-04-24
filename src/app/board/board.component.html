@@ -3,20 +3,20 @@
   <div class="board__header">
     <h2 class="board__title">{{board.name}}</h2>
     <div class="board__members">
-      <ng-container *ngFor="let name of board.members; trackBy: trackByFn">
-        <app-avatar [name]="name"></app-avatar>
-      </ng-container>
+<!--      <ng-container *ngFor="let name of board.members; trackBy: trackByFn">-->
+<!--        <app-avatar [name]="name"></app-avatar>-->
+<!--      </ng-container>-->
       <button tuiIconButton [icon]="icon.IconPlus" [style]="buttonSize" [shape]="shape.Rounded"></button>
     </div>
   </div>
   <div class="board__buttons">
-    <app-button [content]="buttonContentList"></app-button>
-    <app-button [content]="buttonContentCard"></app-button>
+    <app-button [content]="buttonContentList" (click)="addList()"></app-button>
+    <app-button [content]="buttonContentCard" (click)="addCard()"></app-button>
   </div>
   <tui-scrollbar [hidden]="true">
     <div class="board__lists">
-      <ng-container *ngIf="board.lists">
-        <ng-container *ngFor="let list of board.lists; trackBy: trackByFn">
+      <ng-container *ngIf="lists$">
+        <ng-container *ngFor="let list of (lists$ | async); trackBy: trackByFn">
           <app-board-list [list]="list"></app-board-list>
         </ng-container>
       </ng-container>

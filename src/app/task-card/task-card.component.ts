@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Card } from 'src/app/task-card/models/card';
-import { Status } from '../enums';
+import {Collection, Status} from '../enums';
+import {CrudService} from "../services/crud/crud.service";
 
 @Component({
   selector: 'app-task-card',
@@ -9,13 +10,17 @@ import { Status } from '../enums';
 })
 export class TaskCardComponent implements OnInit {
 
-  @Input() public card: Card | undefined;
+  @Input() public card: any;
   public status: typeof Status = Status;
 
-  constructor() {
+  constructor(private crudService: CrudService) {
   }
 
   ngOnInit(): void {
+  }
+
+  public deleteCard(id: string) {
+    this.crudService.deleteObject(Collection.CARDS, id);
   }
 
 }

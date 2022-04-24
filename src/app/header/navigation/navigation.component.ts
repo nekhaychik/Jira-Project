@@ -12,7 +12,7 @@ export class NavigationComponent implements OnInit {
     'Your boards',
     'Statistics'
   ];
-  public buttonContent: string = 'Create';
+  public buttonContent: string = 'Create Board';
   public buttonAppearance: ButtonAppearance = ButtonAppearance.Secondary;
 
   constructor() { }

@@ -12,8 +12,9 @@ $statusBlockedColor: var(--tui-warning-fill);
 }
 
 .card__title {
-  display: block;
+  display: flex;
   font: $cardTextFont;
+  justify-content: space-between;
 }
 
 .card__checklist {

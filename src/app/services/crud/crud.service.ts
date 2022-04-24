@@ -56,6 +56,14 @@ export class CrudService {
     ).pipe(take(1));
   }
 
+  public getOneData(collectionName: string, id: string) {
+    return from(this.angularFirestore
+      .collection(collectionName)
+      .doc(id)
+      .get()
+    ).pipe(take(1));
+  }
+
   public deleteObject(collectionName: string, id: string): Observable<void> {
     return from(
       this.angularFirestore

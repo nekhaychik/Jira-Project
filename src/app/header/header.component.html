@@ -6,7 +6,17 @@
     </div>
     <ng-container *ngIf="user">
       <app-navigation></app-navigation>
-      <app-avatar [name]="userName"></app-avatar>
+      <app-avatar [name]="userName" [matMenuTriggerFor]="menu"></app-avatar>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Log Out</span>
+        </button>
+<!--        <button mat-menu-item (click)="editList(list.id, {name: 'New Name'})">-->
+<!--          <mat-icon>title</mat-icon>-->
+<!--          <span>Rename</span>-->
+<!--        </button>-->
+      </mat-menu>
       <app-button [content]=buttonContent [buttonAppearance]="buttonAppearance" (click)="logout()"></app-button>
     </ng-container>
   </div>

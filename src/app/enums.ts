@@ -20,3 +20,10 @@ export enum Status {
   Blocked = 'blocked',
   Normal = 'normal'
 }
+
+export enum Collection {
+  USERS = 'users',
+  LISTS = 'lists',
+  CARDS = 'cards',
+  BOARDS = 'boards'
+}
