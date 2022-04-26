@@ -1,0 +1,103 @@
+<form [formGroup]="cardForm">
+
+  <h3 class="tui-form__header tui-form__header_margin-top_none">
+    {{formHeader}}
+  </h3>
+
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>Card Name</mat-label>
+      <input matInput placeholder="Input card name" [formControlName]="formControls.name" [value]="card?.name">
+      <mat-error *ngIf="isControlValid(formControls.name)">
+        Card name is required
+      </mat-error>
+    </mat-form-field>
+  </p>
+
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>Choose a list</mat-label>
+      <mat-select [formControlName]="formControls.list" required>
+        <mat-option *ngFor="let list of (lists$ | async)" [value]="list.id">{{list.name}}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="isControlValid(formControls.list)">Please choose a list</mat-error>
+    </mat-form-field>
+  </p>
+
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>Choose a priority</mat-label>
+      <mat-select [formControlName]="formControls.priority" required>
+        <mat-option *ngFor="let priority of priorities" [value]="priority">{{priority}}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="isControlValid(formControls.priority)">Please choose a priority</mat-error>
+    </mat-form-field>
+  </p>
+
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>Choose a member</mat-label>
+      <mat-select [formControlName]="formControls.member" required>
+        <mat-option *ngFor="let member of (users$ | async)" [value]="member.id">
+          {{member.name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="isControlValid(formControls.member)">Please choose a member</mat-error>
+    </mat-form-field>
+  </p>
+
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>Choose a due date</mat-label>
+      <input matInput placeholder="MM/DD/YYYY" [formControlName]="formControls.dueDate" [matDatepicker]="picker">
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="isControlValid(formControls.dueDate)">
+        Invalid value
+      </mat-error>
+    </mat-form-field>
+  </p>
+
+  <div>
+    <div *ngIf="isCreating; then createButton else updateButton"></div>
+
+    <ng-template #createButton>
+      <button
+        mat-dialog-close
+        [disabled]="cardForm.invalid" (click)="submitForm()"
+        tuiButton
+        size="l"
+        type="submit"
+        class="tui-form__button"
+      >
+        Submit
+      </button>
+    </ng-template>
+
+    <ng-template #updateButton>
+      <button
+        mat-dialog-close
+        [disabled]="cardForm.invalid" (click)="submitUpdatingForm(id)"
+        tuiButton
+        size="l"
+        type="submit"
+        class="tui-form__button"
+      >
+        Submit
+      </button>
+    </ng-template>
+
+    <button
+      mat-dialog-close
+      tuiButton
+      type="button"
+      appearance="secondary"
+      size="l"
+      class="tui-form__button"
+    >
+      Cancel
+    </button>
+  </div>
+
+</form>

@@ -1,0 +1,58 @@
+<form [formGroup]="createListForm">
+
+  <h3 class="tui-form__header tui-form__header_margin-top_none">
+    {{formHeader}}
+  </h3>
+
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>List Name</mat-label>
+      <input matInput placeholder="Input list name" [formControlName]="formControls.name" [value]="listName">
+      <mat-error *ngIf="isControlValid(formControls.name)">
+        List name is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </p>
+
+  <div>
+    <div *ngIf="isCreating; then createButton else updateButton"></div>
+
+    <ng-template #createButton>
+      <button
+        mat-dialog-close
+        [disabled]="createListForm.invalid" (click)="submitForm()"
+        tuiButton
+        size="l"
+        type="submit"
+        class="tui-form__button"
+      >
+        Submit
+      </button>
+    </ng-template>
+
+    <ng-template #updateButton>
+      <button
+        mat-dialog-close
+        [disabled]="createListForm.invalid" (click)="submitUpdatingForm(id)"
+        tuiButton
+        size="l"
+        type="submit"
+        class="tui-form__button"
+      >
+        Submit
+      </button>
+    </ng-template>
+
+    <button
+      mat-dialog-close
+      tuiButton
+      type="button"
+      appearance="secondary"
+      size="l"
+      class="tui-form__button"
+    >
+      Cancel
+    </button>
+  </div>
+
+</form>
