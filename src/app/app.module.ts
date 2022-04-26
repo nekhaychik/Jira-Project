@@ -9,7 +9,9 @@ import {
   TuiButtonModule,
   TuiScrollbarModule
 } from '@taiga-ui/core';
-import { TuiAvatarModule } from '@taiga-ui/kit';
+import {
+  TuiAvatarModule
+} from '@taiga-ui/kit';
 import { MatCardModule } from '@angular/material/card';
 
 import { NgModule } from '@angular/core';
@@ -30,6 +32,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthComponent } from './auth/auth.component';
 import { MainPageComponent } from './main-page/main-page.component';
+import {ListFormComponent} from "./list-form/list-form.component";
 
 import { environment } from '../environments/environment';
 import { AngularFireModule } from '@angular/fire/compat';
@@ -37,6 +40,17 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import {MatMenuModule} from "@angular/material/menu";
+import {MatDialogModule} from '@angular/material/dialog';
+import {ReactiveFormsModule} from "@angular/forms";
+import { ListFormUpdateComponent } from './list-form-update/list-form-update.component';
+import { CardFormComponent } from './card-form/card-form.component';
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatNativeDateModule} from "@angular/material/core";
+import {MatTooltipModule} from '@angular/material/tooltip';
+import { CardFormUpdateComponent } from './card-form-update/card-form-update.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +65,11 @@ import {MatMenuModule} from "@angular/material/menu";
     BoardListComponent,
     TaskCardComponent,
     AuthComponent,
-    MainPageComponent
+    MainPageComponent,
+    ListFormComponent,
+    ListFormUpdateComponent,
+    CardFormComponent,
+    CardFormUpdateComponent
   ],
   imports: [
     BrowserModule,
@@ -71,7 +89,15 @@ import {MatMenuModule} from "@angular/material/menu";
     AngularFireAuthModule,
     AngularFirestoreModule,
     AngularFireStorageModule,
-    MatMenuModule
+    MatMenuModule,
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatTooltipModule
   ],
   providers: [ { provide: TUI_SANITIZER, useClass: NgDompurifySanitizer } ],
   bootstrap: [ AppComponent ]
