@@ -1,11 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Board } from './models/board';
-import { BOARDS } from '../mock-boards';
-import { ButtonAppearance, Icon, Shape, Collection } from '../enums';
-import { List } from '../board-list/models/list';
+import {Component, OnInit, Input} from '@angular/core';
+import {ButtonAppearance, Icon, Shape, Collection} from '../enums';
 import {CrudService} from "../services/crud/crud.service";
 import {Observable} from "rxjs";
-import {BoardStore, ListStore, UserStore} from "../services/types";
+import {ListStore, UserStore} from "../services/types";
+import {MatDialog} from '@angular/material/dialog';
+import {ListFormComponent} from "../list-form/list-form.component";
+import {CardFormComponent} from "../card-form/card-form.component";
+import {FormControl, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-board',
@@ -24,23 +25,24 @@ export class BoardComponent implements OnInit {
   public shape: typeof Shape = Shape;
 
   public lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
-  // public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
+  public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
 
-  constructor(private crudService: CrudService) { }
+  constructor(private crudService: CrudService, public dialog: MatDialog) {
+  }
 
   ngOnInit(): void {
   }
 
-  public trackByFn (index: number, item: ListStore): number {
+  public trackByFn(index: number, item: ListStore): number {
     return index;
   }
 
-  public addList() {
-    const list = {
-      name: 'Test list',
-      cardsID: []
-    };
-    this.crudService.createObject(Collection.LISTS, list).subscribe();
+  openDialog() {
+    this.dialog.open(ListFormComponent);
+  }
+
+  openCardDialog() {
+    this.dialog.open(CardFormComponent);
   }
 
   public addCard() {
@@ -54,8 +56,9 @@ export class BoardComponent implements OnInit {
     this.crudService.createObject(Collection.CARDS, card).subscribe();
   }
 
-  public getLists() {
-    this.crudService.getDate(Collection.LISTS).subscribe();
-  }
+  // public getLists() {
+  //   this.crudService.getDate(Collection.LISTS).subscribe();
+  // }
+
 
 }

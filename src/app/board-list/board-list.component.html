@@ -4,13 +4,14 @@
       <mat-card-title>
         {{list.name}}
       </mat-card-title>
-      <button tuiIconButton [matMenuTriggerFor]="menu" [icon]="icon.IconMoreVertLarge" size="s" [appearance]="buttonAppearance.Flat"></button>
+      <button tuiIconButton [matMenuTriggerFor]="menu" [icon]="icon.IconMoreVertLarge" size="s"
+              [appearance]="buttonAppearance.Flat"></button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="deleteList(list.id)">
           <mat-icon>delete_outline</mat-icon>
           <span>Delete</span>
         </button>
-        <button mat-menu-item (click)="editList(list.id, {name: 'New Name'})">
+        <button mat-menu-item (click)="openDialog(list.id, list.name)">
           <mat-icon>title</mat-icon>
           <span>Rename</span>
         </button>
@@ -18,7 +19,7 @@
     </mat-card-header>
     <tui-scrollbar [hidden]="true">
       <mat-card-content>
-        <ng-container *ngFor="let card of (cards | async)">
+        <ng-container *ngFor="let card of (cards$ | async)">
           <ng-container *ngIf="card.listID === list.id">
             <app-task-card [card]="card"></app-task-card>
           </ng-container>

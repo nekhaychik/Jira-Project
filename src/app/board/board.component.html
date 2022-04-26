@@ -3,15 +3,15 @@
   <div class="board__header">
     <h2 class="board__title">{{board.name}}</h2>
     <div class="board__members">
-<!--      <ng-container *ngFor="let name of board.members; trackBy: trackByFn">-->
-<!--        <app-avatar [name]="name"></app-avatar>-->
-<!--      </ng-container>-->
+            <ng-container *ngFor="let user of (users$ | async); trackBy: trackByFn">
+              <app-avatar [name]="user.name" [avatarUrl]="user.avatarUrl"></app-avatar>
+            </ng-container>
       <button tuiIconButton [icon]="icon.IconPlus" [style]="buttonSize" [shape]="shape.Rounded"></button>
     </div>
   </div>
   <div class="board__buttons">
-    <app-button [content]="buttonContentList" (click)="addList()"></app-button>
-    <app-button [content]="buttonContentCard" (click)="addCard()"></app-button>
+    <app-button [content]="buttonContentList" (click)="openDialog()"></app-button>
+    <app-button [content]="buttonContentCard" (click)="openCardDialog()"></app-button>
   </div>
   <tui-scrollbar [hidden]="true">
     <div class="board__lists">
