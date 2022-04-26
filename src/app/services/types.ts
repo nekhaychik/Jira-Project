@@ -1,6 +1,5 @@
 import firebase from "firebase/compat/app";
 
-export type FireBaseUser = firebase.User | null;
 export type UserCredential = firebase.auth.UserCredential;
 
 export type Board = {
@@ -11,13 +10,13 @@ export type Board = {
 
 export type List = {
   name: string;
-  cardsID: string[];
+  cardsID?: string[];
 };
 
 export type Card = {
   name: string;
   priority: string;
-  memberID: string;
+  memberID?: string;
   listID: string;
   checklist?: string;
   dueDate?: string;
@@ -25,6 +24,8 @@ export type Card = {
 
 export type User = {
   name: string;
+  uid: string;
+  avatarUrl: string | null;
 };
 
 export type ID = {
