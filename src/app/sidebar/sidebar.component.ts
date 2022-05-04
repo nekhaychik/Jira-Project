@@ -1,10 +1,8 @@
-import {Component, NgIterable, OnInit} from '@angular/core';
-import { Board } from '../board/models/board';
-import { BOARDS } from '../mock-boards';
-import {Observable} from "rxjs";
-import {BoardStore, CardStore, ID} from "../services/types";
-import {Collection} from "../enums";
-import {CrudService} from "../services/crud/crud.service";
+import {Component, OnInit} from '@angular/core';
+import {Observable} from 'rxjs';
+import {BoardStore} from '../services/types';
+import {Collection} from '../enums';
+import {CrudService} from '../services/crud/crud.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,14 +11,15 @@ import {CrudService} from "../services/crud/crud.service";
 })
 export class SidebarComponent implements OnInit {
 
-  public boards: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
+  public boards$: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
 
-  constructor(private crudService: CrudService) { }
+  constructor(private crudService: CrudService) {
+  }
 
   ngOnInit(): void {
   }
 
-  public trackByFn(index: number, item: any): number {
+  public trackByFn(index: number, item: BoardStore): number {
     return index;
   }
 

@@ -1,3 +1,21 @@
 .main-container {
   display: flex;
 }
+
+@import 'src/styles';
+
+$boardWidth: calc(100vw - 375px);
+$boardHeight: calc(100vh - 90px);
+$boardPadding: 42px 30px;
+
+.board {
+  width: $boardWidth;
+  height: $boardHeight;
+}
+
+.board__background {
+  position: absolute;
+  width: $boardWidth;
+  height: $boardHeight;
+  z-index: -1;
+}

@@ -1,8 +1,8 @@
 <div class="sidebar">
   <h2 class="board__title">Your boards</h2>
   <div class="sidebar__boards">
-    <ng-container *ngFor="let board of (boards | async); trackBy: trackByFn">
-      <a tuiLink  href="#" class="sidebar__board-title">{{board.name}}</a>
+    <ng-container *ngFor="let board of (boards$ | async); trackBy: trackByFn">
+      <a tuiLink  routerLink="{{board.id}}/{{board.name}}" class="sidebar__board-title">{{board.name}}</a>
     </ng-container>
   </div>
 </div>
