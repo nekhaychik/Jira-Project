@@ -12,6 +12,7 @@ export type List = {
   name: string;
   cardsID?: string[];
   boardID?: string;
+  dragID?: string;
 };
 
 export type Card = {

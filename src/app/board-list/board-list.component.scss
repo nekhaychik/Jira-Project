@@ -3,10 +3,35 @@
 .mat-card {
   box-sizing: border-box;
   width: 280px;
-  max-height: calc(100vh - 132px - 90px - 32px);
+  max-height: calc(100vh - 132px - 90px - 32px - 74px);
   height: fit-content;
   background: white;
   margin-bottom: 32px;
+
+  .card__container {
+    height: 100%;
+    margin-bottom: 0;
+  }
+
+  .cdk-drop-list-dragging {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+
+    .cdk-drag:not(.cdk-drag-placeholder) {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+
+  .cdk-drag-placeholder {
+    .card__wrap {
+      background-color: rgba(150, 150, 200, 0.1);
+      border: 1px dashed #abc;
+      margin: 5px;
+
+      .card {
+        opacity: 0;
+      }
+    }
+  }
 }
 
 .mat-card-header {
@@ -23,7 +48,7 @@
 
 tui-scrollbar {
   height: inherit;
-  max-height: calc(100vh - 132px - 90px - 32px - 75px - 74px);
+  max-height: calc(100vh - 132px - 90px - 74px);
 }
 
 .mat-card-header .mat-card-title {
@@ -32,6 +57,6 @@ tui-scrollbar {
 
 .mat-card-content {
   height: inherit;
-  max-height: calc(100vh - 132px - 90px - 32px - 75px - 74px);
-  margin-bottom: 0;
+  max-height: calc(100vh - 132px - 90px - 32px - 83px - 74px);
+  min-height: 5px;
 }

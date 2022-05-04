@@ -13,13 +13,9 @@
     <app-button [content]="buttonContentCard" (click)="openCardDialog()"></app-button>
   </div>
   <tui-scrollbar [hidden]="true">
-    <div class="board__lists">
-      <ng-container *ngIf="lists$">
-        <ng-container *ngFor="let list of (lists$ | async); trackBy: trackByFn">
-          <ng-container *ngIf="boardID == list.boardID">
-            <app-board-list [list]="list"></app-board-list>
-          </ng-container>
-        </ng-container>
+    <div class="board__lists" cdkDropListGroup>
+      <ng-container *ngFor="let list of lists; trackBy: trackByFn">
+        <div class="board__list" app-board-list [list]="list"></div>
       </ng-container>
     </div>
   </tui-scrollbar>

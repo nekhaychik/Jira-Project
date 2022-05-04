@@ -6,9 +6,31 @@ $statusNormalColor: var(--tui-positive);
 $statusCriticalColor: var(--tui-negative);
 $statusBlockedColor: var(--tui-warning-fill);
 
+:host {
+  display: flex;
+  flex: 1;
+}
+
+.card__wrap {
+  touch-action: manipulation;
+  width: 100%;
+  cursor: grab;
+}
+
 .card {
-  margin: 16px 0 0;
+  margin: 10px 0 0;
   background: $cardBackground;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  border-radius: .125rem;
+  transition-property: all;
+  transition-duration: .1s;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: 10px;
 }
 
 .card__title {

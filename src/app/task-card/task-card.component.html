@@ -1,27 +1,29 @@
-<mat-card class="card" *ngIf="card">
-  <mat-card-title class="card__title">
-    {{card.name}}
-    <mat-icon (click)="openUpdateCardDialog(card)">update</mat-icon>
-    <mat-icon (click)="deleteCard(card.id)">delete_outline</mat-icon>
-  </mat-card-title>
-  <mat-card-content>
-    <div class="card__checklist" *ngIf="card.checklist">
-      <mat-icon>list</mat-icon>
-      <p class="card__checklist-number">{{card.checklist}}</p>
-    </div>
-    <div class="card__footer">
-      <mat-chip-list>
-        <mat-chip class="chip__priority"
-          [class.critical]="card.priority === status.Critical"
-          [class.blocked]="card.priority === status.Blocked">
-          {{card.priority}}
-        </mat-chip>
-      </mat-chip-list>
-      <ng-container *ngFor="let user of (users$ | async)">
-        <ng-container *ngIf="card.memberID === user.id">
-          <app-avatar [name]="user.name" [avatarUrl]="user.avatarUrl"></app-avatar>
+<div class="card__wrap">
+  <div class="card" *ngIf="card">
+    <mat-card-title class="card__title">
+      {{card.name}}
+      <mat-icon (click)="openUpdateCardDialog(card)">update</mat-icon>
+      <mat-icon (click)="deleteCard(card.id)">delete_outline</mat-icon>
+    </mat-card-title>
+    <mat-card-content>
+      <div class="card__checklist" *ngIf="card.checklist">
+        <mat-icon>list</mat-icon>
+        <p class="card__checklist-number">{{card.checklist}}</p>
+      </div>
+      <div class="card__footer">
+        <mat-chip-list>
+          <mat-chip class="chip__priority"
+                    [class.critical]="card.priority === status.Critical"
+                    [class.blocked]="card.priority === status.Blocked">
+            {{card.priority}}
+          </mat-chip>
+        </mat-chip-list>
+        <ng-container *ngFor="let user of (users$ | async)">
+          <ng-container *ngIf="card.memberID === user.id">
+            <app-avatar [name]="user.name" [avatarUrl]="user.avatarUrl"></app-avatar>
+          </ng-container>
         </ng-container>
-      </ng-container>
-    </div>
-  </mat-card-content>
-</mat-card>
+      </div>
+    </mat-card-content>
+  </div>
+</div>

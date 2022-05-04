@@ -25,6 +25,7 @@ export class BoardComponent implements OnInit {
   public shape: typeof Shape = Shape;
   public boardID: string = '';
   public members: UserStore[] = [];
+  public lists: ListStore[] = [];
 
   public lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
   public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
@@ -43,8 +44,8 @@ export class BoardComponent implements OnInit {
           this.crudService.getUserDoc<BoardStore>(Collection.BOARDS, this.boardID)
             .subscribe((board: BoardStore | undefined) => {
               this.board = board;
-              this.members = [];
               this.getMembers();
+              this.getLists();
             });
         }
       }
@@ -56,6 +57,7 @@ export class BoardComponent implements OnInit {
   }
 
   public getMembers(): void {
+    this.members = [];
     this.board?.membersID.forEach((memberID: string) => {
       this.crudService.getUserDoc<UserStore>(Collection.USERS, memberID)
         .subscribe((user: UserStore | undefined) => {
@@ -63,6 +65,15 @@ export class BoardComponent implements OnInit {
           }
         );
     })
+  }
+
+  public getLists(): void {
+    this.lists = [];
+    this.lists$.subscribe(lists => {
+        this.lists = lists as ListStore[];
+        this.lists = this.lists.filter(list => list.boardID === this.boardID);
+      }
+    )
   }
 
   public openListDialog(): void {

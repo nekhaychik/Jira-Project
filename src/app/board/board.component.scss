@@ -49,7 +49,15 @@ $boardPadding: 42px 30px;
   margin: 0 30px;
 }
 
-app-board-list:last-child {
+.board__list {
+  margin-right: .5rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: .125rem;
+  flex-shrink: 0;
+}
+
+.board__list:last-child {
   padding-right: 30px;
 }
 
