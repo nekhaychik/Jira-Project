@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ButtonAppearance } from "../enums";
+import {Component, OnInit, Input} from '@angular/core';
+import {ButtonAppearance, Size} from '../enums';
 
 @Component({
   selector: 'app-button',
@@ -10,8 +10,10 @@ export class ButtonComponent implements OnInit {
 
   @Input() content: string = '';
   @Input() buttonAppearance: ButtonAppearance = ButtonAppearance.Primary;
+  @Input() buttonSize: Size = Size.s;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
   }

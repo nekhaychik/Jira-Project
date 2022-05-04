@@ -11,6 +11,7 @@ export type Board = {
 export type List = {
   name: string;
   cardsID?: string[];
+  boardID?: string;
 };
 
 export type Card = {

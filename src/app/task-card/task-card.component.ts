@@ -24,11 +24,11 @@ export class TaskCardComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  openDialog(id: string, card: CardStore) {
-    this.dialog.open(CardFormUpdateComponent, {data: {id: id, card: card}});
+  public openUpdateCardDialog(card: CardStore): void {
+    this.dialog.open(CardFormUpdateComponent, {data: {card: card}});
   }
 
-  public deleteCard(id: string) {
+  public deleteCard(id: string): void {
     this.crudService.deleteObject(Collection.CARDS, id);
   }
 

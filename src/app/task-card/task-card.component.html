@@ -1,7 +1,7 @@
 <mat-card class="card" *ngIf="card">
   <mat-card-title class="card__title">
     {{card.name}}
-    <mat-icon (click)="openDialog(card.id, card)">update</mat-icon>
+    <mat-icon (click)="openUpdateCardDialog(card)">update</mat-icon>
     <mat-icon (click)="deleteCard(card.id)">delete_outline</mat-icon>
   </mat-card-title>
   <mat-card-content>

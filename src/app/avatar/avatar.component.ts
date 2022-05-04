@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 
 @Component({
   selector: 'app-avatar',
@@ -10,7 +10,8 @@ export class AvatarComponent implements OnInit {
   @Input() public name: string = '';
   @Input() public avatarUrl: string | null = null;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
   }

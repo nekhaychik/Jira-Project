@@ -1,10 +1,10 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from "@angular/forms";
-import {CardControls} from "../board/models/controls.enum";
-import {CrudService} from "../services/crud/crud.service";
-import {Card, CardStore, ListStore, UserStore} from "../services/types";
-import {Collection} from "../enums";
-import {Observable} from "rxjs";
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {CardControls} from '../models/controls.enum';
+import {CrudService} from '../services/crud/crud.service';
+import {Card, CardStore, ListStore, UserStore} from '../services/types';
+import {Collection} from '../enums';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-card-form',
@@ -17,8 +17,11 @@ export class CardFormComponent implements OnInit {
   @Input() public card: CardStore | undefined;
   @Input() public isCreating: boolean = true;
   @Input() public id: string = '';
+
   public lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
   public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
+
+  //add to firestore
   public priorities: string[] = [
     'normal',
     'critical',
@@ -28,29 +31,30 @@ export class CardFormComponent implements OnInit {
   public cardForm: FormGroup = new FormGroup({});
   public formControls: typeof CardControls = CardControls;
 
-  constructor(private crudService: CrudService) { }
-
-  ngOnInit(): void {
-    this.cardForm.addControl(CardControls.name, new FormControl('', Validators.required));
-    this.cardForm.addControl(CardControls.priority, new FormControl('', Validators.required));
-    this.cardForm.addControl(CardControls.dueDate, new FormControl('', Validators.compose([Validators.required, this.dateValidator])));
-    this.cardForm.addControl(CardControls.list, new FormControl('', Validators.required));
-    this.cardForm.addControl(CardControls.member, new FormControl('', Validators.required));
+  constructor(private crudService: CrudService) {
   }
 
-  public addCard(card: Card) {
+  ngOnInit(): void {
+    this.cardForm.addControl(CardControls.name, new FormControl(this.card?.name, Validators.required));
+    this.cardForm.addControl(CardControls.priority, new FormControl(this.card?.priority, Validators.required));
+    this.cardForm.addControl(CardControls.dueDate, new FormControl(this.card?.dueDate, Validators.compose([Validators.required, this.dateValidator])));
+    this.cardForm.addControl(CardControls.list, new FormControl(this.card?.listID, Validators.required));
+    this.cardForm.addControl(CardControls.member, new FormControl(this.card?.memberID, Validators.required));
+  }
+
+  public addCard(card: Card): void {
     this.crudService.createObject(Collection.CARDS, card).subscribe();
   }
 
   public submitForm(): void {
-    if(this.cardForm.valid) {
+    if (this.cardForm.valid) {
       const card: Card = {
         name: this.cardForm?.controls[CardControls.name].value,
         priority: this.cardForm?.controls[CardControls.priority].value,
         dueDate: this.cardForm?.controls[CardControls.dueDate].value,
         listID: this.cardForm?.controls[CardControls.list].value,
         memberID: this.cardForm?.controls[CardControls.member].value
-      }
+      };
       this.addCard(card);
       this.cardForm?.reset();
     } else {
@@ -58,19 +62,19 @@ export class CardFormComponent implements OnInit {
     }
   }
 
-  public updateCard(id: string, data: Card) {
+  public updateCard(id: string, data: Card): void {
     this.crudService.updateObject(Collection.CARDS, id, data);
   }
 
   public submitUpdatingForm(id: string): void {
-    if(this.cardForm.valid) {
+    if (this.cardForm.valid) {
       const card: Card = {
         name: this.cardForm?.controls[CardControls.name].value,
         priority: this.cardForm?.controls[CardControls.priority].value,
         dueDate: this.cardForm?.controls[CardControls.dueDate].value,
         listID: this.cardForm?.controls[CardControls.list].value,
         memberID: this.cardForm?.controls[CardControls.member].value
-      }
+      };
       this.updateCard(id, card);
       this.cardForm?.reset();
     } else {
@@ -92,9 +96,9 @@ export class CardFormComponent implements OnInit {
     if (value && typeof value === "string") {
       let match = value.match(/^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/);
       if (!match) {
-        return { 'dateInvalid': true };
+        return {'dateInvalid': true};
       } else if (match && match[0] !== value) {
-        return { 'dateInvalid': true };
+        return {'dateInvalid': true};
       }
     }
     return null;

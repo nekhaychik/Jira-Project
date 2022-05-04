@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 
 @Component({
   selector: 'app-svg-image',
@@ -9,7 +9,8 @@ export class SvgImageComponent implements OnInit {
 
   @Input() public imagePath: string = '';
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
   }

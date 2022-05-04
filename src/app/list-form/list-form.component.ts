@@ -1,9 +1,14 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input, Inject} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from "@angular/forms";
-import {ListControls} from "../board/models/controls.enum";
+import {ListControls} from "../models/controls.enum";
 import {List} from "../services/types";
 import {Collection} from "../enums";
 import {CrudService} from "../services/crud/crud.service";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+
+export interface DialogData {
+  boardID: string
+}
 
 @Component({
   selector: 'app-list-form',
@@ -20,18 +25,20 @@ export class ListFormComponent implements OnInit {
   public createListForm: FormGroup = new FormGroup({});
   public formControls: typeof ListControls = ListControls;
 
-  constructor(private crudService: CrudService) {
+  constructor(private crudService: CrudService,
+              public dialogRef: MatDialogRef<ListFormComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: DialogData) {
   }
 
   ngOnInit(): void {
     this.createListForm.addControl(ListControls.name, new FormControl(this.listName, Validators.required));
   }
 
-  public addList(list: List) {
+  public addList(list: List): void {
     this.crudService.createObject(Collection.LISTS, list).subscribe();
   }
 
-  public updateList(id: string, data: {}) {
+  public updateList(id: string, data: {}): void {
     this.crudService.updateObject(Collection.LISTS, id, data);
   }
 
@@ -39,7 +46,8 @@ export class ListFormComponent implements OnInit {
     if (this.createListForm.valid) {
       const list: List = {
         name: this.createListForm?.controls[ListControls.name].value,
-      }
+        boardID: this.data.boardID
+      };
       this.addList(list);
       this.createListForm?.reset();
     } else {
@@ -47,7 +55,7 @@ export class ListFormComponent implements OnInit {
     }
   }
 
-  public submitUpdatingForm(id: string) {
+  public submitUpdatingForm(id: string): void {
     if (this.createListForm.valid) {
       const list: List = {
         name: this.createListForm?.controls[ListControls.name].value,

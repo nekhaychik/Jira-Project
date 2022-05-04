@@ -3,9 +3,9 @@ import {Router} from '@angular/router';
 import firebase from 'firebase/compat/app';
 import {AuthService} from '../services/auth/auth.service';
 import {CrudService} from '../services/crud/crud.service';
-import {Observable} from 'rxjs';
 import {UserStore} from '../services/types';
-import {Collection} from '../enums';
+import {Collection, Paths, Size} from '../enums';
+import {switchMap} from "rxjs";
 
 @Component({
   selector: 'app-auth',
@@ -14,11 +14,14 @@ import {Collection} from '../enums';
 })
 export class AuthComponent implements OnInit {
 
-  public buttonContent: string = 'Log In';
+  public buttonContent: string = 'Log in with Google';
+  public buttonSize: Size = Size.l;
   public user: firebase.User | null = null;
   public data: UserStore[] = [];
 
-  constructor(private router: Router, private authService: AuthService, private crudService: CrudService) {
+  constructor(private router: Router,
+              private authService: AuthService,
+              private crudService: CrudService) {
   }
 
   ngOnInit(): void {
@@ -42,11 +45,11 @@ export class AuthComponent implements OnInit {
   }
 
   public login(): void {
-    this.authService.googleSignIn().subscribe(() => {
-      this.authService.user$.subscribe(() => {
-        this.router.navigate(['/'])
-        this.addUser();
-      });
+    this.authService.googleSignIn().pipe(
+      switchMap(() => this.authService.user$),
+    ).subscribe(() => {
+      this.addUser();
+      this.router.navigate([Paths.board]);
     })
   }
 }

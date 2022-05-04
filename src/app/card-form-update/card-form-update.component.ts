@@ -1,9 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {CardStore} from "../services/types";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {CardStore} from '../services/types';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 export interface DialogData {
-  id: string,
   card: CardStore
 }
 

@@ -1,11 +1,10 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {Card} from 'src/app/task-card/models/card';
 import {ButtonAppearance, Collection, Icon} from '../enums';
-import {CrudService} from "../services/crud/crud.service";
-import {Observable} from "rxjs";
-import {CardStore, ListStore} from "../services/types";
-import {MatDialog} from "@angular/material/dialog";
-import {ListFormUpdateComponent} from "../list-form-update/list-form-update.component";
+import {CrudService} from '../services/crud/crud.service';
+import {Observable} from 'rxjs';
+import {CardStore, ListStore} from '../services/types';
+import {MatDialog} from '@angular/material/dialog';
+import {ListFormUpdateComponent} from '../list-form-update/list-form-update.component';
 
 @Component({
   selector: 'app-board-list',
@@ -26,19 +25,19 @@ export class BoardListComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public trackByFn(index: number, item: Card): number {
+  public trackByFn(index: number, item: CardStore): number {
     return index;
   }
 
-  public openDialog(id: string, name: string) {
+  public openUpdateListDialog(id: string, name: string): void {
     this.dialog.open(ListFormUpdateComponent, {data: {id: id, name: name}});
   }
 
-  public deleteList(id: string) {
+  public deleteList(id: string): void {
     this.crudService.deleteObject(Collection.LISTS, id);
   }
 
-  public editList(id: string, newData: ListStore) {
+  public editList(id: string, newData: ListStore): void {
     this.crudService.updateObject(Collection.LISTS, id, newData);
   }
 
