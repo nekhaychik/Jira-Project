@@ -18,11 +18,16 @@
       </mat-menu>
     </mat-card-header>
     <tui-scrollbar [hidden]="true">
-      <mat-card-content>
-        <ng-container *ngFor="let card of (cards$ | async); trackBy: trackByFn">
-          <ng-container *ngIf="card.listID === list.id">
-            <app-task-card [card]="card"></app-task-card>
-          </ng-container>
+      <mat-card-content cdkDropList
+                        class="card__container"
+                        [cdkDropListData]="listCards"
+                        (cdkDropListDropped)="drop($event)"
+                        [id]="list.id">
+        <ng-container *ngFor="let card of listCards; trackBy: trackByFn">
+          <app-task-card [card]="card"
+                         [cdkDragData]="card"
+                         cdkDrag>
+          </app-task-card>
         </ng-container>
       </mat-card-content>
     </tui-scrollbar>
