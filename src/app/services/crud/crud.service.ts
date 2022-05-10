@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {AngularFirestore} from "@angular/fire/compat/firestore";
-import {from, map, Observable, take} from "rxjs";
-import firebase from "firebase/compat/app";
+import {AngularFirestore} from '@angular/fire/compat/firestore';
+import {from, map, Observable, take} from 'rxjs';
+import firebase from 'firebase/compat/app';
 import DocumentReference = firebase.firestore.DocumentReference;
 
 @Injectable({
@@ -12,7 +12,7 @@ export class CrudService {
   constructor(private angularFirestore: AngularFirestore) {
   }
 
-  public getUserDoc<T>(collectionName: string, id: string): Observable<T | undefined> {
+  public getDataDoc<T>(collectionName: string, id: string): Observable<T | undefined> {
     const snapshot: Observable<firebase.firestore.DocumentSnapshot<T>> = this.angularFirestore
       .collection(collectionName)
       .doc(id)

@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 import {BoardStore, ListStore, UserStore} from '../services/types';
 import {ListFormComponent} from '../list-form/list-form.component';
 import {CardFormComponent} from '../card-form/card-form.component';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Params} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 
 @Component({
@@ -38,10 +38,10 @@ export class BoardComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(
-      params => {
+      (params: Params) => {
         this.boardID = params['id'];
         if (this.boardID) {
-          this.crudService.getUserDoc<BoardStore>(Collection.BOARDS, this.boardID)
+          this.crudService.getDataDoc<BoardStore>(Collection.BOARDS, this.boardID)
             .subscribe((board: BoardStore | undefined) => {
               this.board = board;
               this.getMembers();
@@ -59,9 +59,9 @@ export class BoardComponent implements OnInit {
   public getMembers(): void {
     this.members = [];
     this.board?.membersID.forEach((memberID: string) => {
-      this.crudService.getUserDoc<UserStore>(Collection.USERS, memberID)
+      this.crudService.getDataDoc<UserStore>(Collection.USERS, memberID)
         .subscribe((user: UserStore | undefined) => {
-            if (user) this.members?.push(user);
+            if (user) this.members.push(user);
           }
         );
     })
@@ -69,11 +69,11 @@ export class BoardComponent implements OnInit {
 
   public getLists(): void {
     this.lists = [];
-    this.lists$.subscribe(lists => {
+    this.lists$.subscribe((lists: ListStore[]) => {
         this.lists = lists as ListStore[];
         this.lists = this.lists.filter(list => list.boardID === this.boardID);
       }
-    )
+    );
   }
 
   public openListDialog(): void {
@@ -81,7 +81,7 @@ export class BoardComponent implements OnInit {
   }
 
   public openCardDialog(): void {
-    this.dialog.open(CardFormComponent);
+    this.dialog.open(CardFormComponent, {data: {boardID: this.boardID}});
   }
 
 }

@@ -5,7 +5,7 @@ import {AuthService} from '../services/auth/auth.service';
 import {CrudService} from '../services/crud/crud.service';
 import {UserStore} from '../services/types';
 import {Collection, Paths, Size} from '../enums';
-import {switchMap} from "rxjs";
+import {switchMap} from 'rxjs';
 
 @Component({
   selector: 'app-auth',
@@ -17,7 +17,7 @@ export class AuthComponent implements OnInit {
   public buttonContent: string = 'Log in with Google';
   public buttonSize: Size = Size.l;
   public user: firebase.User | null = null;
-  public data: UserStore[] = [];
+  public users: UserStore[] = [];
 
   constructor(private router: Router,
               private authService: AuthService,
@@ -26,13 +26,13 @@ export class AuthComponent implements OnInit {
 
   ngOnInit(): void {
     this.crudService.handleData<UserStore>(Collection.USERS).subscribe((value: UserStore[]) => {
-      this.data = value;
+      this.users = value;
     });
     this.authService.user$.subscribe((value: firebase.User | null) => this.user = value);
   }
 
-  addUser() {
-    for (let user of this.data) {
+  public addUser(): void {
+    for (let user of this.users) {
       if (user.uid === this.user?.uid) return;
       else {
         this.crudService.createObject(Collection.USERS, {
@@ -50,6 +50,6 @@ export class AuthComponent implements OnInit {
     ).subscribe(() => {
       this.addUser();
       this.router.navigate([Paths.board]);
-    })
+    });
   }
 }

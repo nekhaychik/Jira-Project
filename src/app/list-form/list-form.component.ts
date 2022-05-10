@@ -1,10 +1,10 @@
 import {Component, OnInit, Input, Inject} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from "@angular/forms";
-import {ListControls} from "../models/controls.enum";
-import {List} from "../services/types";
-import {Collection} from "../enums";
-import {CrudService} from "../services/crud/crud.service";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ListControls} from '../models/controls.enum';
+import {List} from '../services/types';
+import {Collection} from '../enums';
+import {CrudService} from '../services/crud/crud.service';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 export interface DialogData {
   boardID: string
@@ -35,10 +35,10 @@ export class ListFormComponent implements OnInit {
   }
 
   public addList(list: List): void {
-    this.crudService.createObject(Collection.LISTS, list).subscribe();
+    this.crudService.createObject(Collection.LISTS, list);
   }
 
-  public updateList(id: string, data: {}): void {
+  public updateList(id: string, data: List): void {
     this.crudService.updateObject(Collection.LISTS, id, data);
   }
 
@@ -51,7 +51,7 @@ export class ListFormComponent implements OnInit {
       this.addList(list);
       this.createListForm?.reset();
     } else {
-      alert("Error");
+      alert('ERROR');
     }
   }
 
@@ -63,7 +63,7 @@ export class ListFormComponent implements OnInit {
       this.updateList(id, list);
       this.createListForm?.reset();
     } else {
-      alert("Error");
+      alert('ERROR');
     }
   }
 

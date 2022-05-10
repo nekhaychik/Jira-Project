@@ -3,8 +3,8 @@ import {RouterModule, Routes} from '@angular/router';
 import {MainPageComponent} from './main-page/main-page.component';
 import {AuthComponent} from './auth/auth.component';
 import {AuthGuard} from './services/auth/auth.guard';
-import {Paths} from "./enums";
-import {BoardComponent} from "./board/board.component";
+import {Paths} from './enums';
+import {BoardComponent} from './board/board.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/' + Paths.board, pathMatch: 'full'},
@@ -12,7 +12,8 @@ const routes: Routes = [
     path: Paths.board, canActivate: [AuthGuard], component: MainPageComponent,
     children: [{
       path: ':id/:name',
-      component: BoardComponent
+      component: BoardComponent,
+      canActivate: [AuthGuard]
     }
     ]
   },
