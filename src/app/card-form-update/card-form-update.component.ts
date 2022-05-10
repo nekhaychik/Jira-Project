@@ -3,7 +3,8 @@ import {CardStore} from '../services/types';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 export interface DialogData {
-  card: CardStore
+  card: CardStore,
+  boardID: string
 }
 
 @Component({

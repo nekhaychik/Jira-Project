@@ -15,10 +15,17 @@
   </p>
 
   <p>
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea matInput placeholder="Description of your task" [formControlName]="formControls.description" [value]="card?.description"></textarea>
+    </mat-form-field>
+  </p>
+
+  <p>
     <mat-form-field appearance="fill">
       <mat-label>Choose a list</mat-label>
       <mat-select [formControlName]="formControls.list" required>
-        <mat-option *ngFor="let list of (lists$ | async)" [value]="list.id">{{list.name}}</mat-option>
+        <mat-option *ngFor="let list of lists" [value]="list.id">{{list.name}}</mat-option>
       </mat-select>
       <mat-error *ngIf="isControlValid(formControls.list)">Please choose a list</mat-error>
     </mat-form-field>
@@ -60,6 +67,18 @@
   </p>
 
   <div>
+    <input type="file"
+           id="file"
+           (change)="onFileSelected($event)"
+           name="image"
+           autocomplete="off"
+    />
+  </div>
+  <img *ngIf="imageLink" [src]="imageLink" width="70" height="70"/>
+  <progress max="100" [value]="progress"></progress>
+
+
+  <div>
     <div *ngIf="isCreating; then createButton else updateButton"></div>
 
     <ng-template #createButton>
@@ -77,8 +96,9 @@
 
     <ng-template #updateButton>
       <button
+        *ngIf="card"
         mat-dialog-close
-        [disabled]="cardForm.invalid" (click)="submitUpdatingForm(id)"
+        [disabled]="cardForm.invalid" (click)="submitUpdatingForm(card.id)"
         tuiButton
         size="l"
         type="submit"

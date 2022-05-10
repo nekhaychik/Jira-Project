@@ -75,3 +75,7 @@ $statusBlockedColor: var(--tui-warning-fill);
   justify-content: space-between;
   align-items: flex-end;
 }
+
+.card__description {
+  margin-bottom: 16px;
+}

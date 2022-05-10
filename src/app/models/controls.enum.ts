@@ -1,9 +1,3 @@
-export enum UserControls {
-  name = "name",
-  surname = "surname",
-  email = "email",
-}
-
 export enum ListControls {
   name = 'name',
 }
@@ -15,4 +9,5 @@ export enum CardControls {
   member = 'member',
   list = 'list',
   dueDate = 'dueDate',
+  description = 'description'
 }

@@ -1,4 +1,4 @@
-import firebase from "firebase/compat/app";
+import firebase from 'firebase/compat/app';
 
 export type UserCredential = firebase.auth.UserCredential;
 
@@ -18,10 +18,19 @@ export type List = {
 export type Card = {
   name: string;
   priority: string;
-  memberID?: string;
+  memberID: string;
   listID: string;
   checklist?: string;
-  dueDate?: string;
+  description?: string;
+  dueDate: {
+    nanoseconds: number,
+    seconds: number
+  };
+  reporterID: string;
+  createDate: string;
+  updateDate: string;
+  images?: string[];
+  position: number;
 };
 
 export type User = {
