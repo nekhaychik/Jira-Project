@@ -1,11 +1,14 @@
 <ng-container *ngIf="list">
   <mat-card>
-    <mat-card-header>
-      <mat-card-title>
+    <mat-card-header class="mat-card-header">
+      <mat-card-title class="mat-card-title">
         {{list.name}}
       </mat-card-title>
-      <button tuiIconButton [matMenuTriggerFor]="menu" [icon]="icon.IconMoreVertLarge" size="s"
-              [appearance]="buttonAppearance.Flat"></button>
+      <button tuiIconButton [matMenuTriggerFor]="menu"
+              [icon]="icon.IconMoreVertLarge"
+              [size]="buttonSize"
+              [appearance]="buttonAppearance.Flat">
+      </button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="deleteList(list.id)">
           <mat-icon>delete_outline</mat-icon>

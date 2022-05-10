@@ -1,11 +1,10 @@
 import {Component, OnInit, Input, ViewEncapsulation} from '@angular/core';
-import {ButtonAppearance, Collection, Icon} from '../enums';
+import {ButtonAppearance, Collection, Icon, Size} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
-import {Subscription} from 'rxjs';
 import {CardStore, ListStore} from '../services/types';
 import {MatDialog} from '@angular/material/dialog';
 import {ListFormUpdateComponent} from '../list-form-update/list-form-update.component';
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: '[app-board-list]',
@@ -18,21 +17,25 @@ export class BoardListComponent implements OnInit {
   @Input() public list: ListStore | null = null;
   public icon: typeof Icon = Icon;
   public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
+  public buttonSize: Size = Size.m;
   public cards: CardStore[] = [];
-  public cards$: Subscription = this.crudService.handleData<CardStore>(Collection.CARDS).subscribe(cards => {
-    this.cards = cards as CardStore[];
-  });
   public listCards: CardStore[] = [];
 
   constructor(private crudService: CrudService,
               public dialog: MatDialog) {
-    this.crudService.handleData<CardStore>(Collection.CARDS).subscribe(cards => {
+    this.crudService.handleData<CardStore>(Collection.CARDS).subscribe((cards: CardStore[]) => {
       this.cards = cards as CardStore[];
-      this.listCards = this.cards.filter(card => card.listID == this.list?.id);
+      this.listCards = this.cards.filter((card: CardStore) => card.listID == this.list?.id).sort(
+        this.byField('position')
+      );
     });
   }
 
   ngOnInit(): void {
+  }
+
+  private byField(field: string): (a: any, b: any) => (1 | -1) {
+    return (a: any, b: any) => a[field] > b[field] ? 1 : -1;
   }
 
   public trackByFn(index: number, item: CardStore): number {
@@ -51,8 +54,8 @@ export class BoardListComponent implements OnInit {
     this.crudService.updateObject(Collection.LISTS, id, newData);
   }
 
-  drop(event: CdkDragDrop<CardStore[]>) {
-    let isMovingInsideTheSameList = event.previousContainer === event.container;
+  public drop(event: CdkDragDrop<CardStore[]>): void {
+    let isMovingInsideTheSameList: boolean = event.previousContainer === event.container;
     if (isMovingInsideTheSameList) {
       moveItemInArray(
         event.container.data,
@@ -60,20 +63,21 @@ export class BoardListComponent implements OnInit {
         event.currentIndex
       );
     } else {
-      console.log(event.item.data.listID)
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
-      const data = {
-        listID: event.container.id,
-      };
-      this.crudService.updateObject(Collection.CARDS, event.item.data.id, data);
-      event.item.data.listID = event.container.id;
-      console.log(event.item.data.id, event.container.id)
+      this.crudService.updateObject(Collection.CARDS, event.item.data.id, {listID: event.container.id,});
+      event.previousContainer.data.forEach((card: CardStore, index: number) => {
+        this.crudService.updateObject(Collection.CARDS, card.id, {position: index});
+      });
     }
+
+    event.container.data.forEach((card: CardStore, index: number) => {
+      this.crudService.updateObject(Collection.CARDS, card.id, {position: index});
+    });
   }
 
 }

@@ -5,7 +5,7 @@
   width: 280px;
   max-height: calc(100vh - 132px - 90px - 32px - 74px);
   height: fit-content;
-  background: white;
+  background: rgba(255, 255, 255, 0.59);
   margin-bottom: 32px;
 
   .card__container {
@@ -41,6 +41,15 @@
   padding-bottom: 10px;
 }
 
+:root .mat-card-header .mat-card-title {
+  margin-bottom: 0;
+  font-size: 24px;
+}
+
+:root .mat-card-header-text {
+  margin: 0;
+}
+
 .mat-card-title {
   font: $cardHeaderFont;
   color: $mainTextColor;
@@ -55,8 +64,9 @@ tui-scrollbar {
   margin-bottom: 0;
 }
 
-.mat-card-content {
+:root .mat-card-content {
   height: inherit;
   max-height: calc(100vh - 132px - 90px - 32px - 83px - 74px);
   min-height: 5px;
+  margin-bottom: 0;
 }
