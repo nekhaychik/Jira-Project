@@ -42,7 +42,7 @@ export class TaskCardComponent implements OnInit {
   }
 
   public openFullCard(card: CardStore): void {
-    this.dialog.open(FullCardComponent, {data: {card: card}});
+    this.dialog.open(FullCardComponent, {data: {card: card, boardID: this.boardID}});
   }
 
 }

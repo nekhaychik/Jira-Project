@@ -6,7 +6,8 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {CardFormUpdateComponent} from '../card-form-update/card-form-update.component';
 
 export interface DialogData {
-  card: CardStore
+  card: CardStore,
+  boardID: string
 }
 
 @Component({
@@ -72,7 +73,7 @@ export class FullCardComponent implements OnInit {
   }
 
   public openUpdateCardDialog(card: CardStore): void {
-    this.dialog.open(CardFormUpdateComponent, {data: {card: card}});
+    this.dialog.open(CardFormUpdateComponent, {data: {card: card, boardID: this.data.boardID}});
   }
 
 }

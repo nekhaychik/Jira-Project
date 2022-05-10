@@ -31,7 +31,7 @@ export class ListFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.createListForm.addControl(ListControls.name, new FormControl(this.listName, Validators.required));
+    this.createListForm.addControl(ListControls.name, new FormControl(this.listName, Validators.compose([Validators.required, Validators.maxLength(16)])));
   }
 
   public addList(list: List): void {

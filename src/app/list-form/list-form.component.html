@@ -9,7 +9,7 @@
       <mat-label>List Name</mat-label>
       <input matInput placeholder="Input list name" [formControlName]="formControls.name" [value]="listName">
       <mat-error *ngIf="isControlValid(formControls.name)">
-        List name is <strong>required</strong>
+        List name is <strong>required</strong>. Max length is 16
       </mat-error>
     </mat-form-field>
   </p>

@@ -2,13 +2,14 @@ import {Component, OnInit, Input, Inject} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {CardControls} from '../models/controls.enum';
 import {CrudService} from '../services/crud/crud.service';
-import {Card, CardStore, ListStore, UserStore} from '../services/types';
+import {BoardStore, Card, CardStore, ListStore, UserStore} from '../services/types';
 import {Collection} from '../enums';
 import {Observable, combineLatest, takeWhile} from 'rxjs';
 import {UploadService} from '../services/crud/upload.service';
 import firebase from 'firebase/compat';
 import {AuthService} from '../services/auth/auth.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {ActivatedRoute, Params} from "@angular/router";
 
 export interface DialogData {
   boardID: string
@@ -28,9 +29,11 @@ export class CardFormComponent implements OnInit {
   public lists: ListStore[] = [];
   public imageLink: string = '';
   public progress: string | undefined = '';
+  private msInDay: number = 60 * 60 * 24 * 1000;
 
   private user: firebase.User | null = null;
   private users: UserStore[] = [];
+  private dueDateSeconds: number | string = '';
   private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
   public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
 
@@ -56,14 +59,25 @@ export class CardFormComponent implements OnInit {
       this.user = value;
       this.getReporter();
     });
+    if (this.card?.dueDate.seconds) {
+      this.dueDateSeconds = this.card?.dueDate.seconds * 1000;
+    }
+    if (this.isCreating) {
+      this.boardID = this.data.boardID;
+    }
     this.getLists();
-    this.cardForm.addControl(CardControls.name, new FormControl(this.card?.name, Validators.required));
+    this.cardForm.addControl(CardControls.name, new FormControl(this.card?.name, Validators.compose([Validators.required, Validators.maxLength(16)])));
     this.cardForm.addControl(CardControls.priority, new FormControl(this.card?.priority, Validators.required));
-    this.cardForm.addControl(CardControls.dueDate, new FormControl(this.card?.dueDate, Validators.compose([Validators.required, this.dateValidator])));
+    this.cardForm.addControl(CardControls.dueDate, new FormControl(new Date(this.dueDateSeconds).toDateString(), Validators.required));
     this.cardForm.addControl(CardControls.list, new FormControl(this.card?.listID, Validators.required));
     this.cardForm.addControl(CardControls.member, new FormControl(this.card?.memberID, Validators.required));
     this.cardForm.addControl(CardControls.description, new FormControl(this.card?.description));
   }
+
+  public myFilter = (d: Date | null): boolean => {
+    const day = (d || new Date()).getTime();
+    return day >= new Date().getTime() - this.msInDay;
+  };
 
   private getReporter(): void {
     this.users$.subscribe((users: UserStore[]) => {
@@ -140,19 +154,6 @@ export class CardFormComponent implements OnInit {
     } else {
       return false;
     }
-  }
-
-  public dateValidator(c: AbstractControl): { [key: string]: boolean } | null {
-    let value = c.value;
-    if (value && typeof value === "string") {
-      let match = value.match(/^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/);
-      if (!match) {
-        return {'dateInvalid': true};
-      } else if (match && match[0] !== value) {
-        return {'dateInvalid': true};
-      }
-    }
-    return null;
   }
 
   public onFileSelected(event: Event): void {
