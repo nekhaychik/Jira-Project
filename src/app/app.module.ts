@@ -39,19 +39,21 @@ import {AngularFireModule} from '@angular/fire/compat';
 import {AngularFireAuthModule} from '@angular/fire/compat/auth';
 import {AngularFirestoreModule} from '@angular/fire/compat/firestore';
 import {AngularFireStorageModule} from '@angular/fire/compat/storage';
-import {MatMenuModule} from "@angular/material/menu";
+import {MatMenuModule} from '@angular/material/menu';
 import {MatDialogModule} from '@angular/material/dialog';
-import {ReactiveFormsModule} from "@angular/forms";
+import {ReactiveFormsModule} from '@angular/forms';
 import {ListFormUpdateComponent} from './list-form-update/list-form-update.component';
 import {CardFormComponent} from './card-form/card-form.component';
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {MatDatepickerModule} from "@angular/material/datepicker";
-import {MatNativeDateModule} from "@angular/material/core";
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {CardFormUpdateComponent} from './card-form-update/card-form-update.component';
-import {DragDropModule} from "@angular/cdk/drag-drop";
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import {FullCardComponent} from './full-card/full-card.component';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 @NgModule({
   declarations: [
@@ -70,7 +72,8 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
     ListFormComponent,
     ListFormUpdateComponent,
     CardFormComponent,
-    CardFormUpdateComponent
+    CardFormUpdateComponent,
+    FullCardComponent
   ],
   imports: [
     BrowserModule,
@@ -99,7 +102,8 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
     MatDatepickerModule,
     MatNativeDateModule,
     MatTooltipModule,
-    DragDropModule
+    DragDropModule,
+    MatGridListModule
   ],
   providers: [{provide: TUI_SANITIZER, useClass: NgDompurifySanitizer}],
   bootstrap: [AppComponent]

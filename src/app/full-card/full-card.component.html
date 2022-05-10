@@ -1,0 +1,54 @@
+<ng-container *ngIf="data.card">
+  <div class="card__container">
+    <div class="card__main-inform">
+      <div class="card__header">
+        <h1 class="card__title">{{data.card.name}}</h1>
+        <mat-icon mat-dialog-close (click)="openUpdateCardDialog(data.card)">update</mat-icon>
+        <mat-icon mat-dialog-close (click)="deleteCard(data.card.id)">delete_outline</mat-icon>
+      </div>
+      <div class="card__description">
+        <h3 class="card__description-title">Description</h3>
+        <p class="card__description-content">{{data.card.description}}</p>
+      </div>
+      <div class="card__images">
+        <ng-container *ngFor="let image of data.card.images">
+          <div class="card__images-container">
+            <img [src]="image"/>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <div class="card__additional-inform">
+      <div class="card__status">
+        <h3>STATUS</h3>
+        <p>{{list?.name}}</p>
+      </div>
+      <div class="card__reporter" *ngIf="reporter">
+        <h3>REPORTER</h3>
+        <div class="card-avatar">
+          <app-avatar [name]="reporter.name" [avatarUrl]="reporter.avatarUrl"></app-avatar>
+          <p>{{reporter.name}}</p>
+        </div>
+      </div>
+      <div class="card__member"  *ngIf="member">
+        <h3>ASSIGNEES</h3>
+        <div class="card-avatar">
+          <app-avatar [name]="member.name" [avatarUrl]="member.avatarUrl"></app-avatar>
+          <p>{{member.name}}</p>
+        </div>
+      </div>
+      <div class="card__priority">
+        <h3>PRIORITY</h3>
+        <p>{{data.card.priority}}</p>
+      </div>
+      <div class="card__dueDate">
+        <h3>DUE DATE</h3>
+        <p>{{getDate(data.card.dueDate?.seconds)}}</p>
+      </div>
+      <div class="card__date-inform">
+        <p>Created - {{data.card.createDate}}</p>
+        <p>Updated - {{data.card.updateDate}}</p>
+      </div>
+    </div>
+  </div>
+</ng-container>
