@@ -54,6 +54,7 @@ import {CardFormUpdateComponent} from './card-form-update/card-form-update.compo
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {FullCardComponent} from './full-card/full-card.component';
 import {MatGridListModule} from '@angular/material/grid-list';
+import { BoardFormComponent } from './board-form/board-form.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import {MatGridListModule} from '@angular/material/grid-list';
     ListFormUpdateComponent,
     CardFormComponent,
     CardFormUpdateComponent,
-    FullCardComponent
+    FullCardComponent,
+    BoardFormComponent
   ],
   imports: [
     BrowserModule,

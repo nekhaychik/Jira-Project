@@ -5,12 +5,10 @@ export type UserCredential = firebase.auth.UserCredential;
 export type Board = {
   name: string;
   membersID: string[];
-  listsID?: string[];
 };
 
 export type List = {
   name: string;
-  cardsID?: string[];
   boardID?: string;
   dragID?: string;
 };

@@ -33,7 +33,7 @@ export class CardFormComponent implements OnInit {
 
   private user: firebase.User | null = null;
   private users: UserStore[] = [];
-  private dueDateSeconds: number | string = '';
+  public dueDateSeconds: number | string = '';
   private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
   public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
 
@@ -52,6 +52,7 @@ export class CardFormComponent implements OnInit {
               private uploadService: UploadService,
               public dialogRef: MatDialogRef<CardFormComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+
   }
 
   ngOnInit(): void {

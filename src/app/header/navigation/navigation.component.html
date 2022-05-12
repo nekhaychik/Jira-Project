@@ -1,4 +1,7 @@
 <ng-container *ngFor="let link of navigationLinks">
   <a class="nav__link" tuiLink href="#">{{link}}</a>
 </ng-container>
-<app-button [content]=buttonContent [buttonAppearance]="buttonAppearance"></app-button>
+<app-button [content]=buttonContent
+            [buttonAppearance]="buttonAppearance"
+            (click)="openBoardDialog()"
+></app-button>
