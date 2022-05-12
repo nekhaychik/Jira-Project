@@ -1,0 +1,67 @@
+<form [formGroup]="boardForm">
+
+  <h3 class="tui-form__header tui-form__header_margin-top_none">
+    {{formHeader}}
+  </h3>
+
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>Board Name</mat-label>
+      <input matInput placeholder="Input board name" [formControlName]="formControls.name">
+      <mat-error *ngIf="isControlValid(formControls.name)">
+        Board name is <strong>required</strong>. Max length is 16
+      </mat-error>
+    </mat-form-field>
+  </p>
+
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>Board Members</mat-label>
+      <mat-select [formControlName]="formControls.membersID" multiple>
+        <mat-option *ngFor="let user of (users$ | async)" [value]="user.id">{{user.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </p>
+
+  <div>
+    <div *ngIf="isCreating; then createButton else updateButton"></div>
+
+    <ng-template #createButton>
+      <button
+        mat-dialog-close
+        [disabled]="boardForm.invalid" (click)="submitForm()"
+        tuiButton
+        size="l"
+        type="submit"
+        class="tui-form__button"
+      >
+        Submit
+      </button>
+    </ng-template>
+
+    <ng-template #updateButton>
+      <button
+        mat-dialog-close
+        [disabled]="boardForm.invalid"
+        tuiButton
+        size="l"
+        type="submit"
+        class="tui-form__button"
+      >
+        Submit
+      </button>
+    </ng-template>
+
+    <button
+      mat-dialog-close
+      tuiButton
+      type="button"
+      appearance="secondary"
+      size="l"
+      class="tui-form__button"
+    >
+      Cancel
+    </button>
+  </div>
+
+</form>
