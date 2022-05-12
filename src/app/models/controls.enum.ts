@@ -11,3 +11,8 @@ export enum CardControls {
   dueDate = 'dueDate',
   description = 'description'
 }
+
+export enum BoardControls {
+  name = 'name',
+  membersID = 'membersID'
+}
