@@ -4,6 +4,8 @@ import {CrudService} from '../services/crud/crud.service';
 import {Collection} from '../enums';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {CardFormUpdateComponent} from '../card-form-update/card-form-update.component';
+import {combineLatest, takeWhile} from "rxjs";
+import {UploadService} from "../services/crud/upload.service";
 
 export interface DialogData {
   card: CardStore,
@@ -21,10 +23,23 @@ export class FullCardComponent implements OnInit {
   public member: UserStore | undefined;
   public reporter: UserStore | undefined;
 
+
+  public imageLink: string = '';
+  public progress: string | undefined = '';
+
   constructor(private crudService: CrudService,
               public dialogRef: MatDialogRef<FullCardComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private uploadService: UploadService) {
+    this.crudService.handleData<CardStore>(Collection.CARDS).subscribe(
+      (value) => {
+        value.forEach((card) => {
+          if(card.id === this.data.card.id)
+            this.data.card = card;
+        })
+      }
+    )
   }
 
   ngOnInit(): void {
@@ -74,6 +89,42 @@ export class FullCardComponent implements OnInit {
 
   public openUpdateCardDialog(card: CardStore): void {
     this.dialog.open(CardFormUpdateComponent, {data: {card: card, boardID: this.data.boardID}});
+  }
+
+  public onFileSelected(event: Event): void {
+    if (event) {
+      const eventTarget: HTMLInputElement = (<HTMLInputElement>event?.target);
+      if (eventTarget && eventTarget.files) {
+        const file: File = eventTarget.files[0];
+        combineLatest(this.uploadService.uploadFileAndGetMetadata('task-images', file))
+          .pipe(
+            takeWhile(([, link]) => {
+              return !link;
+            }, true),
+          )
+          .subscribe(([percent, link]) => {
+            this.progress = percent;
+            if (link === null) this.imageLink = '';
+            else this.imageLink = link;
+
+            if(this.imageLink) {
+              let newImage = {};
+              if (this.data.card.images) {
+                newImage = {
+                  images: [...this.data.card.images, this.imageLink]
+                }
+              } else {
+                newImage = {
+                  images: [this.imageLink]
+                }
+              }
+              this.progress = ''; this.imageLink = '';
+              this.crudService.updateObject(Collection.CARDS, this.data.card.id, newImage)
+            }
+          });
+      }
+    }
+
   }
 
 }

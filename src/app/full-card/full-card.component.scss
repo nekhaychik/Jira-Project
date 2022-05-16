@@ -11,14 +11,21 @@ mat-icon {
   cursor: pointer;
 }
 
+.card__images {
+  display: flex;
+  grid-gap: 10px;
+  flex-wrap: wrap;
+}
+
 .card__images-container {
-  width: 40%;
-  height: auto;
+  width: 23%;
+
 }
 
 .card__images-container img {
   width: 100%;
-  height: 100%;
+  height: auto;
+  overflow: hidden;
 }
 
 .card__header {
