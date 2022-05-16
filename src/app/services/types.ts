@@ -13,6 +13,11 @@ export type List = {
   dragID?: string;
 };
 
+export type DueDate = {
+  nanoseconds?: number;
+  seconds?: number;
+}
+
 export type Card = {
   name: string;
   priority: string;
@@ -20,15 +25,13 @@ export type Card = {
   listID: string;
   checklist?: string;
   description?: string;
-  dueDate: {
-    nanoseconds: number,
-    seconds: number
-  };
+  dueDate: DueDate;
   reporterID: string;
   createDate: string;
   updateDate: string;
   images?: string[];
   position: number;
+  history?: string[];
 };
 
 export type User = {
