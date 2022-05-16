@@ -11,7 +11,7 @@
         <p class="card__checklist-number">{{card.checklist}}</p>
       </div>
       <div class="card__description" *ngIf="card.description">
-        <span>{{card.description}}</span>
+        <span>{{shortDescription(card.description)}}</span>
       </div>
       <div class="card__footer">
         <mat-chip-list>
