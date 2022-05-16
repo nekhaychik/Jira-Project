@@ -31,24 +31,10 @@ export class AuthComponent implements OnInit {
     this.authService.user$.subscribe((value: firebase.User | null) => this.user = value);
   }
 
-  public addUser(): void {
-    for (let user of this.users) {
-      if (user.uid === this.user?.uid) return;
-      else {
-        this.crudService.createObject(Collection.USERS, {
-          name: this.user?.displayName,
-          uid: this.user?.uid,
-          avatarUrl: this.user?.photoURL,
-        });
-      }
-    }
-  }
-
   public login(): void {
     this.authService.googleSignIn().pipe(
       switchMap(() => this.authService.user$),
     ).subscribe(() => {
-      this.addUser();
       this.router.navigate([Paths.board]);
     });
   }

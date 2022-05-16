@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {AngularFirestore} from '@angular/fire/compat/firestore';
+import {Action, AngularFirestore, DocumentSnapshot} from '@angular/fire/compat/firestore';
 import {from, map, Observable, take} from 'rxjs';
 import firebase from 'firebase/compat/app';
 import DocumentReference = firebase.firestore.DocumentReference;
@@ -35,6 +35,23 @@ export class CrudService {
           }),
         ),
       );
+  }
+
+  public fetchOneDocumentFromFirestore<T>(collectionName: string, id: string): Observable<T | null> {
+    return this.angularFirestore.collection(collectionName).doc(id).snapshotChanges()
+      .pipe(
+        map((snapshot: Action<DocumentSnapshot<T | any>>) => {
+          const {id, exists} = snapshot.payload;
+          const data = snapshot.payload.data();
+          return exists
+            ?
+            {
+              id: id,
+              ...data,
+            }
+            : null;
+        })
+      )
   }
 
   public getDate<T>(collectionName: string): Observable<T[]> {
