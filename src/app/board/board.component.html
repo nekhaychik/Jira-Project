@@ -5,7 +5,7 @@
       <ng-container *ngFor="let member of members; trackBy: trackByFn">
         <app-avatar [name]="member.name" [avatarUrl]="member.avatarUrl"></app-avatar>
       </ng-container>
-      <button tuiIconButton [icon]="icon.IconPlus" [style]="buttonSize" [shape]="shape.Rounded"></button>
+      <button tuiIconButton [disabled]="true" [icon]="icon.IconPlus" [style]="buttonSize" [shape]="shape.Rounded" (click)="openMembersDialog()"></button>
     </div>
   </div>
   <div class="board__buttons">

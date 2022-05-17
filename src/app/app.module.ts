@@ -55,6 +55,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {FullCardComponent} from './full-card/full-card.component';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { BoardFormComponent } from './board-form/board-form.component';
+import { MembersFormComponent } from './members-form/members-form.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { BoardFormComponent } from './board-form/board-form.component';
     CardFormComponent,
     CardFormUpdateComponent,
     FullCardComponent,
-    BoardFormComponent
+    BoardFormComponent,
+    MembersFormComponent
   ],
   imports: [
     BrowserModule,

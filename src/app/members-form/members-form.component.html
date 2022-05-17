@@ -1,0 +1,40 @@
+<form [formGroup]="membersForm">
+
+  <h3 class="tui-form__header tui-form__header_margin-top_none">
+    Add members
+  </h3>
+
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>Board Members</mat-label>
+      <mat-select [formControlName]="formControls.membersID" multiple>
+        <mat-option *ngFor="let user of (users$ | async)" [value]="user.id">{{user.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </p>
+
+  <div>
+      <button
+        mat-dialog-close
+        [disabled]="membersForm.invalid"
+        tuiButton
+        size="l"
+        type="submit"
+        class="tui-form__button"
+      >
+        Submit
+      </button>
+
+    <button
+      mat-dialog-close
+      tuiButton
+      type="button"
+      appearance="secondary"
+      size="l"
+      class="tui-form__button"
+    >
+      Cancel
+    </button>
+  </div>
+
+</form>

@@ -7,6 +7,7 @@ import {ListFormComponent} from '../list-form/list-form.component';
 import {CardFormComponent} from '../card-form/card-form.component';
 import {ActivatedRoute, Params} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
+import {MembersFormComponent} from "../members-form/members-form.component";
 
 @Component({
   selector: 'app-board',
@@ -82,6 +83,10 @@ export class BoardComponent implements OnInit {
 
   public openCardDialog(): void {
     this.dialog.open(CardFormComponent, {data: {boardID: this.boardID}});
+  }
+
+  public openMembersDialog() {
+    this.dialog.open(MembersFormComponent, {data: {boardID: this.boardID}});
   }
 
 }

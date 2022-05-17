@@ -16,3 +16,7 @@ export enum BoardControls {
   name = 'name',
   membersID = 'membersID'
 }
+
+export enum MembersControls {
+  membersID = 'membersID'
+}
