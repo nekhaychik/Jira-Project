@@ -68,11 +68,16 @@ export class BoardComponent implements OnInit {
     })
   }
 
+  private byField(field: string): (a: any, b: any) => (1 | -1) {
+    return (a: any, b: any) => a[field] > b[field] ? 1 : -1;
+  }
+
   public getLists(): void {
     this.lists = [];
     this.lists$.subscribe((lists: ListStore[]) => {
         this.lists = lists as ListStore[];
-        this.lists = this.lists.filter(list => list.boardID === this.boardID);
+        this.lists = this.lists.filter(list => list.boardID === this.boardID)
+          .sort(this.byField('dateCreating'));
       }
     );
   }

@@ -11,6 +11,7 @@ export type List = {
   name: string;
   boardID?: string;
   dragID?: string;
+  dateCreating?: number;
 };
 
 export type DueDate = {

@@ -46,7 +46,8 @@ export class ListFormComponent implements OnInit {
     if (this.createListForm.valid) {
       const list: List = {
         name: this.createListForm?.controls[ListControls.name].value,
-        boardID: this.data.boardID
+        boardID: this.data.boardID,
+        dateCreating: new Date().getTime()
       };
       this.addList(list);
       this.createListForm?.reset();
