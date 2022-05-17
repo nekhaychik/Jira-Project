@@ -28,7 +28,9 @@
       <progress max="100" [value]="progress"></progress>
       <div class="card__history">
         <h3 class="card__description-title">History</h3>
-        <p class="card__description-content" *ngFor="let history of data.card.history">{{history}}</p>
+        <div class="card__history-content">
+          <p class="card__description-content" *ngFor="let history of data.card.history">{{history}}</p>
+        </div>
       </div>
     </div>
     <div class="card__additional-inform">

@@ -33,6 +33,13 @@ export class TaskCardComponent implements OnInit {
     );
   }
 
+  public shortDescription(description: string): string {
+    if (description.length > 130) {
+      return description.slice(0, 129) + '...';
+    }
+    return description;
+  }
+
   public openUpdateCardDialog(card: CardStore): void {
     this.dialog.open(CardFormUpdateComponent, {data: {card: card, boardID: this.boardID}});
   }

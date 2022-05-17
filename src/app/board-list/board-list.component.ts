@@ -5,6 +5,9 @@ import {CardStore, ListStore} from '../services/types';
 import {MatDialog} from '@angular/material/dialog';
 import {ListFormUpdateComponent} from '../list-form-update/list-form-update.component';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {AuthService} from "../services/auth/auth.service";
+import firebase from "firebase/compat";
+import {Observable} from "rxjs";
 
 @Component({
   selector: '[app-board-list]',
@@ -20,9 +23,14 @@ export class BoardListComponent implements OnInit {
   public buttonSize: Size = Size.m;
   public cards: CardStore[] = [];
   public listCards: CardStore[] = [];
+  private authUser: firebase.User | null = null;
+
+  public lists: ListStore[] = [];
+  private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
 
   constructor(private crudService: CrudService,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private authService: AuthService) {
     this.crudService.handleData<CardStore>(Collection.CARDS).subscribe((cards: CardStore[]) => {
       this.cards = cards as CardStore[];
       this.listCards = this.cards.filter((card: CardStore) => card.listID == this.list?.id).sort(
@@ -32,6 +40,28 @@ export class BoardListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.authService.user$.subscribe((value: firebase.User | null) => {
+      this.authUser = value;
+    });
+    this.getLists();
+  }
+
+  private getLists(): void {
+    this.lists = [];
+    this.lists$.subscribe((lists: ListStore[]) => {
+        this.lists = lists as ListStore[];
+        this.lists = this.lists.filter((list: ListStore) => list.boardID === this.list?.boardID);
+      }
+    );
+  }
+
+  private getListName(id: string): string {
+    let listsRet: ListStore[] = [];
+    listsRet = this.lists.filter((list: ListStore) => list.id === id);
+    if (listsRet[0])
+      return listsRet[0].name;
+    else
+      return 'undefined';
   }
 
   private byField(field: string): (a: any, b: any) => (1 | -1) {
@@ -69,7 +99,13 @@ export class BoardListComponent implements OnInit {
         event.previousIndex,
         event.currentIndex
       );
-      this.crudService.updateObject(Collection.CARDS, event.item.data.id, {listID: event.container.id,});
+
+      let history: string[] = [];
+      const listName: string = this.getListName(event.previousContainer.id);
+      const newListName: string = this.getListName(event.container.id);
+      history.push(this.authUser?.displayName + ' changed status from ' + listName + ' to ' + newListName);
+
+      this.crudService.updateObject(Collection.CARDS, event.item.data.id, {listID: event.container.id, history: [...history, ...event.item.data.history]});
       event.previousContainer.data.forEach((card: CardStore, index: number) => {
         this.crudService.updateObject(Collection.CARDS, card.id, {position: index});
       });

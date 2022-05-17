@@ -2,7 +2,7 @@ import {Component, OnInit, Input, Inject} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {CardControls} from '../models/controls.enum';
 import {CrudService} from '../services/crud/crud.service';
-import {Card, CardStore, ListStore, UserStore} from '../services/types';
+import {BoardStore, Card, CardStore, ListStore, UserStore} from '../services/types';
 import {Collection} from '../enums';
 import {Observable, combineLatest, takeWhile} from 'rxjs';
 import {UploadService} from '../services/crud/upload.service';
@@ -27,12 +27,13 @@ export class CardFormComponent implements OnInit {
   @Input() public boardID: string = '';
   public imageLink: string = '';
   public progress: string | undefined = '';
+  private boards: BoardStore[] = [];
 
   private currentDueDate: string | null = null;
   private msInDay: number = 60 * 60 * 24 * 1000;
 
   private authUser: firebase.User | null = null;
-  // private users: UserStore[] = [];
+  public users: UserStore[] = [];
   public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
 
   public lists: ListStore[] = [];
@@ -61,13 +62,24 @@ export class CardFormComponent implements OnInit {
     });
     if (this.card?.dueDate.seconds) this.currentDueDate = new Date(this.card?.dueDate.seconds * 1000).toISOString();
     if (this.isCreating) this.boardID = this.data.boardID;
+
+    this.getBoard();
     this.getLists();
+    this.getUsers();
+
     this.cardForm.addControl(CardControls.name, new FormControl(this.card?.name, Validators.compose([Validators.required, Validators.maxLength(16)])));
     this.cardForm.addControl(CardControls.priority, new FormControl(this.card?.priority, Validators.required));
     this.cardForm.addControl(CardControls.dueDate, new FormControl(this.currentDueDate, Validators.required));
     this.cardForm.addControl(CardControls.list, new FormControl(this.card?.listID, Validators.required));
     this.cardForm.addControl(CardControls.member, new FormControl(this.card?.memberID, Validators.required));
     this.cardForm.addControl(CardControls.description, new FormControl(this.card?.description));
+  }
+
+  private getBoard(): void {
+    this.crudService.handleData<BoardStore>(Collection.BOARDS).subscribe((boards: BoardStore[]) => {
+      this.boards = boards as BoardStore[];
+      this.boards = this.boards.filter((board: BoardStore) => board.id === this.boardID);
+    })
   }
 
   public myFilter = (d: Date | null): boolean => {
@@ -84,6 +96,14 @@ export class CardFormComponent implements OnInit {
     );
   }
 
+  private getUsers(): void {
+    this.users = [];
+    this.users$.subscribe((users: UserStore[]) => {
+      this.users = users as UserStore[];
+      this.users = this.users.filter((user: UserStore) => this.boards[0].membersID.includes(user.uid));
+    });
+  }
+
   private getListName(id: string): string {
     let listsRet: ListStore[] = [];
     listsRet = this.lists.filter((list: ListStore) => list.id === id);
@@ -95,10 +115,7 @@ export class CardFormComponent implements OnInit {
 
   private getUserName(id: string): string {
     let usersRet: UserStore[] = [];
-    this.users$.subscribe((users: UserStore[]) => {
-      usersRet = users as UserStore[];
-    });
-    usersRet = usersRet.filter((user: UserStore) => user.id === id);
+    usersRet = this.users.filter((user: UserStore) => user.id === id);
     if (usersRet[0])
       return usersRet[0].name;
     else
