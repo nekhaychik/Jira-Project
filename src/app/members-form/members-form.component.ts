@@ -1,11 +1,11 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from "@angular/forms";
-import {BoardControls, MembersControls} from "../models/controls.enum";
-import {Observable} from "rxjs";
-import {Board, BoardStore, UserStore} from "../services/types";
-import {Collection} from "../enums";
-import {CrudService} from "../services/crud/crud.service";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {Component, Inject, OnInit} from '@angular/core';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {MembersControls} from '../models/controls.enum';
+import {Observable} from 'rxjs';
+import {BoardStore, UserStore} from '../services/types';
+import {Collection} from '../enums';
+import {CrudService} from '../services/crud/crud.service';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 export interface DialogData {
   boardID: string
@@ -20,7 +20,6 @@ export class MembersFormComponent implements OnInit {
 
   public membersForm: FormGroup = new FormGroup({});
   public formControls: typeof MembersControls = MembersControls;
-
   private boards: BoardStore[] = [];
   public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
 
@@ -28,7 +27,7 @@ export class MembersFormComponent implements OnInit {
               public dialogRef: MatDialogRef<MembersFormComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.getBoard();
   }
 
@@ -48,9 +47,9 @@ export class MembersFormComponent implements OnInit {
   public submitForm(): void {
     if (this.membersForm.valid) {
       const board = {
-        // name: this.boardForm?.controls[BoardControls.name].value,
         membersID: this.membersForm.controls[MembersControls.membersID].value
       };
+      console.log(board)
       this.addMembers(board);
       this.membersForm?.reset();
     } else {

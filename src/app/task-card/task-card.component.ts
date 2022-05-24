@@ -15,7 +15,8 @@ import {ActivatedRoute, Params} from '@angular/router';
 })
 export class TaskCardComponent implements OnInit {
 
-  @Input() public card: CardStore | undefined;
+  @Input()
+  public card: CardStore | undefined;
   public status: typeof Status = Status;
   public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
   private boardID: string = '';
@@ -25,7 +26,7 @@ export class TaskCardComponent implements OnInit {
               private route: ActivatedRoute) {
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.route.params.subscribe(
       (params: Params) => {
         this.boardID = params['id'];

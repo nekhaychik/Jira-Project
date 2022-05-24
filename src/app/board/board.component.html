@@ -1,11 +1,12 @@
 <ng-container *ngIf="board">
   <div class="board__header">
     <h2 class="board__title">{{board.name}}</h2>
+<!--    <mat-icon (click)="openBoardDialog()">settings</mat-icon>-->
     <div class="board__members">
       <ng-container *ngFor="let member of members; trackBy: trackByFn">
         <app-avatar [name]="member.name" [avatarUrl]="member.avatarUrl"></app-avatar>
       </ng-container>
-      <button tuiIconButton [disabled]="true" [icon]="icon.IconPlus" [style]="buttonSize" [shape]="shape.Rounded" (click)="openMembersDialog()"></button>
+<!--      <button tuiIconButton [icon]="icon.IconPlus" [style]="buttonSize" [shape]="shape.Rounded" (click)="openMembersDialog()"></button>-->
     </div>
   </div>
   <div class="board__buttons">

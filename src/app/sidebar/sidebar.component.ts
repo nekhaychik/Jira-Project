@@ -3,8 +3,8 @@ import {Observable} from 'rxjs';
 import {BoardStore, UserStore} from '../services/types';
 import {Collection} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
-import {AuthService} from "../services/auth/auth.service";
-import firebase from "firebase/compat";
+import {AuthService} from '../services/auth/auth.service';
+import firebase from 'firebase/compat';
 
 @Component({
   selector: 'app-sidebar',
@@ -16,6 +16,7 @@ export class SidebarComponent implements OnInit {
   public boards: BoardStore[] = [];
   private userAuth: firebase.User | null = null;
   public user: UserStore | undefined;
+
   public boards$: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
   public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
 
@@ -23,7 +24,7 @@ export class SidebarComponent implements OnInit {
               private authService: AuthService) {
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.authService.user$.subscribe((value: firebase.User | null) => {
       this.userAuth = value;
       this.getUser();
@@ -56,5 +57,12 @@ export class SidebarComponent implements OnInit {
   public trackByFn(index: number, item: BoardStore): number {
     return index;
   }
+
+  // open = false;
+  //
+  // toggle(open: boolean) {
+  //   this.open = open;
+  // }
+
 
 }

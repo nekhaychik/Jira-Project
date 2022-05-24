@@ -6,10 +6,17 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {CardFormUpdateComponent} from '../card-form-update/card-form-update.component';
 import {combineLatest, takeWhile} from "rxjs";
 import {UploadService} from "../services/crud/upload.service";
+import firebase from "firebase/compat";
+import {AuthService} from "../services/auth/auth.service";
 
 export interface DialogData {
   card: CardStore,
   boardID: string
+}
+
+type Image = {
+  images: string[],
+  history: string[]
 }
 
 @Component({
@@ -22,12 +29,13 @@ export class FullCardComponent implements OnInit {
   public list: ListStore | undefined;
   public member: UserStore | undefined;
   public reporter: UserStore | undefined;
-
+  private authUser: firebase.User | null = null;
 
   public imageLink: string = '';
   public progress: string | undefined = '';
 
   constructor(private crudService: CrudService,
+              private authService: AuthService,
               public dialogRef: MatDialogRef<FullCardComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
               private dialog: MatDialog,
@@ -43,6 +51,9 @@ export class FullCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.authService.user$.subscribe((value: firebase.User | null) => {
+      this.authUser = value;
+    });
     this.getList();
     this.getMember();
     this.getReporter();
@@ -108,16 +119,22 @@ export class FullCardComponent implements OnInit {
             else this.imageLink = link;
 
             if(this.imageLink) {
-              let newImage = {};
+              let newImage: Image;
               if (this.data.card.images) {
                 newImage = {
-                  images: [...this.data.card.images, this.imageLink]
+                  images: [...this.data.card.images, this.imageLink],
+                  history: []
                 }
               } else {
                 newImage = {
-                  images: [this.imageLink]
+                  images: [this.imageLink],
+                  history: []
                 }
               }
+              if (this.data.card.history) {
+                newImage.history = [this.authUser?.displayName + ' added image(s)', ...this.data.card.history]
+              }
+
               this.progress = ''; this.imageLink = '';
               this.crudService.updateObject(Collection.CARDS, this.data.card.id, newImage)
             }

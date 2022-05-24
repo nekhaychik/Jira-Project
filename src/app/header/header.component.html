@@ -7,14 +7,14 @@
     <ng-container *ngIf="user">
       <app-navigation></app-navigation>
       <ng-container *ngIf="user.displayName">
-        <app-avatar [name]="user.displayName" [matMenuTriggerFor]="menu" [avatarUrl]="user.photoURL"></app-avatar>
+        <app-avatar [name]="user.displayName" [avatarUrl]="user.photoURL"></app-avatar>
       </ng-container>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item>
-          <mat-icon>exit_to_app</mat-icon>
-          <span>Log Out</span>
-        </button>
-      </mat-menu>
+<!--      <mat-menu #menu="matMenu">-->
+<!--        <button mat-menu-item>-->
+<!--          <mat-icon>exit_to_app</mat-icon>-->
+<!--          <span>Log Out</span>-->
+<!--        </button>-->
+<!--      </mat-menu>-->
       <app-button [content]=buttonContent [buttonAppearance]="buttonAppearance" (click)="logout()"></app-button>
     </ng-container>
   </div>

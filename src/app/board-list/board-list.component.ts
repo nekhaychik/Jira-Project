@@ -5,9 +5,9 @@ import {CardStore, ListStore} from '../services/types';
 import {MatDialog} from '@angular/material/dialog';
 import {ListFormUpdateComponent} from '../list-form-update/list-form-update.component';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
-import {AuthService} from "../services/auth/auth.service";
-import firebase from "firebase/compat";
-import {Observable} from "rxjs";
+import {AuthService} from '../services/auth/auth.service';
+import firebase from 'firebase/compat';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: '[app-board-list]',
@@ -24,8 +24,8 @@ export class BoardListComponent implements OnInit {
   public cards: CardStore[] = [];
   public listCards: CardStore[] = [];
   private authUser: firebase.User | null = null;
-
   public lists: ListStore[] = [];
+
   private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
 
   constructor(private crudService: CrudService,
@@ -56,7 +56,7 @@ export class BoardListComponent implements OnInit {
   }
 
   private getListName(id: string): string {
-    let listsRet: ListStore[] = [];
+    let listsRet: ListStore[];
     listsRet = this.lists.filter((list: ListStore) => list.id === id);
     if (listsRet[0])
       return listsRet[0].name;

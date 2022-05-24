@@ -20,7 +20,7 @@ export class HeaderComponent implements OnInit {
               private authService: AuthService) {
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.authService.user$.subscribe((value: firebase.User | null) => this.user = value);
   }
 

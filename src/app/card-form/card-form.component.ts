@@ -25,7 +25,7 @@ export class CardFormComponent implements OnInit {
   @Input() public card: CardStore | undefined;
   @Input() public isCreating: boolean = true;
   @Input() public boardID: string = '';
-  public imageLink: string = '';
+  public imageLink: string[] = [];
   public progress: string | undefined = '';
   private boards: BoardStore[] = [];
 
@@ -68,7 +68,7 @@ export class CardFormComponent implements OnInit {
     this.getUsers();
 
     this.cardForm.addControl(CardControls.name, new FormControl(this.card?.name, Validators.compose([Validators.required, Validators.maxLength(16)])));
-    this.cardForm.addControl(CardControls.priority, new FormControl(this.card?.priority, Validators.required));
+    this.cardForm.addControl(CardControls.priority, new FormControl(this.card?.priority, Validators.compose([Validators.required, Validators.maxLength(1200)])));
     this.cardForm.addControl(CardControls.dueDate, new FormControl(this.currentDueDate, Validators.required));
     this.cardForm.addControl(CardControls.list, new FormControl(this.card?.listID, Validators.required));
     this.cardForm.addControl(CardControls.member, new FormControl(this.card?.memberID, Validators.required));
@@ -107,19 +107,13 @@ export class CardFormComponent implements OnInit {
   private getListName(id: string): string {
     let listsRet: ListStore[] = [];
     listsRet = this.lists.filter((list: ListStore) => list.id === id);
-    if (listsRet[0])
-      return listsRet[0].name;
-    else
-      return 'undefined';
+    return listsRet[0].name;
   }
 
   private getUserName(id: string): string {
     let usersRet: UserStore[] = [];
     usersRet = this.users.filter((user: UserStore) => user.id === id);
-    if (usersRet[0])
-      return usersRet[0].name;
-    else
-      return 'undefined';
+    return usersRet[0].name;
   }
 
   private addCard(card: Card): void {
@@ -145,7 +139,7 @@ export class CardFormComponent implements OnInit {
         reporterID: this.authUser.uid,
         history: [this.authUser.displayName + ' created this card'],
       };
-      if (this.imageLink) card.images = [this.imageLink];
+      if (this.imageLink.length) card.images = [...this.imageLink];
       this.addCard(card);
       this.cardForm?.reset();
     } else {
@@ -222,6 +216,23 @@ export class CardFormComponent implements OnInit {
     }
   }
 
+  public isTextValueValid(controlName: string): void {
+    const control: AbstractControl | undefined = this.cardForm?.controls[controlName];
+    if (control.value && control.value.match(/^[ ]+$/)) {
+      control.setValue(control.value.trim());
+    }
+  }
+
+  public isInputControlValid(controlName: string): boolean {
+    const control: AbstractControl | undefined = this.cardForm?.controls[controlName];
+    if (control) {
+      this.isTextValueValid(controlName);
+      return control.invalid && (control.dirty || control.touched);
+    } else {
+      return false;
+    }
+  }
+
   public isControlValid(controlName: string): boolean {
     const control: AbstractControl | undefined = this.cardForm?.controls[controlName];
     if (control) {
@@ -244,12 +255,13 @@ export class CardFormComponent implements OnInit {
           )
           .subscribe(([percent, link]) => {
             this.progress = percent;
-            if (link === null) this.imageLink = '';
-            else this.imageLink = link;
+            if (link === null) this.imageLink = this.imageLink;
+            else this.imageLink.push(link);
             // if (this.imageLink) this.progress = '';
           });
       }
     }
   }
+
 
 }

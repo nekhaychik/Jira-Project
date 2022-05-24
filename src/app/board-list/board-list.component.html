@@ -10,10 +10,12 @@
               [appearance]="buttonAppearance.Flat">
       </button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="deleteList(list.id)">
-          <mat-icon>delete_outline</mat-icon>
-          <span>Delete</span>
-        </button>
+        <ng-container *ngIf="!listCards.length">
+          <button mat-menu-item (click)="deleteList(list.id)">
+            <mat-icon>delete_outline</mat-icon>
+            <span>Delete</span>
+          </button>
+        </ng-container>
         <button mat-menu-item (click)="openUpdateListDialog(list.id, list.name)">
           <mat-icon>title</mat-icon>
           <span>Rename</span>

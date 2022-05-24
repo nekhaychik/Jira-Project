@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 export interface DialogData {
@@ -11,7 +11,7 @@ export interface DialogData {
   templateUrl: './list-form-update.component.html',
   styleUrls: ['./list-form-update.component.scss']
 })
-export class ListFormUpdateComponent implements OnInit {
+export class ListFormUpdateComponent {
 
   public formHeader: string = 'List update';
   public nameInput: string = 'New name';
@@ -19,9 +19,6 @@ export class ListFormUpdateComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<ListFormUpdateComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData) {
-  }
-
-  ngOnInit(): void {
   }
 
 }

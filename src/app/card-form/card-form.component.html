@@ -1,123 +1,135 @@
-<form [formGroup]="cardForm">
+<tui-scrollbar [hidden]="true">
+  <form [formGroup]="cardForm">
 
-  <h3 class="tui-form__header tui-form__header_margin-top_none">
-    {{formHeader}}
-  </h3>
+    <h3 class="tui-form__header tui-form__header_margin-top_none">
+      {{formHeader}}
+    </h3>
 
-  <p>
-    <mat-form-field appearance="outline">
-      <mat-label>Card Name</mat-label>
-      <input matInput placeholder="Input card name" [formControlName]="formControls.name" [value]="card?.name">
-      <mat-error *ngIf="isControlValid(formControls.name)">
-        Card name is required. Max length is 16
-      </mat-error>
-    </mat-form-field>
-  </p>
+    <p>
+      <mat-form-field appearance="outline">
+        <mat-label>Card Name</mat-label>
+        <input matInput placeholder="Input card name" [formControlName]="formControls.name" [value]="card?.name">
+        <mat-error *ngIf="isInputControlValid(formControls.name)">
+          Card name is required. Max length is 16
+        </mat-error>
+      </mat-form-field>
+    </p>
 
-  <p>
-    <mat-form-field appearance="outline">
-      <mat-label>Description</mat-label>
-      <textarea matInput placeholder="Description of your task" [formControlName]="formControls.description" [value]="card?.description"></textarea>
-    </mat-form-field>
-  </p>
+    <p>
+      <mat-form-field appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea (keyup)="isTextValueValid(formControls.description)" matInput placeholder="Description of your task"
+                  [formControlName]="formControls.description" [value]="card?.description"></textarea>
+      </mat-form-field>
+    </p>
 
-  <p>
-    <mat-form-field appearance="fill">
-      <mat-label>Choose a list</mat-label>
-      <mat-select [formControlName]="formControls.list" required>
-        <mat-option *ngFor="let list of lists" [value]="list.id">{{list.name}}</mat-option>
-      </mat-select>
-      <mat-error *ngIf="isControlValid(formControls.list)">Please choose a list</mat-error>
-    </mat-form-field>
-  </p>
+    <p>
+      <mat-form-field appearance="fill">
+        <mat-label>Choose a list</mat-label>
+        <mat-select [formControlName]="formControls.list" required>
+          <mat-option *ngFor="let list of lists" [value]="list.id">{{list.name}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="isControlValid(formControls.list)">Please choose a list</mat-error>
+      </mat-form-field>
+    </p>
 
-  <p>
-    <mat-form-field appearance="fill">
-      <mat-label>Choose a priority</mat-label>
-      <mat-select [formControlName]="formControls.priority" required>
-        <mat-option *ngFor="let priority of priorities" [value]="priority">{{priority}}</mat-option>
-      </mat-select>
-      <mat-error *ngIf="isControlValid(formControls.priority)">Please choose a priority</mat-error>
-    </mat-form-field>
-  </p>
+    <p>
+      <mat-form-field appearance="fill">
+        <mat-label>Choose a priority</mat-label>
+        <mat-select [formControlName]="formControls.priority" required>
+          <mat-option *ngFor="let priority of priorities" [value]="priority">{{priority}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="isControlValid(formControls.priority)">Please choose a priority</mat-error>
+      </mat-form-field>
+    </p>
 
-  <p>
-    <mat-form-field appearance="fill">
-      <mat-label>Choose a member</mat-label>
-      <mat-select [formControlName]="formControls.member" required>
-        <mat-option *ngFor="let member of users" [value]="member.id">
-          {{member.name}}
-        </mat-option>
-      </mat-select>
-      <mat-error *ngIf="isControlValid(formControls.member)">Please choose a member</mat-error>
-    </mat-form-field>
-  </p>
+    <p>
+      <mat-form-field appearance="fill">
+        <mat-label>Choose a member</mat-label>
+        <mat-select [formControlName]="formControls.member" required>
+          <mat-option *ngFor="let member of users" [value]="member.id">
+            {{member.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="isControlValid(formControls.member)">Please choose a member</mat-error>
+      </mat-form-field>
+    </p>
 
-  <p>
-    <mat-form-field appearance="fill">
-      <mat-label>Choose a due date</mat-label>
-      <input matInput placeholder="MM/DD/YYYY" [matDatepickerFilter]="myFilter" [matDatepicker]="picker" [formControlName]="formControls.dueDate">
-      <mat-hint>MM/DD/YYYY</mat-hint>
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-      <mat-error *ngIf="isControlValid(formControls.dueDate)">
-        Invalid value
-      </mat-error>
-    </mat-form-field>
-  </p>
+    <p>
+      <mat-form-field appearance="fill">
+        <mat-label>Choose a due date</mat-label>
+        <input matInput placeholder="MM/DD/YYYY" [matDatepickerFilter]="myFilter" [matDatepicker]="picker"
+               [formControlName]="formControls.dueDate">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="isControlValid(formControls.dueDate)">
+          Invalid value
+        </mat-error>
+      </mat-form-field>
+    </p>
 
-  <div>
-    <input type="file"
-           id="file"
-           (change)="onFileSelected($event)"
-           name="image"
-           autocomplete="off"
-    />
-  </div>
-  <img *ngIf="imageLink" [src]="imageLink" width="70" height="70"/>
-  <progress max="100" [value]="progress"></progress>
+    <ng-container *ngIf="isCreating">
+
+    <div>
+      <input type="file"
+             id="file"
+             (change)="onFileSelected($event)"
+             name="image"
+             autocomplete="off"
+      />
+    </div>
+      <ng-container *ngFor="let image of imageLink">
+        <div class="card__images-container">
+          <img [src]="image" width="70px" height="70px"/>
+        </div>
+      </ng-container>
+    <progress max="100" [value]="progress"></progress>
+
+    </ng-container>
 
 
-  <div>
-    <div *ngIf="isCreating; then createButton else updateButton"></div>
+    <div>
+      <div *ngIf="isCreating; then createButton else updateButton"></div>
 
-    <ng-template #createButton>
+      <ng-template #createButton>
+        <button
+          mat-dialog-close
+          [disabled]="cardForm.invalid" (click)="submitForm()"
+          tuiButton
+          size="l"
+          type="submit"
+          class="tui-form__button"
+        >
+          Submit
+        </button>
+      </ng-template>
+
+      <ng-template #updateButton>
+        <button
+          *ngIf="card"
+          mat-dialog-close
+          [disabled]="cardForm.invalid" (click)="submitUpdatingForm(card.id)"
+          tuiButton
+          size="l"
+          type="submit"
+          class="tui-form__button"
+        >
+          Submit
+        </button>
+      </ng-template>
+
       <button
         mat-dialog-close
-        [disabled]="cardForm.invalid" (click)="submitForm()"
         tuiButton
+        type="button"
+        appearance="secondary"
         size="l"
-        type="submit"
         class="tui-form__button"
       >
-        Submit
+        Cancel
       </button>
-    </ng-template>
+    </div>
 
-    <ng-template #updateButton>
-      <button
-        *ngIf="card"
-        mat-dialog-close
-        [disabled]="cardForm.invalid" (click)="submitUpdatingForm(card.id)"
-        tuiButton
-        size="l"
-        type="submit"
-        class="tui-form__button"
-      >
-        Submit
-      </button>
-    </ng-template>
-
-    <button
-      mat-dialog-close
-      tuiButton
-      type="button"
-      appearance="secondary"
-      size="l"
-      class="tui-form__button"
-    >
-      Cancel
-    </button>
-  </div>
-
-</form>
+  </form>
+</tui-scrollbar>

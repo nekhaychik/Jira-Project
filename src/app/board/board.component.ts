@@ -7,7 +7,7 @@ import {ListFormComponent} from '../list-form/list-form.component';
 import {CardFormComponent} from '../card-form/card-form.component';
 import {ActivatedRoute, Params} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
-import {MembersFormComponent} from "../members-form/members-form.component";
+import {BoardUpdateComponent} from '../board-update/board-update.component';
 
 @Component({
   selector: 'app-board',
@@ -37,7 +37,7 @@ export class BoardComponent implements OnInit {
               private route: ActivatedRoute) {
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.route.params.subscribe(
       (params: Params) => {
         this.boardID = params['id'];
@@ -90,8 +90,8 @@ export class BoardComponent implements OnInit {
     this.dialog.open(CardFormComponent, {data: {boardID: this.boardID}});
   }
 
-  public openMembersDialog() {
-    this.dialog.open(MembersFormComponent, {data: {boardID: this.boardID}});
+  public openBoardDialog(): void {
+    this.dialog.open(BoardUpdateComponent, {data: {boardID: this.boardID, boardName: this.board?.name}});
   }
 
 }

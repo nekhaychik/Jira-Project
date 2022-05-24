@@ -24,7 +24,7 @@ export class AuthComponent implements OnInit {
               private crudService: CrudService) {
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.crudService.handleData<UserStore>(Collection.USERS).subscribe((value: UserStore[]) => {
       this.users = value;
     });

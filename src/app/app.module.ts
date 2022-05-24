@@ -13,6 +13,8 @@ import {
   TuiAvatarModule
 } from '@taiga-ui/kit';
 import {MatCardModule} from '@angular/material/card';
+import {TuiSidebarModule} from '@taiga-ui/addon-mobile';
+import {TuiActiveZoneModule} from '@taiga-ui/cdk';
 
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
@@ -56,6 +58,7 @@ import {FullCardComponent} from './full-card/full-card.component';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { BoardFormComponent } from './board-form/board-form.component';
 import { MembersFormComponent } from './members-form/members-form.component';
+import { BoardUpdateComponent } from './board-update/board-update.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +80,8 @@ import { MembersFormComponent } from './members-form/members-form.component';
     CardFormUpdateComponent,
     FullCardComponent,
     BoardFormComponent,
-    MembersFormComponent
+    MembersFormComponent,
+    BoardUpdateComponent
   ],
   imports: [
     BrowserModule,
@@ -107,7 +111,9 @@ import { MembersFormComponent } from './members-form/members-form.component';
     MatNativeDateModule,
     MatTooltipModule,
     DragDropModule,
-    MatGridListModule
+    MatGridListModule,
+    TuiSidebarModule,
+    TuiActiveZoneModule
   ],
   providers: [{provide: TUI_SANITIZER, useClass: NgDompurifySanitizer}],
   bootstrap: [AppComponent]

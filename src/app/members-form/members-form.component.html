@@ -17,6 +17,7 @@
       <button
         mat-dialog-close
         [disabled]="membersForm.invalid"
+        (click)="submitForm()"
         tuiButton
         size="l"
         type="submit"

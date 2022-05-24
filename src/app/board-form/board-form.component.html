@@ -4,6 +4,8 @@
     {{formHeader}}
   </h3>
 
+  <ng-container *ngIf="isCreating">
+
   <p>
     <mat-form-field appearance="outline">
       <mat-label>Board Name</mat-label>
@@ -13,6 +15,7 @@
       </mat-error>
     </mat-form-field>
   </p>
+  </ng-container>
 
   <p>
     <mat-form-field appearance="fill">
@@ -43,6 +46,7 @@
       <button
         mat-dialog-close
         [disabled]="boardForm.invalid"
+        (click)="submitUpdatingForm()"
         tuiButton
         size="l"
         type="submit"
