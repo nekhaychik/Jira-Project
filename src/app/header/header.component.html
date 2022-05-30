@@ -9,12 +9,21 @@
       <ng-container *ngIf="user.displayName">
         <app-avatar [name]="user.displayName" [avatarUrl]="user.photoURL"></app-avatar>
       </ng-container>
-<!--      <mat-menu #menu="matMenu">-->
-<!--        <button mat-menu-item>-->
-<!--          <mat-icon>exit_to_app</mat-icon>-->
-<!--          <span>Log Out</span>-->
-<!--        </button>-->
-<!--      </mat-menu>-->
+      <mat-icon class="menu" [matMenuTriggerFor]="menu">menu</mat-icon>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item class="menu__link" (click)="navigate(boardPath)">
+          <mat-icon>dashboard</mat-icon>
+          <span>Your Boards</span>
+        </button>
+        <button mat-menu-item class="menu__link" (click)="navigate(statisticsPath)">
+          <mat-icon> show_chart</mat-icon>
+          <span>Statistics</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Log Out</span>
+        </button>
+      </mat-menu>
       <app-button [content]=buttonContent [buttonAppearance]="buttonAppearance" (click)="logout()"></app-button>
     </ng-container>
   </div>

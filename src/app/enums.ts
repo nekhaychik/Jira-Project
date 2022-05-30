@@ -38,5 +38,6 @@ export enum Collection {
 
 export enum Paths {
   board = 'board',
-  authorization = 'authorization'
+  authorization = 'authorization',
+  statistics = 'statistics'
 }

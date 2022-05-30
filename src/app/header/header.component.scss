@@ -32,6 +32,14 @@ header {
   margin: 0;
 }
 
+.menu {
+  display: none;
+}
+
+.menu__link {
+  display: none;
+}
+
 app-navigation {
   display: flex;
   justify-content: center;
@@ -42,4 +50,32 @@ app-navigation {
 app-avatar {
   margin-left: auto;
   margin-right: 12px;
+}
+
+@media screen and (max-width: 1200px) {
+
+  mat-icon {
+    color: $headerTextColor;
+  }
+
+  .menu {
+    display: block;
+    margin-left: auto;
+    margin-right: 12px;
+  }
+
+  app-button,
+  app-avatar {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  app-navigation {
+    display: none;
+  }
+
+  .menu__link {
+    display: block;
+  }
 }

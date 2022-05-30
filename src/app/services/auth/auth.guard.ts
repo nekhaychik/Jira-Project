@@ -4,6 +4,7 @@ import {map, Observable, take, tap} from 'rxjs';
 import {AuthService} from './auth.service';
 import firebase from 'firebase/compat/app';
 import {Paths} from '../../enums';
+import {CrudService} from "../crud/crud.service";
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,8 @@ import {Paths} from '../../enums';
 export class AuthGuard implements CanActivate {
 
   constructor(private authService: AuthService,
-              private router: Router) {
+              private router: Router,
+              private crudService: CrudService) {
   }
 
   canActivate(

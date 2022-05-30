@@ -4,7 +4,7 @@
 
 @import 'src/styles';
 
-$boardWidth: calc(100vw - 280px);
+$boardWidth: calc(100vw);
 $boardHeight: calc(100vh - 90px);
 $boardPadding: 42px 30px;
 
@@ -13,9 +13,21 @@ $boardPadding: 42px 30px;
   height: $boardHeight;
 }
 
+.open {
+  width: calc(100vw - 280px);
+}
+
+button {
+  position: absolute;
+  left: -12px;
+  top: 56px;
+}
+
 .board__background {
   position: absolute;
   width: $boardWidth;
   height: $boardHeight;
   z-index: -1;
 }
+
+

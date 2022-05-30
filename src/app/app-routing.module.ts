@@ -5,6 +5,8 @@ import {AuthComponent} from './auth/auth.component';
 import {AuthGuard} from './services/auth/auth.guard';
 import {Paths} from './enums';
 import {BoardComponent} from './board/board.component';
+import {BarChartComponent} from './bar-chart/bar-chart.component';
+import {StatisticsComponent} from './statistics/statistics.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/' + Paths.board, pathMatch: 'full'},
@@ -18,6 +20,15 @@ const routes: Routes = [
     ]
   },
   {path: Paths.authorization, component: AuthComponent},
+  {
+    path: Paths.statistics, canActivate: [AuthGuard], component: StatisticsComponent,
+    children: [{
+      path: ':id',
+      component: BarChartComponent,
+      canActivate: [AuthGuard]
+    }
+    ]
+  }
 ];
 
 @NgModule({

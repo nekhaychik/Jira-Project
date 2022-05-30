@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {ButtonAppearance} from '../../enums';
+import {Component} from '@angular/core';
+import {ButtonAppearance, Paths} from '../../enums';
 import {MatDialog} from '@angular/material/dialog';
 import {BoardFormComponent} from '../../board-form/board-form.component';
+import {Navigation} from '../../services/types';
 
 @Component({
   selector: 'app-navigation',
@@ -10,9 +11,9 @@ import {BoardFormComponent} from '../../board-form/board-form.component';
 })
 export class NavigationComponent {
 
-  public navigationLinks: string[] = [
-    'Your boards',
-    // 'Statistics'
+  public navigationLinks: Navigation[] = [
+    {name: 'Your boards', path: Paths.board},
+    {name: 'Statistics', path: Paths.statistics}
   ];
   public buttonContent: string = 'Create Board';
   public buttonAppearance: ButtonAppearance = ButtonAppearance.Secondary;

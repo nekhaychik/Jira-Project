@@ -2,6 +2,11 @@ import firebase from 'firebase/compat/app';
 
 export type UserCredential = firebase.auth.UserCredential;
 
+export type Navigation = {
+  name: string;
+  path: string;
+}
+
 export type Board = {
   name: string;
   membersID: string[];

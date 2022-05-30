@@ -16,6 +16,9 @@ export class HeaderComponent implements OnInit {
   public buttonAppearance: ButtonAppearance = ButtonAppearance.Secondary;
   public user: firebase.User | null = null;
 
+  public statisticsPath: string = Paths.statistics;
+  public boardPath: string = Paths.board;
+
   constructor(private router: Router,
               private authService: AuthService) {
   }
@@ -26,6 +29,10 @@ export class HeaderComponent implements OnInit {
 
   public logout(): void {
     this.authService.signOut().subscribe(() => this.router.navigate([Paths.authorization]));
+  }
+
+  public navigate(path: string): void {
+    this.router.navigate([path]);
   }
 
 }

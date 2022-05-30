@@ -9,4 +9,10 @@ export class MainPageComponent {
 
   public imagePath: string = 'assets/background.png';
 
+
+  open = false;
+
+  toggle(open: boolean) {
+    this.open = open;
+  }
 }

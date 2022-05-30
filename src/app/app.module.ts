@@ -15,6 +15,7 @@ import {
 import {MatCardModule} from '@angular/material/card';
 import {TuiSidebarModule} from '@taiga-ui/addon-mobile';
 import {TuiActiveZoneModule} from '@taiga-ui/cdk';
+import {NgChartsModule } from 'ng2-charts';
 
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
@@ -59,6 +60,10 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import { BoardFormComponent } from './board-form/board-form.component';
 import { MembersFormComponent } from './members-form/members-form.component';
 import { BoardUpdateComponent } from './board-update/board-update.component';
+import { BarChartComponent } from './bar-chart/bar-chart.component';
+import { PieChartComponent } from './pie-chart/pie-chart.component';
+import { StatisticsComponent } from './statistics/statistics.component';
+import {MatSidenavModule} from "@angular/material/sidenav";
 
 @NgModule({
   declarations: [
@@ -81,7 +86,10 @@ import { BoardUpdateComponent } from './board-update/board-update.component';
     FullCardComponent,
     BoardFormComponent,
     MembersFormComponent,
-    BoardUpdateComponent
+    BoardUpdateComponent,
+    BarChartComponent,
+    PieChartComponent,
+    StatisticsComponent
   ],
   imports: [
     BrowserModule,
@@ -113,7 +121,9 @@ import { BoardUpdateComponent } from './board-update/board-update.component';
     DragDropModule,
     MatGridListModule,
     TuiSidebarModule,
-    TuiActiveZoneModule
+    TuiActiveZoneModule,
+    NgChartsModule,
+    MatSidenavModule
   ],
   providers: [{provide: TUI_SANITIZER, useClass: NgDompurifySanitizer}],
   bootstrap: [AppComponent]
