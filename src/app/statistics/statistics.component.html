@@ -1,0 +1,13 @@
+<div class="statistics">
+  <h2 class="board__title">Choose a board</h2>
+  <div class="statistics__buttons">
+    <ng-container *ngFor="let board of boards">
+      <button tuiButton
+              size="s"
+              (click)="navigate(board.id)">
+        {{board.name}}
+      </button>
+    </ng-container>
+  </div>
+  <router-outlet></router-outlet>
+</div>

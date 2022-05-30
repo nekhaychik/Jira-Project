@@ -1,0 +1,13 @@
+@import 'src/styles';
+
+.chart-wrapper {
+  height: 50vh;
+  width: 70vw;
+  margin: 1% auto 0;
+}
+
+.board__title {
+  margin: 0;
+  font: $mainHeaderFont;
+  color: $mainTextColor;
+}
