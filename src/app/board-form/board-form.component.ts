@@ -41,7 +41,7 @@ export class BoardFormComponent implements OnInit {
     this.authService.user$.subscribe((value: firebase.User | null) => {
       this.authUser = value;
     });
-    this.boardForm.addControl(BoardControls.name, new FormControl(this.boardName, Validators.compose([Validators.required, Validators.maxLength(16)])));
+    this.boardForm.addControl(BoardControls.name, new FormControl(this.boardName, Validators.compose([Validators.required, Validators.maxLength(12)])));
     this.boardForm.addControl(BoardControls.membersID, new FormControl(''));
   }
 

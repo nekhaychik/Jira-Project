@@ -40,6 +40,10 @@ header {
   display: none;
 }
 
+.menu__create-board {
+  display: none;
+}
+
 app-navigation {
   display: flex;
   justify-content: center;
@@ -68,9 +72,17 @@ app-avatar {
   app-avatar {
     display: none;
   }
+
+  .menu__create-board {
+    display: block;
+  }
 }
 
 @media screen and (max-width: 800px) {
+  .logo__title{
+    font: var(--tui-font-heading-3);
+  }
+
   app-navigation {
     display: none;
   }

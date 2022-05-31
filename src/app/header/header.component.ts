@@ -4,6 +4,8 @@ import {AuthService} from '../services/auth/auth.service';
 import {Router} from '@angular/router';
 import {ButtonAppearance, Paths} from '../enums';
 import {Subscription} from "rxjs";
+import {BoardFormComponent} from "../board-form/board-form.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-header',
@@ -21,7 +23,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public boardPath: string = Paths.board;
 
   constructor(private router: Router,
-              private authService: AuthService) {
+              private authService: AuthService,
+              public dialog: MatDialog) {
   }
 
   public ngOnInit(): void {
@@ -39,6 +42,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   public navigate(path: string): void {
     this.router.navigate([path]);
+  }
+
+  public openBoardDialog(): void {
+    this.dialog.open(BoardFormComponent);
   }
 
   public ngOnDestroy(): void {

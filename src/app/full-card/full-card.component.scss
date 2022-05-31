@@ -95,4 +95,15 @@ mat-icon {
   overflow-y: scroll;
 }
 
+@media screen and (max-width: 600px) {
+  .card__container {
+    flex-direction: column;
+  }
+
+  .card__additional-inform {
+    padding-left: 0;
+    border-left: none;
+  }
+}
+
 

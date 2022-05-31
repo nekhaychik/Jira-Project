@@ -11,6 +11,10 @@
       </ng-container>
       <mat-icon class="menu" [matMenuTriggerFor]="menu">menu</mat-icon>
       <mat-menu #menu="matMenu">
+        <button mat-menu-item class="menu__create-board" (click)="openBoardDialog()">
+          <mat-icon>create</mat-icon>
+          <span>Create Board</span>
+        </button>
         <button mat-menu-item class="menu__link" (click)="navigate(boardPath)">
           <mat-icon>dashboard</mat-icon>
           <span>Your Boards</span>
