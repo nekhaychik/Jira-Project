@@ -1,13 +1,14 @@
-import {Component, OnInit, Inject} from '@angular/core';
+import {Component, OnInit, Inject, OnDestroy} from '@angular/core';
 import {CardStore, ListStore, UserStore} from '../services/types';
 import {CrudService} from '../services/crud/crud.service';
-import {Collection} from '../enums';
+import {Collection, Paths} from '../enums';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {CardFormUpdateComponent} from '../card-form-update/card-form-update.component';
-import {combineLatest, takeWhile} from "rxjs";
-import {UploadService} from "../services/crud/upload.service";
-import firebase from "firebase/compat";
-import {AuthService} from "../services/auth/auth.service";
+import {combineLatest, Subscription, takeWhile} from 'rxjs';
+import {UploadService} from '../services/crud/upload.service';
+import firebase from 'firebase/compat';
+import {AuthService} from '../services/auth/auth.service';
+import {Router} from "@angular/router";
 
 export interface DialogData {
   card: CardStore,
@@ -15,8 +16,8 @@ export interface DialogData {
 }
 
 type Image = {
-  images: string[],
-  history: string[]
+  images: string[];
+  history: string[];
 }
 
 @Component({
@@ -24,13 +25,15 @@ type Image = {
   templateUrl: './full-card.component.html',
   styleUrls: ['./full-card.component.scss']
 })
-export class FullCardComponent implements OnInit {
+export class FullCardComponent implements OnInit, OnDestroy {
 
+  readonly subscription: Subscription = new Subscription();
+  readonly ONE_SECOND: number = 1000;
+  readonly MEDIA_FOLDER_PATH: string = 'task-images';
   public list: ListStore | undefined;
   public member: UserStore | undefined;
   public reporter: UserStore | undefined;
   private authUser: firebase.User | null = null;
-
   public imageLink: string = '';
   public progress: string | undefined = '';
 
@@ -39,57 +42,59 @@ export class FullCardComponent implements OnInit {
               public dialogRef: MatDialogRef<FullCardComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
               private dialog: MatDialog,
-              private uploadService: UploadService) {
-    this.crudService.handleData<CardStore>(Collection.CARDS).subscribe(
-      (value) => {
-        value.forEach((card) => {
-          if(card.id === this.data.card.id)
-            this.data.card = card;
-        })
-      }
-    )
+              private uploadService: UploadService,
+              private router: Router) {
   }
 
-  ngOnInit(): void {
-    this.authService.user$.subscribe((value: firebase.User | null) => {
-      this.authUser = value;
-    });
+  public ngOnInit(): void {
+    this.subscription.add(
+      this.authService.user$.subscribe((value: firebase.User | null) => {
+        this.authUser = value;
+      })
+    );
     this.getList();
     this.getMember();
     this.getReporter();
+
   }
 
   private getList(): void {
-    this.crudService.getDataDoc<ListStore>(Collection.LISTS, this.data.card.listID).subscribe(
-      (value: ListStore | undefined) => {
-        this.list = value;
-      }
+    this.subscription.add(
+      this.crudService.getDataDoc<ListStore>(Collection.LISTS, this.data.card.listID).subscribe(
+        (list: ListStore | undefined) => {
+          this.list = list;
+        }
+      )
     );
   }
 
   private getMember(): void {
     if (this.data.card.memberID) {
-      this.crudService.getDataDoc<UserStore>(Collection.USERS, this.data.card.memberID).subscribe(
-        (value: UserStore | undefined) => {
-          this.member = value;
-        }
+      this.subscription.add(
+        this.crudService.getDataDoc<UserStore>(Collection.USERS, this.data.card.memberID).subscribe(
+          (user: UserStore | undefined) => {
+            this.member = user;
+          }
+        )
       );
     }
   }
 
   private getReporter(): void {
     if (this.data.card.reporterID) {
-      this.crudService.getDataDoc<UserStore>(Collection.USERS, this.data.card.reporterID).subscribe(
-        (value: UserStore | undefined) => {
-          this.reporter = value;
-        }
+      this.subscription.add(
+        this.crudService.getDataDoc<UserStore>(Collection.USERS, this.data.card.reporterID).subscribe(
+          (user: UserStore | undefined) => {
+            this.reporter = user;
+          }
+        )
       );
     }
   }
 
-  public getDate(value: number | undefined): string {
-    if (value) {
-      return new Date(value * 1000).toDateString();
+  public getDate(seconds: number | undefined): string {
+    if (seconds) {
+      return new Date(seconds * this.ONE_SECOND).toDateString();
     }
     return 'Error';
   }
@@ -99,7 +104,9 @@ export class FullCardComponent implements OnInit {
   }
 
   public openUpdateCardDialog(card: CardStore): void {
-    this.dialog.open(CardFormUpdateComponent, {data: {card: card, boardID: this.data.boardID}});
+    console.log(card);
+    let dialogRef = this.dialog.open(CardFormUpdateComponent, {data: {card: card, boardID: this.data.boardID}});
+    this.router.navigate([Paths.board + '/' + this.data.boardID]);
   }
 
   public onFileSelected(event: Event): void {
@@ -107,7 +114,7 @@ export class FullCardComponent implements OnInit {
       const eventTarget: HTMLInputElement = (<HTMLInputElement>event?.target);
       if (eventTarget && eventTarget.files) {
         const file: File = eventTarget.files[0];
-        combineLatest(this.uploadService.uploadFileAndGetMetadata('task-images', file))
+        combineLatest(this.uploadService.uploadFileAndGetMetadata(this.MEDIA_FOLDER_PATH, file))
           .pipe(
             takeWhile(([, link]) => {
               return !link;
@@ -118,7 +125,7 @@ export class FullCardComponent implements OnInit {
             if (link === null) this.imageLink = '';
             else this.imageLink = link;
 
-            if(this.imageLink) {
+            if (this.imageLink) {
               let newImage: Image;
               if (this.data.card.images) {
                 newImage = {
@@ -132,16 +139,23 @@ export class FullCardComponent implements OnInit {
                 }
               }
               if (this.data.card.history) {
-                newImage.history = [this.authUser?.displayName + ' added image(s)', ...this.data.card.history]
+                newImage.history = [this.authUser?.displayName + ' added image(s)', ...this.data.card.history];
               }
 
-              this.progress = ''; this.imageLink = '';
-              this.crudService.updateObject(Collection.CARDS, this.data.card.id, newImage)
+              this.progress = '';
+              this.imageLink = '';
+              this.crudService.updateObject(Collection.CARDS, this.data.card.id, newImage);
+              this.crudService.getDataDoc<CardStore>(Collection.CARDS, this.data.card.id).subscribe((card: CardStore | undefined) => {
+                if (card) this.data.card = card;
+              });
             }
           });
       }
     }
+  }
 
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
 }

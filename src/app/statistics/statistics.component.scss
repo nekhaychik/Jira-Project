@@ -1,4 +1,11 @@
+$boardWidth: calc(100vw);
+$boardHeight: calc(100vh - 90px);
+
 .statistics {
+  box-sizing: border-box;
+  height: calc(100% - 90px);
+  width: 100%;
+  background-color: #FDF2E4;
   padding: 30px 30px 0;
 }
 
@@ -6,4 +13,11 @@
   display: flex;
   flex-wrap: wrap;
   grid-gap: 8px;
+}
+
+.board__background {
+  position: absolute;
+  width: $boardWidth;
+  height: $boardHeight;
+  z-index: -1;
 }

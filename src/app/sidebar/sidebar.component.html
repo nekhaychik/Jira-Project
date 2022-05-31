@@ -2,11 +2,9 @@
   <h2 class="board__title">Your boards</h2>
   <tui-scrollbar [hidden]="true">
     <div class="sidebar__boards">
-
       <ng-container *ngFor="let board of boards; trackBy: trackByFn">
-        <a tuiLink routerLink="{{board.id}}/{{board.name}}" class="sidebar__board-title">{{board.name}}</a>
+        <a tuiLink routerLink="{{board.id}}" class="sidebar__board-title">{{board.name}}</a>
       </ng-container>
-
     </div>
   </tui-scrollbar>
 </div>

@@ -1,21 +1,22 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import firebase from 'firebase/compat/app';
 import {AuthService} from '../services/auth/auth.service';
 import {Router} from '@angular/router';
 import {ButtonAppearance, Paths} from '../enums';
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
+  readonly subscription: Subscription = new Subscription();
   public logoPath: string = 'assets/logo.svg';
   public buttonContent: string = 'Log out';
   public buttonAppearance: ButtonAppearance = ButtonAppearance.Secondary;
   public user: firebase.User | null = null;
-
   public statisticsPath: string = Paths.statistics;
   public boardPath: string = Paths.board;
 
@@ -24,15 +25,24 @@ export class HeaderComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.authService.user$.subscribe((value: firebase.User | null) => this.user = value);
+    this.subscription.add(
+      this.authService.user$.subscribe((value: firebase.User | null) => this.user = value)
+    );
   }
 
   public logout(): void {
-    this.authService.signOut().subscribe(() => this.router.navigate([Paths.authorization]));
+    this.subscription.add(
+      this.authService.signOut().subscribe(() =>
+        this.router.navigate([Paths.authorization]))
+    );
   }
 
   public navigate(path: string): void {
     this.router.navigate([path]);
+  }
+
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
 }

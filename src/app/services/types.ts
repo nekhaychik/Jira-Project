@@ -1,7 +1,3 @@
-import firebase from 'firebase/compat/app';
-
-export type UserCredential = firebase.auth.UserCredential;
-
 export type Navigation = {
   name: string;
   path: string;
@@ -29,7 +25,6 @@ export type Card = {
   priority: string;
   memberID: string;
   listID: string;
-  checklist?: string;
   description?: string;
   dueDate: DueDate;
   reporterID: string;

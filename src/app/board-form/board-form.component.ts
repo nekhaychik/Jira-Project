@@ -18,7 +18,7 @@ import {AuthService} from "../services/auth/auth.service";
 export class BoardFormComponent implements OnInit {
 
   @Input()
-  board: string | undefined;
+  boardID: string | undefined;
   @Input()
   formHeader: string = 'Creating a new board';
   @Input()
@@ -34,7 +34,7 @@ export class BoardFormComponent implements OnInit {
 
   constructor(private router: Router,
               private crudService: CrudService,
-              private authService: AuthService,) {
+              private authService: AuthService) {
   }
 
   public ngOnInit(): void {
@@ -42,16 +42,16 @@ export class BoardFormComponent implements OnInit {
       this.authUser = value;
     });
     this.boardForm.addControl(BoardControls.name, new FormControl(this.boardName, Validators.compose([Validators.required, Validators.maxLength(16)])));
-    this.boardForm.addControl(BoardControls.membersID, new FormControl('', Validators.required));
+    this.boardForm.addControl(BoardControls.membersID, new FormControl(''));
   }
 
   public addBoard(board: Board): void {
     this.crudService.createObject(Collection.BOARDS, board);
   }
 
-  public updateBoard(board: Board): void {
-    if (this.board) {
-      this.crudService.updateObject(Collection.BOARDS, this.board, board);
+  public updateBoard(board: any): void {
+    if (this.boardID) {
+      this.crudService.updateObject(Collection.BOARDS, this.boardID, board);
     }
   }
 
@@ -76,16 +76,11 @@ export class BoardFormComponent implements OnInit {
 
   public submitUpdatingForm(): void {
     if (this.boardForm.valid) {
-      const board: Board = {
-        name: this.boardForm?.controls[BoardControls.name].value,
-        membersID: this.boardForm.controls[BoardControls.membersID].value
+      const board = {
+        name: this.boardForm?.controls[BoardControls.name].value
       };
       this.updateBoard(board);
       this.boardForm?.reset();
-      if (this.board && this.boardName) {
-        let path = 'board/' + this.board + '/' + this.boardName;
-        this.router.navigate([path]);
-      }
     } else {
       alert('ERROR');
     }

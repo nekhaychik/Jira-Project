@@ -6,10 +6,6 @@
       <mat-icon (click)="deleteCard(card.id)">delete_outline</mat-icon>
     </mat-card-title>
     <mat-card-content (click)="openFullCard(card)">
-      <div class="card__checklist" *ngIf="card.checklist">
-        <mat-icon>list</mat-icon>
-        <p class="card__checklist-number">{{card.checklist}}</p>
-      </div>
       <div class="card__description" *ngIf="card.description">
         <span>{{shortDescription(card.description)}}</span>
       </div>
@@ -21,10 +17,8 @@
             {{card.priority}}
           </mat-chip>
         </mat-chip-list>
-        <ng-container *ngFor="let user of (users$ | async)">
-          <ng-container *ngIf="card.memberID === user.id">
-            <app-avatar [name]="user.name" [avatarUrl]="user.avatarUrl"></app-avatar>
-          </ng-container>
+        <ng-container *ngIf="assignee">
+          <app-avatar [name]="assignee.name" [avatarUrl]="assignee.avatarUrl"></app-avatar>
         </ng-container>
       </div>
     </mat-card-content>

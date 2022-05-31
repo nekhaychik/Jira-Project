@@ -1,10 +1,11 @@
-import {Component, OnInit, Input, Inject} from '@angular/core';
+import {Component, OnInit, Input, Inject, OnDestroy} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ListControls} from '../models/controls.enum';
 import {List, ListStore} from '../services/types';
 import {Collection} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {Subscription} from "rxjs";
 
 export interface DialogData {
   boardID: string
@@ -15,7 +16,7 @@ export interface DialogData {
   templateUrl: './list-form.component.html',
   styleUrls: ['./list-form.component.scss']
 })
-export class ListFormComponent implements OnInit {
+export class ListFormComponent implements OnInit, OnDestroy {
 
   @Input()
   public formHeader: string = 'Creating a new list';
@@ -27,6 +28,8 @@ export class ListFormComponent implements OnInit {
   public id: string = '';
   @Input()
   public listName: string | undefined;
+  readonly subscription: Subscription = new Subscription();
+  readonly NAME_MAX_LENGTH: number = 16;
   public createListForm: FormGroup = new FormGroup({});
   public formControls: typeof ListControls = ListControls;
   public boardLists: ListStore[] = [];
@@ -37,11 +40,12 @@ export class ListFormComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    console.log(this.boardLists)
-    this.crudService.handleData<ListStore>(Collection.LISTS).subscribe((lists: ListStore[]) => {
-      this.boardLists = lists.filter((list: ListStore) => this.data.boardID == list.boardID);
-    });
-    this.createListForm.addControl(ListControls.name, new FormControl(this.listName, Validators.compose([Validators.required, Validators.maxLength(16)/*, ValidateNameExist(this.boardLists)*/])));
+    this.subscription.add(
+      this.crudService.handleData<ListStore>(Collection.LISTS).subscribe((lists: ListStore[]) => {
+        this.boardLists = lists.filter((list: ListStore) => this.data.boardID === list.boardID);
+      })
+    );
+    this.createListForm.addControl(ListControls.name, new FormControl(this.listName, Validators.compose([Validators.required, Validators.maxLength(this.NAME_MAX_LENGTH)/*, ValidateNameExist(this.boardLists)*/])));
   }
 
   public addList(list: List): void {
@@ -88,6 +92,10 @@ export class ListFormComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
 }

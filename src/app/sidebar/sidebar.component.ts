@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs';
-import {BoardStore, UserStore} from '../services/types';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Observable, Subscription} from 'rxjs';
+import {BoardStore} from '../services/types';
 import {Collection} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
 import {AuthService} from '../services/auth/auth.service';
@@ -11,58 +11,48 @@ import firebase from 'firebase/compat';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
 
+  readonly subscription: Subscription = new Subscription();
   public boards: BoardStore[] = [];
   private userAuth: firebase.User | null = null;
-  public user: UserStore | undefined;
-
-  public boards$: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
-  public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
+  private boards$: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
 
   constructor(private crudService: CrudService,
               private authService: AuthService) {
   }
 
   public ngOnInit(): void {
-    this.authService.user$.subscribe((value: firebase.User | null) => {
-      this.userAuth = value;
-      this.getUser();
-    });
+    this.subscription.add(
+      this.authService.user$.subscribe((value: firebase.User | null) => {
+        this.userAuth = value;
+      })
+    );
     this.getBoards();
   }
 
-  private getUser(): void {
-    this.users$.subscribe((users: UserStore[]) => {
-      let allUsers: UserStore[] = users as UserStore[];
-      allUsers = allUsers.filter((user: UserStore) => user.uid === this.userAuth?.uid);
-      this.user = allUsers[0];
-    });
-  }
-
   private getBoards(): void {
-    this.boards$.subscribe((boards: BoardStore[]) => {
-      this.boards = [];
-      boards.forEach(board => {
-        board.membersID.forEach(memberID => {
-          if (memberID === this.user?.id){
-            this.boards.push(board);
-            return;
-          }
+    this.subscription.add(
+      this.boards$.subscribe((boards: BoardStore[]) => {
+        this.boards = [];
+        boards.forEach(board => {
+          board.membersID.forEach(memberID => {
+            if (memberID === this.userAuth?.uid) {
+              this.boards.push(board);
+              return;
+            }
+          });
         });
-      });
-    });
+      })
+    );
   }
 
   public trackByFn(index: number, item: BoardStore): number {
     return index;
   }
 
-  // open = false;
-  //
-  // toggle(open: boolean) {
-  //   this.open = open;
-  // }
-
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 
 }

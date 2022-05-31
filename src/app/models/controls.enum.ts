@@ -14,9 +14,9 @@ export enum CardControls {
 
 export enum BoardControls {
   name = 'name',
-  membersID = 'membersID'
+  membersID = 'membersID',
 }
 
 export enum MembersControls {
-  membersID = 'membersID'
+  membersID = 'membersID',
 }
