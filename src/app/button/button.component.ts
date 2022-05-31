@@ -9,10 +9,10 @@ import {ButtonAppearance, Size} from '../enums';
 export class ButtonComponent {
 
   @Input()
-  content: string = '';
+  public content: string = '';
   @Input()
-  buttonAppearance: ButtonAppearance = ButtonAppearance.Primary;
+  public buttonAppearance: ButtonAppearance = ButtonAppearance.Primary;
   @Input()
-  buttonSize: Size = Size.s;
+  public buttonSize: Size = Size.s;
 
 }

@@ -7,7 +7,9 @@ import {Component, Input} from '@angular/core';
 })
 export class AvatarComponent {
 
-  @Input() public name: string = '';
-  @Input() public avatarUrl: string | null = null;
+  @Input()
+  public name: string = '';
+  @Input()
+  public avatarUrl: string | null = null;
 
 }

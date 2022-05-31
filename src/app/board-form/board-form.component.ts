@@ -1,13 +1,14 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {BoardControls} from '../models/controls.enum';
 import {CrudService} from '../services/crud/crud.service';
 import {Board, UserStore} from '../services/types';
 import {Collection} from '../enums';
-import {Observable} from 'rxjs';
-import {Router} from "@angular/router";
-import firebase from "firebase/compat";
-import {AuthService} from "../services/auth/auth.service";
+import {Observable, Subscription} from 'rxjs';
+import {Router} from '@angular/router';
+import firebase from 'firebase/compat';
+import {AuthService} from '../services/auth/auth.service';
+import {BOARD_NAME_MAX_LENGTH} from '../constants';
 
 @Component({
   selector: 'app-board-form',
@@ -15,21 +16,20 @@ import {AuthService} from "../services/auth/auth.service";
   styleUrls: ['./board-form.component.scss']
 })
 
-export class BoardFormComponent implements OnInit {
+export class BoardFormComponent implements OnInit, OnDestroy {
 
   @Input()
-  boardID: string | undefined;
+  public boardID: string | undefined;
   @Input()
-  formHeader: string = 'Creating a new board';
+  public formHeader: string = 'Creating a new board';
   @Input()
-  isCreating: boolean = true;
+  public isCreating: boolean = true;
   @Input()
-  boardName: string = '';
+  public boardName: string = '';
+  private subscriptionList: Subscription[] = [];
   private authUser: firebase.User | null = null;
-
   public boardForm: FormGroup = new FormGroup({});
   public formControls: typeof BoardControls = BoardControls;
-
   public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
 
   constructor(private router: Router,
@@ -38,18 +38,20 @@ export class BoardFormComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.authService.user$.subscribe((value: firebase.User | null) => {
-      this.authUser = value;
-    });
-    this.boardForm.addControl(BoardControls.name, new FormControl(this.boardName, Validators.compose([Validators.required, Validators.maxLength(12)])));
+    this.subscriptionList.push(
+      this.authService.user$.subscribe((value: firebase.User | null) => {
+        this.authUser = value;
+      })
+    );
+    this.boardForm.addControl(BoardControls.name, new FormControl(this.boardName, Validators.compose([Validators.required, Validators.maxLength(BOARD_NAME_MAX_LENGTH)])));
     this.boardForm.addControl(BoardControls.membersID, new FormControl(''));
   }
 
-  public addBoard(board: Board): void {
+  private addBoard(board: Board): void {
     this.crudService.createObject(Collection.BOARDS, board);
   }
 
-  public updateBoard(board: any): void {
+  private updateBoard(board: { name: string }): void {
     if (this.boardID) {
       this.crudService.updateObject(Collection.BOARDS, this.boardID, board);
     }
@@ -66,7 +68,6 @@ export class BoardFormComponent implements OnInit {
           board.membersID.push(this.authUser.uid);
         }
       }
-
       this.addBoard(board);
       this.boardForm?.reset();
     } else {
@@ -76,7 +77,7 @@ export class BoardFormComponent implements OnInit {
 
   public submitUpdatingForm(): void {
     if (this.boardForm.valid) {
-      const board = {
+      const board: { name: string } = {
         name: this.boardForm?.controls[BoardControls.name].value
       };
       this.updateBoard(board);
@@ -93,6 +94,10 @@ export class BoardFormComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  public ngOnDestroy(): void {
+    this.subscriptionList.forEach((s: Subscription) => s.unsubscribe());
   }
 
 }

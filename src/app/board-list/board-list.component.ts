@@ -19,7 +19,7 @@ export class BoardListComponent implements OnInit, OnDestroy {
 
   @Input()
   public list: ListStore | null = null;
-  readonly subscription: Subscription = new Subscription();
+  private subscriptionList: Subscription[] = [];
   readonly SORTING_FIELD: string = 'position';
   public icon: typeof Icon = Icon;
   public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
@@ -35,14 +35,14 @@ export class BoardListComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.subscription.add(
+    this.subscriptionList.push(
       this.crudService.handleData<CardStore>(Collection.CARDS).subscribe((cards: CardStore[]) => {
         this.listCards = cards.filter((card: CardStore) => card.listID === this.list?.id).sort(
           this.byField(this.SORTING_FIELD)
         );
       })
     );
-    this.subscription.add(
+    this.subscriptionList.push(
       this.authService.user$.subscribe((value: firebase.User | null) => {
         this.authUser = value;
       })
@@ -52,7 +52,7 @@ export class BoardListComponent implements OnInit, OnDestroy {
 
   private getLists(): void {
     this.lists = [];
-    this.subscription.add(
+    this.subscriptionList.push(
       this.lists$.subscribe((lists: ListStore[]) => {
           this.lists = lists.filter((list: ListStore) => list.boardID === this.list?.boardID);
         }
@@ -122,7 +122,7 @@ export class BoardListComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscriptionList.forEach((s: Subscription) => s.unsubscribe());
   }
 
 }

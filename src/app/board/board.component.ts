@@ -1,14 +1,14 @@
 import {Component, OnInit, Input, OnDestroy} from '@angular/core';
 import {ButtonAppearance, Icon, Shape, Collection} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
-import {Observable, Subscription} from 'rxjs';
+import {Observable, Subscription, switchMap} from 'rxjs';
 import {BoardStore, ListStore, UserStore} from '../services/types';
 import {ListFormComponent} from '../list-form/list-form.component';
 import {CardFormComponent} from '../card-form/card-form.component';
 import {ActivatedRoute, Params} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {BoardUpdateComponent} from '../board-update/board-update.component';
-import {MembersFormComponent} from "../members-form/members-form.component";
+import {MembersFormComponent} from '../members-form/members-form.component';
 
 @Component({
   selector: 'app-board',
@@ -19,7 +19,7 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   @Input()
   public board: BoardStore | undefined;
-  readonly subscription: Subscription = new Subscription();
+  private subscriptionList: Subscription[] = [];
   readonly SORTING_FIELD: string = 'dateCreating';
   public buttonContentList: string = 'Add List';
   public buttonContentCard: string = 'Add Card';
@@ -30,8 +30,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   private boardID: string = '';
   public members: UserStore[] = [];
   public lists: ListStore[] = [];
-  public lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
-  public boards$: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
+  private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
+  private boards$: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
 
   constructor(private crudService: CrudService,
               public dialog: MatDialog,
@@ -39,37 +39,36 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.subscription.add(
+    this.subscriptionList.push(
       this.route.params.subscribe(
         (params: Params) => {
           this.boardID = params['id'];
           this.getLists();
-          if (this.boardID) {
-            this.subscription.add(
-              this.boards$.subscribe(() => {
-                this.crudService.getDataDoc<BoardStore>(Collection.BOARDS, this.boardID).subscribe(
-                  (board: BoardStore | undefined) => {
-                    this.board = board;
-                    if (this.board) this.getMembers(this.board);
-                  }
-                );
-              })
-            );
-          }
+          this.getBoard(this.boardID);
         }
-      ));
-
-
+      )
+    );
   }
 
   public trackByFn(index: number, item: ListStore): number {
     return index;
   }
 
+  private getBoard(boardID: string): void {
+    this.subscriptionList.push(
+      this.boards$.pipe(
+        switchMap(() => this.crudService.getDataDoc<BoardStore>(Collection.BOARDS, boardID))
+      ).subscribe((board: BoardStore | undefined) => {
+        this.board = board;
+        if (this.board) this.getMembers(this.board);
+      })
+    );
+  }
+
   private getMembers(board: BoardStore): void {
     this.members = [];
     board.membersID.forEach((memberID: string) => {
-      this.subscription.add(
+      this.subscriptionList.push(
         this.crudService.getDataDoc<UserStore>(Collection.USERS, memberID)
           .subscribe((user: UserStore | undefined) => {
               if (user) {
@@ -87,7 +86,7 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   private getLists(): void {
     this.lists = [];
-    this.subscription.add(
+    this.subscriptionList.push(
       this.lists$.subscribe((lists: ListStore[]) => {
           this.lists = lists.filter((list: ListStore) => list.boardID === this.boardID)
             .sort(this.byField(this.SORTING_FIELD));
@@ -115,7 +114,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscriptionList.forEach((s: Subscription) => s.unsubscribe());
   }
 
 }
