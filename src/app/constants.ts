@@ -1,0 +1,1 @@
+export const SHORT_DESCRIPTION_MAX_LENGTH = 130;

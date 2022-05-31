@@ -1,0 +1,112 @@
+@import 'src/styles';
+
+.card-container {
+  padding: 30px;
+  position: absolute;
+  top: 100px;
+  left: calc(30%);
+  background-color: #ECEFF1;
+}
+
+.card__container:before {
+  width: 100vw;
+  height: 100vh;
+  background: #ffa100;
+}
+
+tui-scrollbar {
+  max-height: 90vh;
+}
+
+.card__container {
+  width: 100%;
+  height: 100%;
+  max-height: 90vh;
+  justify-content: space-between;
+  display: flex;
+}
+
+mat-icon {
+  cursor: pointer;
+}
+
+.card__images {
+  display: flex;
+  grid-gap: 10px;
+  flex-wrap: wrap;
+}
+
+.card__images-container {
+  width: 23%;
+
+}
+
+.card__images-container img {
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+.card__header {
+  display: flex;
+  align-items: center;
+  grid-gap: 13px;
+  border-bottom: 1px solid #a2a2a266;
+}
+
+.card__main-inform {
+  padding-right: 24px;
+  width: 500px;
+}
+
+.card__additional-inform {
+  padding-left: 24px;
+  border-left: 1px solid #a2a2a266;
+}
+
+.card__additional-inform h3 {
+  font: $mainTextFont;
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.card__additional-inform p {
+  font: $mainTextFont;
+  font-size: 15px;
+  color: dimgrey;
+  margin-top: 0;
+  margin-bottom: 0;
+  border-bottom: 1px solid #a2a2a266;
+}
+
+.card-avatar {
+  display: flex;
+  align-items: center;
+  grid-gap: 10px;
+}
+
+.card-avatar p {
+  margin: 0;
+}
+
+.card__date-inform {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.card__date-inform p {
+  font-size: 13px;
+  border: none;
+}
+
+.card__history-content p {
+  margin: 4px 0;
+}
+
+.card__history-content {
+  height: 16vh;
+  overflow-y: scroll;
+}
+
+
