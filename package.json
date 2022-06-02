@@ -21,6 +21,7 @@
     "@angular/platform-browser": "~13.2.0",
     "@angular/platform-browser-dynamic": "~13.2.0",
     "@angular/router": "~13.2.0",
+    "@angular/service-worker": "~13.2.0",
     "@taiga-ui/addon-charts": "^2.38.0",
     "@taiga-ui/addon-commerce": "^2.38.0",
     "@taiga-ui/addon-doc": "^2.38.0",
