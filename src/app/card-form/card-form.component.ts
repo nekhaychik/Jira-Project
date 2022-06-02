@@ -36,7 +36,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
   @Input()
   public isCreating: boolean = true;
   @Input()
-  private boardID: string = '';
+  public boardID: string = '';
   public imageLinks: string[] = [];
   public progress: string | undefined = '';
   private subscription: Subscription[] = [];
