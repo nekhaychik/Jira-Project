@@ -66,6 +66,7 @@ import {BarChartComponent} from './bar-chart/bar-chart.component';
 import {PieChartComponent} from './pie-chart/pie-chart.component';
 import {StatisticsComponent} from './statistics/statistics.component';
 import {CardLinkComponent} from './card-link/card-link.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [
@@ -126,7 +127,13 @@ import {CardLinkComponent} from './card-link/card-link.component';
     TuiSidebarModule,
     TuiActiveZoneModule,
     NgChartsModule,
-    MatSidenavModule
+    MatSidenavModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
   providers: [{provide: TUI_SANITIZER, useClass: NgDompurifySanitizer}],
   bootstrap: [AppComponent]

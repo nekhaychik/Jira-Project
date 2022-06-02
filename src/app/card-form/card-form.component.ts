@@ -9,6 +9,14 @@ import {UploadService} from '../services/crud/upload.service';
 import firebase from 'firebase/compat';
 import {AuthService} from '../services/auth/auth.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {
+  DESCRIPTION_MAX_LENGTH,
+  FIRST_POSITION,
+  MEDIA_FOLDER_PATH,
+  MS_IN_DAY,
+  NAME_MAX_LENGTH,
+  ONE_SECOND
+} from '../constants';
 
 export interface DialogData {
   boardID: string
@@ -28,37 +36,23 @@ export class CardFormComponent implements OnInit, OnDestroy {
   @Input()
   public isCreating: boolean = true;
   @Input()
-  public boardID: string = '';
-
+  private boardID: string = '';
   public imageLinks: string[] = [];
   public progress: string | undefined = '';
-
-  readonly subscription: Subscription = new Subscription();
-  readonly MS_IN_DAY: number = 60 * 60 * 24 * 1000;
-  readonly ONE_SECOND: number = 1000;
-  readonly NAME_MAX_LENGTH: number = 16;
-  readonly DESCRIPTION_MAX_LENGTH: number = 1200;
-  readonly FIRST_POSITION: number = 1;
-  readonly MEDIA_FOLDER_PATH: string = 'task-images';
+  private subscription: Subscription[] = [];
   private currentDueDate: string | null = null;
-
   private boards: BoardStore[] = [];
   public lists: ListStore[] = [];
   private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
-
-
   private authUser: firebase.User | null = null;
   public users: UserStore[] = [];
   private users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
-
-
   //add to firestore
   public priorities: string[] = [
     'normal',
     'critical',
     'blocked'
   ];
-
   public cardForm: FormGroup = new FormGroup({});
   public formControls: typeof CardControls = CardControls;
 
@@ -70,21 +64,20 @@ export class CardFormComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    console.log(this.data)
-    this.subscription.add(
+    this.subscription.push(
       this.authService.user$.subscribe((value: firebase.User | null) => {
         this.authUser = value;
       })
     );
-    if (this.card?.dueDate.seconds) this.currentDueDate = new Date(this.card?.dueDate.seconds * this.ONE_SECOND).toISOString();
+    if (this.card?.dueDate.seconds) this.currentDueDate = new Date(this.card?.dueDate.seconds * ONE_SECOND).toISOString();
     if (this.isCreating) this.boardID = this.data.boardID;
 
     this.getBoard();
     this.getLists();
     this.getUsers();
 
-    this.cardForm.addControl(CardControls.name, new FormControl(this.card?.name, Validators.compose([Validators.required, Validators.maxLength(this.NAME_MAX_LENGTH)])));
-    this.cardForm.addControl(CardControls.priority, new FormControl(this.card?.priority, Validators.compose([Validators.required, Validators.maxLength(this.DESCRIPTION_MAX_LENGTH)])));
+    this.cardForm.addControl(CardControls.name, new FormControl(this.card?.name, Validators.compose([Validators.required, Validators.maxLength(NAME_MAX_LENGTH)])));
+    this.cardForm.addControl(CardControls.priority, new FormControl(this.card?.priority, Validators.compose([Validators.required, Validators.maxLength(DESCRIPTION_MAX_LENGTH)])));
     this.cardForm.addControl(CardControls.dueDate, new FormControl(this.currentDueDate, Validators.required));
     this.cardForm.addControl(CardControls.list, new FormControl(this.card?.listID, Validators.required));
     this.cardForm.addControl(CardControls.member, new FormControl(this.card?.memberID, Validators.required));
@@ -92,7 +85,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
   }
 
   private getBoard(): void {
-    this.subscription.add(
+    this.subscription.push(
       this.crudService.handleData<BoardStore>(Collection.BOARDS).subscribe((boards: BoardStore[]) => {
         this.boards = boards.filter((board: BoardStore) => board.id === this.boardID);
       })
@@ -101,12 +94,12 @@ export class CardFormComponent implements OnInit, OnDestroy {
 
   public myFilter = (d: Date | null): boolean => {
     const day: number = (d || new Date()).getTime();
-    return day >= new Date().getTime() - this.MS_IN_DAY;
+    return day >= new Date().getTime() - MS_IN_DAY;
   };
 
   private getLists(): void {
     this.lists = [];
-    this.subscription.add(
+    this.subscription.push(
       this.lists$.subscribe((lists: ListStore[]) => {
           this.lists = lists.filter((list: ListStore) => list.boardID === this.data.boardID);
         }
@@ -116,7 +109,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
 
   private getUsers(): void {
     this.users = [];
-    this.subscription.add(
+    this.subscription.push(
       this.users$.subscribe((users: UserStore[]) => {
         this.users = users.filter((user: UserStore) => this.boards[0].membersID.includes(user.uid));
       })
@@ -154,7 +147,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
         memberID: this.cardForm?.controls[CardControls.member].value,
         createDate: new Date().toDateString(),
         updateDate: new Date().toDateString(),
-        position: this.FIRST_POSITION,
+        position: FIRST_POSITION,
         reporterID: this.authUser.uid,
         history: [this.authUser.displayName + ' created this card'],
       };
@@ -184,14 +177,14 @@ export class CardFormComponent implements OnInit, OnDestroy {
 
       if (typeof this.cardForm?.controls[CardControls.dueDate].value === 'string') {
         card.dueDate = {
-          seconds: new Date(this.cardForm?.controls[CardControls.dueDate].value).getTime() / this.ONE_SECOND,
+          seconds: new Date(this.cardForm?.controls[CardControls.dueDate].value).getTime() / ONE_SECOND,
           nanoseconds: 0
         };
       }
 
       //if changed due date
       if (this.card.dueDate.seconds && !card.dueDate.seconds) {
-        const cardDueDate: string = new Date(this.card.dueDate.seconds * this.ONE_SECOND).toDateString();
+        const cardDueDate: string = new Date(this.card.dueDate.seconds * ONE_SECOND).toDateString();
         // @ts-ignore
         let newCardDueDate: string = new Date(card.dueDate.getTime()).toDateString();
         history.push(this.authUser?.displayName + ' changed card due date from ' + cardDueDate + ' to ' + newCardDueDate);
@@ -265,7 +258,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
       const eventTarget: HTMLInputElement = (<HTMLInputElement>event?.target);
       if (eventTarget && eventTarget.files) {
         const file: File = eventTarget.files[0];
-        combineLatest(this.uploadService.uploadFileAndGetMetadata(this.MEDIA_FOLDER_PATH, file))
+        combineLatest(this.uploadService.uploadFileAndGetMetadata(MEDIA_FOLDER_PATH, file))
           .pipe(
             takeWhile(([, link]) => {
               return !link;
@@ -281,7 +274,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscription.forEach((s: Subscription) => s.unsubscribe());
   }
 
 }
