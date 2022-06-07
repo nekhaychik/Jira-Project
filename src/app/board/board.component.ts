@@ -75,8 +75,10 @@ export class BoardComponent implements OnInit, OnDestroy {
       this.subscriptionList.push(
         this.crudService.getDataDoc<UserStore>(Collection.USERS, memberID)
           .subscribe((user: UserStore | undefined) => {
-              if (user && !this.members.includes(user)) {
-                this.members.push(user);
+              if (user) {
+                if (!this.members.includes(user)) {
+                  this.members.push(user);
+                }
               }
             }
           )
