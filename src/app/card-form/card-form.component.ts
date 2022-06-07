@@ -22,6 +22,9 @@ export interface DialogData {
   boardID: string
 }
 
+const ACTIVE_LABEL: string = 'cursor: pointer; color: #526ed3;';
+const NOT_ACTIVE_LABEL: string = 'cursor: default; color: gray;';
+
 @Component({
   selector: 'app-card-form',
   templateUrl: './card-form.component.html',
@@ -37,11 +40,13 @@ export class CardFormComponent implements OnInit, OnDestroy {
   public isCreating: boolean = true;
   @Input()
   public boardID: string = '';
+  public isDisable: boolean = false;
+  public labelStyle: string = ACTIVE_LABEL;
   public imageLinks: string[] = [];
   public progress: string | undefined = '';
-  private subscription: Subscription[] = [];
+  private subscriptionList: Subscription[] = [];
   private currentDueDate: string | null = null;
-  private boards: BoardStore[] = [];
+  private board: BoardStore | undefined;
   public lists: ListStore[] = [];
   private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
   private authUser: firebase.User | null = null;
@@ -64,17 +69,17 @@ export class CardFormComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.subscription.push(
-      this.authService.user$.subscribe((value: firebase.User | null) => {
-        this.authUser = value;
-      })
-    );
-    if (this.card?.dueDate.seconds) this.currentDueDate = new Date(this.card?.dueDate.seconds * ONE_SECOND).toISOString();
-    if (this.isCreating) this.boardID = this.data.boardID;
+    if (this.card?.dueDate.seconds) {
+      this.currentDueDate = new Date(this.card?.dueDate.seconds * ONE_SECOND).toISOString();
+    }
+    if (this.isCreating) {
+      this.boardID = this.data.boardID;
+    }
 
+    this.getAuthUser();
     this.getBoard();
-    this.getLists();
     this.getUsers();
+    this.getLists();
 
     this.cardForm.addControl(CardControls.name, new FormControl(this.card?.name, Validators.compose([Validators.required, Validators.maxLength(NAME_MAX_LENGTH)])));
     this.cardForm.addControl(CardControls.priority, new FormControl(this.card?.priority, Validators.compose([Validators.required, Validators.maxLength(DESCRIPTION_MAX_LENGTH)])));
@@ -84,10 +89,18 @@ export class CardFormComponent implements OnInit, OnDestroy {
     this.cardForm.addControl(CardControls.description, new FormControl(this.card?.description));
   }
 
+  private getAuthUser(): void {
+    this.subscriptionList.push(
+      this.authService.user$.subscribe((value: firebase.User | null) => {
+        this.authUser = value;
+      })
+    );
+  }
+
   private getBoard(): void {
-    this.subscription.push(
-      this.crudService.handleData<BoardStore>(Collection.BOARDS).subscribe((boards: BoardStore[]) => {
-        this.boards = boards.filter((board: BoardStore) => board.id === this.boardID);
+    this.subscriptionList.push(
+      this.crudService.getDataDoc<BoardStore>(Collection.BOARDS, this.boardID).subscribe((board: BoardStore | undefined) => {
+        this.board = board;
       })
     );
   }
@@ -99,7 +112,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
 
   private getLists(): void {
     this.lists = [];
-    this.subscription.push(
+    this.subscriptionList.push(
       this.lists$.subscribe((lists: ListStore[]) => {
           this.lists = lists.filter((list: ListStore) => list.boardID === this.data.boardID);
         }
@@ -109,31 +122,35 @@ export class CardFormComponent implements OnInit, OnDestroy {
 
   private getUsers(): void {
     this.users = [];
-    this.subscription.push(
+    this.subscriptionList.push(
       this.users$.subscribe((users: UserStore[]) => {
-        this.users = users.filter((user: UserStore) => this.boards[0].membersID.includes(user.uid));
+        this.users = users.filter((user: UserStore) => this.board?.membersID.includes(user.uid));
       })
     );
   }
 
   private getListName(id: string): string {
-    let listsRet: ListStore[] = [];
+    let listsRet: ListStore[];
     listsRet = this.lists.filter((list: ListStore) => list.id === id);
     return listsRet[0].name;
   }
 
   private getUserName(id: string): string {
-    let usersRet: UserStore[] = [];
+    let usersRet: UserStore[];
     usersRet = this.users.filter((user: UserStore) => user.id === id);
     return usersRet[0].name;
   }
 
   private addCard(card: Card): void {
-    this.crudService.createObject(Collection.CARDS, card);
+    this.subscriptionList.push(
+      this.crudService.createObject(Collection.CARDS, card).subscribe()
+    );
   }
 
   private updateCard(id: string, newCardData: Card): void {
-    this.crudService.updateObject(Collection.CARDS, id, newCardData);
+    this.subscriptionList.push(
+      this.crudService.updateObject(Collection.CARDS, id, newCardData).subscribe()
+    );
   }
 
   public submitForm(): void {
@@ -151,9 +168,10 @@ export class CardFormComponent implements OnInit, OnDestroy {
         reporterID: this.authUser.uid,
         history: [this.authUser.displayName + ' created this card'],
       };
-      if (this.imageLinks.length) card.images = [...this.imageLinks];
+      if (this.imageLinks.length) {
+        card.images = [...this.imageLinks];
+      }
       this.addCard(card);
-      this.cardForm?.reset();
     } else {
       alert('ERROR');
     }
@@ -173,6 +191,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
         updateDate: new Date().toDateString(),
         position: this.card.position,
         description: this.cardForm?.controls[CardControls.description].value,
+        history: history
       };
 
       if (typeof this.cardForm?.controls[CardControls.dueDate].value === 'string') {
@@ -189,26 +208,31 @@ export class CardFormComponent implements OnInit, OnDestroy {
         let newCardDueDate: string = new Date(card.dueDate.getTime()).toDateString();
         history.push(this.authUser?.displayName + ' changed card due date from ' + cardDueDate + ' to ' + newCardDueDate);
       }
+
       //if changed assignees (member)
       if (this.card.memberID !== card.memberID) {
         const memberName: string = this.getUserName(this.card.memberID);
         const newMemberName: string = this.getUserName(card.memberID);
         history.push(this.authUser?.displayName + ' changed assignees from ' + memberName + ' to ' + newMemberName);
       }
+
       //if changed priority
       if (this.card.priority !== card.priority) {
         history.push(this.authUser?.displayName + ' changed priority from ' + this.card.priority + ' to ' + card.priority);
       }
+
       //if changed status (list)
       if (this.card.listID !== card.listID) {
         const listName: string = this.getListName(this.card.listID);
         const newListName: string = this.getListName(card.listID);
         history.push(this.authUser?.displayName + ' changed status from ' + listName + ' to ' + newListName);
       }
+
       //if changed description
       if (this.card.description !== card.description) {
         history.push(this.authUser?.displayName + ' changed card description');
       }
+
       //if changed card name
       if (this.card.name !== card.name) {
         history.push(this.authUser?.displayName + ' renamed card from ' + this.card.name + ' to ' + card.name);
@@ -221,14 +245,13 @@ export class CardFormComponent implements OnInit, OnDestroy {
       }
 
       this.updateCard(id, card);
-      this.cardForm?.reset();
     } else {
       alert('ERROR');
     }
   }
 
   public isTextValueValid(controlName: string): void {
-    const control: AbstractControl | undefined = this.cardForm?.controls[controlName];
+    const control: AbstractControl | undefined = this.cardForm.controls[controlName];
     if (control.value && control.value.match(/^[ ]+$/)) {
       control.setValue(control.value.trim());
     }
@@ -258,23 +281,31 @@ export class CardFormComponent implements OnInit, OnDestroy {
       const eventTarget: HTMLInputElement = (<HTMLInputElement>event?.target);
       if (eventTarget && eventTarget.files) {
         const file: File = eventTarget.files[0];
-        combineLatest(this.uploadService.uploadFileAndGetMetadata(MEDIA_FOLDER_PATH, file))
-          .pipe(
-            takeWhile(([, link]) => {
-              return !link;
-            }, true),
-          )
-          .subscribe(([percent, link]) => {
-            this.progress = percent;
-            if (link === null) this.imageLinks = this.imageLinks;
-            else this.imageLinks.push(link);
-          });
+        this.subscriptionList.push(
+          combineLatest(this.uploadService.uploadFileAndGetMetadata(MEDIA_FOLDER_PATH, file))
+            .pipe(
+              takeWhile(([, link]) => {
+                return !link;
+              }, true),
+            )
+            .subscribe(([percent, link]) => {
+              this.progress = percent;
+              if (link !== null) {
+                this.labelStyle = ACTIVE_LABEL;
+                this.isDisable = false;
+                this.imageLinks.push(link);
+              } else {
+                this.labelStyle = NOT_ACTIVE_LABEL;
+                this.isDisable = true;
+              }
+            })
+        );
       }
     }
   }
 
   public ngOnDestroy(): void {
-    this.subscription.forEach((s: Subscription) => s.unsubscribe());
+    this.subscriptionList.forEach((s: Subscription) => s.unsubscribe());
   }
 
 }

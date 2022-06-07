@@ -6,6 +6,8 @@ import {CrudService} from '../services/crud/crud.service';
 import {AuthService} from '../services/auth/auth.service';
 import firebase from 'firebase/compat';
 
+const SORTING_FIELD: string = 'name';
+
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
@@ -13,7 +15,7 @@ import firebase from 'firebase/compat';
 })
 export class SidebarComponent implements OnInit, OnDestroy {
 
-  readonly subscription: Subscription = new Subscription();
+  private subscriptionList: Subscription[] = [];
   public boards: BoardStore[] = [];
   private userAuth: firebase.User | null = null;
   private boards$: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
@@ -23,28 +25,32 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.subscription.add(
+    this.getAuthUser();
+    this.getBoards();
+  }
+
+  private getAuthUser(): void {
+    this.subscriptionList.push(
       this.authService.user$.subscribe((value: firebase.User | null) => {
         this.userAuth = value;
       })
     );
-    this.getBoards();
   }
 
   private getBoards(): void {
-    this.subscription.add(
+    this.boards = [];
+    this.subscriptionList.push(
       this.boards$.subscribe((boards: BoardStore[]) => {
-        this.boards = [];
-        boards.forEach(board => {
-          board.membersID.forEach(memberID => {
-            if (memberID === this.userAuth?.uid) {
-              this.boards.push(board);
-              return;
-            }
-          });
-        });
+        this.boards = boards.filter((board: BoardStore) =>
+          board.membersID.includes(<string>this.userAuth?.uid))
+          .sort(this.byField(SORTING_FIELD));
       })
     );
+
+  }
+
+  private byField(field: string): (a: any, b: any) => (1 | -1) {
+    return (a: any, b: any) => a[field] > b[field] ? 1 : -1;
   }
 
   public trackByFn(index: number, item: BoardStore): number {
@@ -52,7 +58,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscriptionList.forEach((s: Subscription) => s.unsubscribe());
   }
 
 }

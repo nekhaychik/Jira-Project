@@ -1,13 +1,14 @@
-import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import {Injectable} from '@angular/core';
+import {AngularFireAuth} from '@angular/fire/compat/auth';
 import firebase from 'firebase/compat/app';
 import {from, Observable, of, ReplaySubject} from 'rxjs';
 import AuthProvider = firebase.auth.AuthProvider;
 import UserCredential = firebase.auth.UserCredential;
-import {switchMap} from "rxjs/operators";
-import {AngularFirestore} from "@angular/fire/compat/firestore";
-import {CrudService} from "../crud/crud.service";
-import {Collection} from "../../enums";
+import {switchMap} from 'rxjs/operators';
+import {AngularFirestore} from '@angular/fire/compat/firestore';
+import {CrudService} from '../crud/crud.service';
+import {Collection} from '../../enums';
+import {UserStore} from '../types';
 
 @Injectable({
   providedIn: 'root'
@@ -34,12 +35,12 @@ export class AuthService {
     return from(this.afAuth.signInWithPopup(provider))
       .pipe(
         switchMap((credentials: any) => {
-          return this.crudService.fetchOneDocumentFromFirestore(Collection.USERS, credentials.user.uid)
+          return this.crudService.fetchOneDocumentFromFirestore<UserStore>(Collection.USERS, credentials.user.uid)
             .pipe(
-              switchMap((user: any) => {
+              switchMap((user: UserStore | null) => {
                 if (!user) {
                   const {user: credentialsUser} = credentials;
-                  const userRef: any = this.firestoreService.collection(Collection.USERS).doc(credentialsUser.uid).set({
+                  const userRef = this.firestoreService.collection(Collection.USERS).doc(credentialsUser.uid).set({
                     uid: credentialsUser.uid,
                     name: credentialsUser.displayName,
                     avatarURL: credentialsUser.photoURL,

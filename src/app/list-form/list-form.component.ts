@@ -5,7 +5,8 @@ import {List, ListStore} from '../services/types';
 import {Collection} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Subscription} from "rxjs";
+import {Subscription} from 'rxjs';
+import {NAME_MAX_LENGTH} from '../constants';
 
 export interface DialogData {
   boardID: string
@@ -28,8 +29,7 @@ export class ListFormComponent implements OnInit, OnDestroy {
   public id: string = '';
   @Input()
   public listName: string | undefined;
-  readonly subscription: Subscription = new Subscription();
-  readonly NAME_MAX_LENGTH: number = 16;
+  private subscriptionList: Subscription[] = [];
   public createListForm: FormGroup = new FormGroup({});
   public formControls: typeof ListControls = ListControls;
   public boardLists: ListStore[] = [];
@@ -40,31 +40,38 @@ export class ListFormComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.subscription.add(
+    this.getLists();
+    this.createListForm.addControl(ListControls.name, new FormControl(this.listName, Validators.compose([Validators.required, Validators.maxLength(NAME_MAX_LENGTH)/*, ValidateNameExist(this.boardLists)*/])));
+  }
+
+  private getLists(): void {
+    this.subscriptionList.push(
       this.crudService.handleData<ListStore>(Collection.LISTS).subscribe((lists: ListStore[]) => {
         this.boardLists = lists.filter((list: ListStore) => this.data.boardID === list.boardID);
       })
     );
-    this.createListForm.addControl(ListControls.name, new FormControl(this.listName, Validators.compose([Validators.required, Validators.maxLength(this.NAME_MAX_LENGTH)/*, ValidateNameExist(this.boardLists)*/])));
   }
 
-  public addList(list: List): void {
-    this.crudService.createObject(Collection.LISTS, list);
+  private addList(list: List): void {
+    this.subscriptionList.push(
+      this.crudService.createObject(Collection.LISTS, list).subscribe()
+    );
   }
 
-  public updateList(id: string, data: List): void {
-    this.crudService.updateObject(Collection.LISTS, id, data);
+  private updateList(id: string, data: List): void {
+    this.subscriptionList.push(
+      this.crudService.updateObject(Collection.LISTS, id, data).subscribe()
+    );
   }
 
   public submitForm(): void {
     if (this.createListForm.valid) {
       const list: List = {
-        name: this.createListForm?.controls[ListControls.name].value.trim(),
+        name: this.createListForm.controls[ListControls.name].value.trim(),
         boardID: this.data.boardID,
         dateCreating: new Date().getTime()
       };
       this.addList(list);
-      this.createListForm?.reset();
     } else {
       alert('ERROR');
     }
@@ -73,17 +80,16 @@ export class ListFormComponent implements OnInit, OnDestroy {
   public submitUpdatingForm(id: string): void {
     if (this.createListForm.valid) {
       const list: List = {
-        name: this.createListForm?.controls[ListControls.name].value,
+        name: this.createListForm.controls[ListControls.name].value.trim(),
       }
       this.updateList(id, list);
-      this.createListForm?.reset();
     } else {
       alert('ERROR');
     }
   }
 
   public isControlValid(controlName: string): boolean {
-    const control: AbstractControl | undefined = this.createListForm?.controls[controlName];
+    const control: AbstractControl | undefined = this.createListForm.controls[controlName];
     if (control) {
       if (control.value && control.value.match(/^[ ]+$/)) {
         control.setValue(control.value.trim());
@@ -95,7 +101,7 @@ export class ListFormComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscriptionList.forEach((s: Subscription) => s.unsubscribe());
   }
 
 }

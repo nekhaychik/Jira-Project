@@ -1,20 +1,11 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {combineLatest, Observable, Subscription, takeWhile} from "rxjs";
-import {CardStore, ListStore, UserStore} from "../services/types";
-import firebase from "firebase/compat";
-import {CrudService} from "../services/crud/crud.service";
-import {AuthService} from "../services/auth/auth.service";
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {UploadService} from "../services/crud/upload.service";
-import {Collection, Paths} from "../enums";
-import {CardFormUpdateComponent} from "../card-form-update/card-form-update.component";
-import {DialogData, FullCardComponent} from "../full-card/full-card.component";
-import {ActivatedRoute, Params, Router} from "@angular/router";
-
-type Image = {
-  images: string[];
-  history: string[];
-}
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subscription} from 'rxjs';
+import {CardStore} from '../services/types';
+import {CrudService} from '../services/crud/crud.service';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {Collection, Paths} from '../enums';
+import {FullCardComponent} from '../full-card/full-card.component';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 
 @Component({
   selector: 'app-card-link',
@@ -23,52 +14,59 @@ type Image = {
 })
 export class CardLinkComponent implements OnInit, OnDestroy {
 
-  readonly subscription: Subscription = new Subscription();
-  readonly ONE_SECOND: number = 1000;
-  readonly MEDIA_FOLDER_PATH: string = 'task-images';
-  public list: ListStore | undefined;
-  public member: UserStore | undefined;
-  public reporter: UserStore | undefined;
-  private authUser: firebase.User | null = null;
-  public imageLink: string = '';
-  public progress: string | undefined = '';
+  private subscriptionList: Subscription[] = [];
   public card: CardStore | undefined;
-  private cards$: Observable<CardStore[]> = this.crudService.handleData<CardStore>(Collection.CARDS);
-
   private boardID: string = '';
 
   constructor(private crudService: CrudService,
-              private authService: AuthService,
               private dialog: MatDialog,
-              private uploadService: UploadService,
               private route: ActivatedRoute,
               private router: Router) {
   }
 
   public ngOnInit(): void {
-    this.route.params.subscribe((params: Params) => {
-
-      this.crudService.getDataDoc<CardStore>(Collection.CARDS, params['id']).subscribe((card: CardStore | undefined) => {
-        this.card = card;
-        if (this.card) this.card.id = params['id'];
-
-        let startIndex = this.router.url.indexOf('/', 1) + 1;
-        let endIndex = this.router.url.lastIndexOf('/');
-        this.boardID = this.router.url.slice(startIndex, endIndex);
-
-        let dialogRef = this.dialog.open(FullCardComponent, {data: {card: card, boardID: this.boardID}});
-        dialogRef.afterClosed().subscribe(() => {
-          this.router.navigate([Paths.board + '/' + this.boardID]);
-        })
-      });
-    });
-
-
+    this.subscriptionList.push(
+      this.route.params.subscribe((params: Params) => {
+        this.getCard(params['id']);
+        this.getBoardID();
+      })
+    );
   }
 
+  private getCard(id: string): void {
+    this.subscriptionList.push(
+      this.crudService.getDataDoc<CardStore>(Collection.CARDS, id).subscribe((card: CardStore | undefined) => {
+        this.card = card;
+        if (this.card) {
+          this.card.id = id;
+        }
+        this.navigate();
+      })
+    )
+  }
+
+  private getBoardID(): void {
+    let startIndex: number = this.router.url.indexOf('/', 1) + 1;
+    let endIndex: number = this.router.url.lastIndexOf('/');
+    this.boardID = this.router.url.slice(startIndex, endIndex);
+  }
+
+  private navigate(): void {
+    let dialogRef: MatDialogRef<FullCardComponent> = this.dialog.open(FullCardComponent, {
+      data: {
+        card: this.card,
+        boardID: this.boardID
+      }
+    });
+    this.subscriptionList.push(
+      dialogRef.afterClosed().subscribe(() => {
+        this.router.navigate([Paths.board + '/' + this.boardID]);
+      })
+    );
+  }
 
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscriptionList.forEach((s: Subscription) => s.unsubscribe());
   }
 
 }

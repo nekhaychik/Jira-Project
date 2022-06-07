@@ -3,9 +3,9 @@ import firebase from 'firebase/compat/app';
 import {AuthService} from '../services/auth/auth.service';
 import {Router} from '@angular/router';
 import {ButtonAppearance, Paths} from '../enums';
-import {Subscription} from "rxjs";
-import {BoardFormComponent} from "../board-form/board-form.component";
-import {MatDialog} from "@angular/material/dialog";
+import {Subscription} from 'rxjs';
+import {BoardFormComponent} from '../board-form/board-form.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-header',
@@ -14,7 +14,7 @@ import {MatDialog} from "@angular/material/dialog";
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
-  readonly subscription: Subscription = new Subscription();
+  private subscriptionList: Subscription[] = [];
   public logoPath: string = 'assets/logo.svg';
   public buttonContent: string = 'Log out';
   public buttonAppearance: ButtonAppearance = ButtonAppearance.Secondary;
@@ -28,15 +28,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.subscription.add(
-      this.authService.user$.subscribe((value: firebase.User | null) => this.user = value)
+    this.getAuthUser();
+  }
+
+  private getAuthUser(): void {
+    this.subscriptionList.push(
+      this.authService.user$.subscribe((value: firebase.User | null) =>
+        this.user = value
+      )
     );
   }
 
   public logout(): void {
-    this.subscription.add(
+    this.subscriptionList.push(
       this.authService.signOut().subscribe(() =>
-        this.router.navigate([Paths.authorization]))
+        this.router.navigate([Paths.authorization])
+      )
     );
   }
 
@@ -49,7 +56,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscriptionList.forEach((s: Subscription) => s.unsubscribe());
   }
 
 }

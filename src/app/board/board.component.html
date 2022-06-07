@@ -1,7 +1,9 @@
 <ng-container *ngIf="board">
   <div class="board__header">
-    <h2 class="board__title">{{board.name}}</h2>
-    <mat-icon (click)="openBoardDialog()">settings</mat-icon>
+    <h2 class="board__title">
+      {{board.name}}
+      <mat-icon (click)="openBoardDialog()">settings</mat-icon>
+    </h2>
     <div class="board__members">
       <ng-container *ngFor="let member of members; trackBy: trackByFn">
         <app-avatar [name]="member.name" [avatarUrl]="member.avatarUrl"></app-avatar>
@@ -15,7 +17,8 @@
   </div>
   <div class="board__buttons">
     <app-button [content]="buttonContentList" (click)="openListDialog()"></app-button>
-    <app-button [content]="buttonContentCard" (click)="openCardDialog()"></app-button>
+    <app-button [content]="buttonContentCard" (click)="openCardDialog(!lists.length)"
+                [isDisable]="!lists.length"></app-button>
   </div>
   <tui-scrollbar [hidden]="true">
     <div class="board__lists" cdkDropListGroup>

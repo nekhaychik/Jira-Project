@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Collection, Paths, Status} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
 import {CardStore, UserStore} from '../services/types';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription, switchMap} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {CardFormUpdateComponent} from '../card-form-update/card-form-update.component';
 import {ActivatedRoute, Params, Router} from '@angular/router';
@@ -17,10 +17,11 @@ export class TaskCardComponent implements OnInit, OnDestroy {
 
   @Input()
   public card: CardStore | undefined;
-  readonly subscription: Subscription = new Subscription();
+  readonly subscriptionList: Subscription[] = [];
   public status: typeof Status = Status;
   private boardID: string = '';
   public assignee: UserStore | undefined;
+  private cards$: Observable<CardStore[]> = this.crudService.handleData(Collection.CARDS);
 
   constructor(private crudService: CrudService,
               private dialog: MatDialog,
@@ -29,7 +30,7 @@ export class TaskCardComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.subscription.add(
+    this.subscriptionList.push(
       this.route.params.subscribe(
         (params: Params) => {
           this.boardID = params['id'];
@@ -40,9 +41,18 @@ export class TaskCardComponent implements OnInit, OnDestroy {
   }
 
   private getAssignee(): void {
+    // if (this.card) {
+    //   this.subscriptionList.push(
+    //     this.crudService.getDataDoc<UserStore>(Collection.USERS, this.card.memberID).subscribe((user: UserStore | undefined) => {
+    //       this.assignee = user;
+    //     })
+    //   );
+    // }
     if (this.card) {
-      this.subscription.add(
-        this.crudService.getDataDoc<UserStore>(Collection.USERS, this.card.memberID).subscribe((user: UserStore | undefined) => {
+      this.subscriptionList.push(
+        this.cards$.pipe(
+          switchMap(() => this.crudService.getDataDoc<UserStore>(Collection.USERS, <string>this.card?.memberID))
+        ).subscribe((user: UserStore | undefined) => {
           this.assignee = user;
         })
       );
@@ -61,7 +71,9 @@ export class TaskCardComponent implements OnInit, OnDestroy {
   }
 
   public deleteCard(id: string): void {
-    this.crudService.deleteObject(Collection.CARDS, id);
+    this.subscriptionList.push(
+      this.crudService.deleteObject(Collection.CARDS, id).subscribe()
+    );
   }
 
   public openFullCard(card: CardStore): void {
@@ -69,7 +81,7 @@ export class TaskCardComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscriptionList.forEach((s: Subscription) => s.unsubscribe());
   }
 
 }

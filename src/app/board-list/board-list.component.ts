@@ -4,10 +4,12 @@ import {CrudService} from '../services/crud/crud.service';
 import {CardStore, ListStore} from '../services/types';
 import {MatDialog} from '@angular/material/dialog';
 import {ListFormUpdateComponent} from '../list-form-update/list-form-update.component';
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {AuthService} from '../services/auth/auth.service';
 import firebase from 'firebase/compat';
 import {Observable, Subscription} from 'rxjs';
+
+const SORTING_FIELD: string = 'position';
 
 @Component({
   selector: '[app-board-list]',
@@ -20,7 +22,6 @@ export class BoardListComponent implements OnInit, OnDestroy {
   @Input()
   public list: ListStore | null = null;
   private subscriptionList: Subscription[] = [];
-  readonly SORTING_FIELD: string = 'position';
   public icon: typeof Icon = Icon;
   public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
   public buttonSize: Size = Size.m;
@@ -35,19 +36,27 @@ export class BoardListComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    this.getCards();
+    this.getAuthUser();
+    this.getLists();
+  }
+
+  private getCards(): void {
     this.subscriptionList.push(
       this.crudService.handleData<CardStore>(Collection.CARDS).subscribe((cards: CardStore[]) => {
         this.listCards = cards.filter((card: CardStore) => card.listID === this.list?.id).sort(
-          this.byField(this.SORTING_FIELD)
+          this.byField(SORTING_FIELD)
         );
       })
     );
+  }
+
+  private getAuthUser(): void {
     this.subscriptionList.push(
       this.authService.user$.subscribe((value: firebase.User | null) => {
         this.authUser = value;
       })
     );
-    this.getLists();
   }
 
   private getLists(): void {
@@ -79,11 +88,15 @@ export class BoardListComponent implements OnInit, OnDestroy {
   }
 
   public deleteList(id: string): void {
-    this.crudService.deleteObject(Collection.LISTS, id);
+    this.subscriptionList.push(
+      this.crudService.deleteObject(Collection.LISTS, id).subscribe()
+    );
   }
 
   public editList(id: string, newData: ListStore): void {
-    this.crudService.updateObject(Collection.LISTS, id, newData);
+    this.subscriptionList.push(
+      this.crudService.updateObject(Collection.LISTS, id, newData).subscribe()
+    );
   }
 
   public drop(event: CdkDragDrop<CardStore[]>): void {
@@ -101,23 +114,32 @@ export class BoardListComponent implements OnInit, OnDestroy {
         event.previousIndex,
         event.currentIndex
       );
-
-      let history: string[] = [];
-      const listName: string = this.getListName(event.previousContainer.id);
-      const newListName: string = this.getListName(event.container.id);
-      history.push(this.authUser?.displayName + ' changed status from ' + listName + ' to ' + newListName);
-
-      this.crudService.updateObject(Collection.CARDS, event.item.data.id, {
-        listID: event.container.id,
-        history: [...history, ...event.item.data.history]
-      });
-      event.previousContainer.data.forEach((card: CardStore, index: number) => {
-        this.crudService.updateObject(Collection.CARDS, card.id, {position: index});
-      });
+      this.addCardHistory(event.container, event.previousContainer, event.item.data);
+      this.updateCardPosition(event.previousContainer);
     }
 
-    event.container.data.forEach((card: CardStore, index: number) => {
-      this.crudService.updateObject(Collection.CARDS, card.id, {position: index});
+    this.updateCardPosition(event.container);
+  }
+
+  private addCardHistory(container: CdkDropList<CardStore[]>, previousContainer: CdkDropList<CardStore[]>, card: CardStore): void {
+    let history: string[] = [];
+    const listName: string = this.getListName(previousContainer.id);
+    const newListName: string = this.getListName(container.id);
+    history.push(this.authUser?.displayName + ' changed status from ' + listName + ' to ' + newListName);
+
+    this.subscriptionList.push(
+      this.crudService.updateObject(Collection.CARDS, card.id, {
+        listID: container.id,
+        history: [...history, ...card.history]
+      }).subscribe()
+    );
+  }
+
+  private updateCardPosition(container: CdkDropList<CardStore[]>) {
+    container.data.forEach((card: CardStore, index: number) => {
+      this.subscriptionList.push(
+        this.crudService.updateObject(Collection.CARDS, card.id, {position: index}).subscribe()
+      );
     });
   }
 

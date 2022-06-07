@@ -14,7 +14,7 @@ import {Router} from '@angular/router';
 })
 export class StatisticsComponent implements OnInit, OnDestroy {
 
-  readonly subscription: Subscription = new Subscription();
+  private subscriptionList: Subscription[] = [];
   public buttonSize: Size = Size.s;
   public boards: BoardStore[] = [];
   private userAuth: firebase.User | null = null;
@@ -26,12 +26,16 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.subscription.add(
+    this.getAuthUser();
+    this.getBoards();
+  }
+
+  private getAuthUser(): void {
+    this.subscriptionList.push(
       this.authService.user$.subscribe((value: firebase.User | null) => {
         this.userAuth = value;
       })
     );
-    this.getBoards();
   }
 
   public trackByFn(index: number, item: BoardStore): number {
@@ -39,7 +43,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   }
 
   private getBoards(): void {
-    this.subscription.add(
+    this.subscriptionList.push(
       this.allBoards$.subscribe((boards: BoardStore[]) => {
         this.boards = [];
         boards.forEach((board: BoardStore) => {
@@ -58,7 +62,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscriptionList.forEach((s: Subscription) => s.unsubscribe());
   }
 
 }

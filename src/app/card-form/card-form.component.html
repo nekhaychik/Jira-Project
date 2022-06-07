@@ -71,20 +71,25 @@
 
     <ng-container *ngIf="isCreating">
 
-    <div>
-      <input type="file"
-             id="file"
-             (change)="onFileSelected($event)"
-             name="image"
-             autocomplete="off"
-      />
-    </div>
+      <div>
+        <label for="file" [style]="labelStyle">Choose an image</label>
+        <input
+          [disabled]="isDisable"
+          type="file"
+          id="file"
+          style="display: none"
+          (change)="onFileSelected($event)"
+          name="image"
+          autocomplete="off"
+          accept=".jpg, .jpeg, .png"
+        />
+      </div>
       <ng-container *ngFor="let image of imageLinks">
         <div class="card__images-container">
           <img [src]="image" width="70px" height="70px"/>
         </div>
       </ng-container>
-    <progress max="100" [value]="progress"></progress>
+      <progress max="100" [value]="progress"></progress>
 
     </ng-container>
 
@@ -95,7 +100,7 @@
       <ng-template #createButton>
         <button
           mat-dialog-close
-          [disabled]="cardForm.invalid" (click)="submitForm()"
+          [disabled]="cardForm.invalid || isDisable" (click)="submitForm()"
           tuiButton
           size="l"
           type="submit"

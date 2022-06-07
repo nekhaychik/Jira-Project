@@ -20,12 +20,13 @@ export interface DialogData {
 })
 export class MembersFormComponent implements OnInit, OnDestroy {
 
-  readonly subscription: Subscription = new Subscription();
+  private subscriptionList: Subscription[] = [];
   public membersForm: FormGroup = new FormGroup({});
   public formControls: typeof MembersControls = MembersControls;
   public board: BoardStore | undefined;
   public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
   private authUser: firebase.User | null = null;
+  public membersID: string[] = [];
 
   constructor(private crudService: CrudService,
               public dialogRef: MatDialogRef<MembersFormComponent>,
@@ -34,23 +35,42 @@ export class MembersFormComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.subscription.add(
+    this.getAuthUser();
+    this.getBoard();
+    this.membersForm.addControl(MembersControls.membersID, new FormControl(this.membersID, Validators.required));
+  }
+
+  private getAuthUser(): void {
+    this.subscriptionList.push(
       this.authService.user$.subscribe((value: firebase.User | null) => {
         this.authUser = value;
       })
     );
-    this.subscription.add(
+  }
+
+  private getBoard(): void {
+    this.subscriptionList.push(
       this.crudService.getDataDoc<BoardStore>(Collection.BOARDS, this.data.boardID).subscribe(
         (board: BoardStore | undefined) => {
           this.board = board;
+          if (this.board) {
+            this.getMembersID(this.board);
+          }
         }
       )
     );
-    this.membersForm.addControl(MembersControls.membersID, new FormControl('', Validators.required));
   }
 
-  public addMembers(members: { membersID: string[] }): void {
-    this.crudService.updateObject(Collection.BOARDS, this.data.boardID, members);
+  private getMembersID(board: BoardStore): void {
+    board.membersID.forEach((id: string) => {
+      this.membersID.push(id);
+    });
+  }
+
+  private addMembers(members: { membersID: string[] }): void {
+    this.subscriptionList.push(
+      this.crudService.updateObject(Collection.BOARDS, this.data.boardID, members).subscribe()
+    );
   }
 
   public submitForm(): void {
@@ -64,7 +84,6 @@ export class MembersFormComponent implements OnInit, OnDestroy {
         }
       }
       this.addMembers(board);
-      this.membersForm?.reset();
     } else {
       alert('ERROR');
     }
@@ -80,7 +99,7 @@ export class MembersFormComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscriptionList.forEach((s: Subscription) => s.unsubscribe());
   }
 
 }

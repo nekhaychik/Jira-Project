@@ -14,5 +14,7 @@ export class ButtonComponent {
   public buttonAppearance: ButtonAppearance = ButtonAppearance.Primary;
   @Input()
   public buttonSize: Size = Size.s;
+  @Input()
+  public isDisable: boolean = false;
 
 }

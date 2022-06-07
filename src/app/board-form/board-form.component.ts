@@ -38,29 +38,37 @@ export class BoardFormComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    this.getAuthUser();
+    this.boardForm.addControl(BoardControls.name, new FormControl(this.boardName, Validators.compose([Validators.required, Validators.maxLength(BOARD_NAME_MAX_LENGTH)])));
+    this.boardForm.addControl(BoardControls.membersID, new FormControl([this.authUser?.uid], Validators.required));
+  }
+
+  private getAuthUser(): void {
     this.subscriptionList.push(
       this.authService.user$.subscribe((value: firebase.User | null) => {
         this.authUser = value;
       })
     );
-    this.boardForm.addControl(BoardControls.name, new FormControl(this.boardName, Validators.compose([Validators.required, Validators.maxLength(BOARD_NAME_MAX_LENGTH)])));
-    this.boardForm.addControl(BoardControls.membersID, new FormControl(''));
   }
 
   private addBoard(board: Board): void {
-    this.crudService.createObject(Collection.BOARDS, board);
+    this.subscriptionList.push(
+      this.crudService.createObject(Collection.BOARDS, board).subscribe()
+    );
   }
 
   private updateBoard(board: { name: string }): void {
     if (this.boardID) {
-      this.crudService.updateObject(Collection.BOARDS, this.boardID, board);
+      this.subscriptionList.push(
+        this.crudService.updateObject(Collection.BOARDS, this.boardID, board).subscribe()
+      );
     }
   }
 
   public submitForm(): void {
     if (this.boardForm.valid) {
       const board: Board = {
-        name: this.boardForm?.controls[BoardControls.name].value,
+        name: this.boardForm.controls[BoardControls.name].value.trim(),
         membersID: this.boardForm.controls[BoardControls.membersID].value
       };
       if (this.authUser) {
@@ -69,7 +77,6 @@ export class BoardFormComponent implements OnInit, OnDestroy {
         }
       }
       this.addBoard(board);
-      this.boardForm?.reset();
     } else {
       alert('ERROR');
     }
@@ -78,10 +85,9 @@ export class BoardFormComponent implements OnInit, OnDestroy {
   public submitUpdatingForm(): void {
     if (this.boardForm.valid) {
       const board: { name: string } = {
-        name: this.boardForm?.controls[BoardControls.name].value
+        name: this.boardForm.controls[BoardControls.name].value.trim()
       };
       this.updateBoard(board);
-      this.boardForm?.reset();
     } else {
       alert('ERROR');
     }
@@ -90,6 +96,9 @@ export class BoardFormComponent implements OnInit, OnDestroy {
   public isControlValid(controlName: string): boolean {
     const control: AbstractControl | undefined = this.boardForm?.controls[controlName];
     if (control) {
+      if (control.value && control.value.match(/^[ ]+$/)) {
+        control.setValue(control.value.trim());
+      }
       return control.invalid && (control.dirty || control.touched);
     } else {
       return false;

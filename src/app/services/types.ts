@@ -32,7 +32,7 @@ export type Card = {
   updateDate: string;
   images?: string[];
   position: number;
-  history?: string[];
+  history: string[];
 };
 
 export type User = {

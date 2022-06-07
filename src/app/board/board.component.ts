@@ -1,7 +1,7 @@
 import {Component, OnInit, Input, OnDestroy} from '@angular/core';
 import {ButtonAppearance, Icon, Shape, Collection} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
-import {Observable, Subscription, switchMap} from 'rxjs';
+import {Observable, Subscription, switchMap, tap} from 'rxjs';
 import {BoardStore, ListStore, UserStore} from '../services/types';
 import {ListFormComponent} from '../list-form/list-form.component';
 import {CardFormComponent} from '../card-form/card-form.component';
@@ -9,6 +9,8 @@ import {ActivatedRoute, Params} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {BoardUpdateComponent} from '../board-update/board-update.component';
 import {MembersFormComponent} from '../members-form/members-form.component';
+
+const SORTING_FIELD: string = 'dateCreating';
 
 @Component({
   selector: 'app-board',
@@ -20,10 +22,9 @@ export class BoardComponent implements OnInit, OnDestroy {
   @Input()
   public board: BoardStore | undefined;
   private subscriptionList: Subscription[] = [];
-  readonly SORTING_FIELD: string = 'dateCreating';
-  public buttonContentList: string = 'Add List';
-  public buttonContentCard: string = 'Add Card';
-  public buttonSize: string = 'width: 48px; height: 48px;';
+  readonly buttonContentList: string = 'Add List';
+  readonly buttonContentCard: string = 'Add Card';
+  readonly buttonSize: string = 'width: 48px; height: 48px;';
   public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
   public icon: typeof Icon = Icon;
   public shape: typeof Shape = Shape;
@@ -57,11 +58,14 @@ export class BoardComponent implements OnInit, OnDestroy {
   private getBoard(boardID: string): void {
     this.subscriptionList.push(
       this.boards$.pipe(
-        switchMap(() => this.crudService.getDataDoc<BoardStore>(Collection.BOARDS, boardID))
-      ).subscribe((board: BoardStore | undefined) => {
-        this.board = board;
-        if (this.board) this.getMembers(this.board);
-      })
+        switchMap(() => this.crudService.getDataDoc<BoardStore>(Collection.BOARDS, boardID)),
+        tap((board: BoardStore | undefined) => {
+          if (board) {
+            this.getMembers(board);
+            this.board = board;
+          }
+        })
+      ).subscribe()
     );
   }
 
@@ -71,7 +75,7 @@ export class BoardComponent implements OnInit, OnDestroy {
       this.subscriptionList.push(
         this.crudService.getDataDoc<UserStore>(Collection.USERS, memberID)
           .subscribe((user: UserStore | undefined) => {
-              if (user) {
+              if (user && !this.members.includes(user)) {
                 this.members.push(user);
               }
             }
@@ -89,7 +93,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.subscriptionList.push(
       this.lists$.subscribe((lists: ListStore[]) => {
           this.lists = lists.filter((list: ListStore) => list.boardID === this.boardID)
-            .sort(this.byField(this.SORTING_FIELD));
+            .sort(this.byField(SORTING_FIELD));
         }
       )
     );
@@ -99,8 +103,10 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.dialog.open(ListFormComponent, {data: {boardID: this.boardID}});
   }
 
-  public openCardDialog(): void {
-    this.dialog.open(CardFormComponent, {data: {boardID: this.boardID}});
+  public openCardDialog(isButtonDisable: boolean): void {
+    if (!isButtonDisable) {
+      this.dialog.open(CardFormComponent, {data: {boardID: this.boardID}});
+    }
   }
 
   public openBoardDialog(): void {
@@ -109,7 +115,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     }
   }
 
-  public openMembersDialog() {
+  public openMembersDialog(): void {
     this.dialog.open(MembersFormComponent, {data: {boardID: this.boardID}});
   }
 

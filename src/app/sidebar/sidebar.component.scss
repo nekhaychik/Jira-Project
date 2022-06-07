@@ -21,6 +21,7 @@ $sidebarBackground: #FFFFFF;
 
 .sidebar__boards {
   display: flex;
+  max-height: calc(100vh - 250px);
   flex-direction: column;
   grid-gap: 14px;
 }

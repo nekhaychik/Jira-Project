@@ -8,6 +8,7 @@ import {BoardComponent} from './board/board.component';
 import {BarChartComponent} from './bar-chart/bar-chart.component';
 import {StatisticsComponent} from './statistics/statistics.component';
 import {CardLinkComponent} from './card-link/card-link.component';
+import {BoardGuard} from './services/auth/board.guard';
 
 const routes: Routes = [
   {path: '', redirectTo: '/' + Paths.board, pathMatch: 'full'},
@@ -16,6 +17,7 @@ const routes: Routes = [
     children: [{
       path: ':id',
       component: BoardComponent,
+      canActivate: [BoardGuard],
       children: [{
         path: ':id',
         component: CardLinkComponent
@@ -28,7 +30,8 @@ const routes: Routes = [
     path: Paths.statistics, canActivate: [AuthGuard], component: StatisticsComponent,
     children: [{
       path: ':id',
-      component: BarChartComponent
+      component: BarChartComponent,
+      canActivate: [BoardGuard]
     }
     ]
   }

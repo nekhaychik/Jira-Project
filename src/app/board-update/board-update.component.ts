@@ -13,7 +13,7 @@ export interface DialogData {
 })
 export class BoardUpdateComponent {
 
-  public formHeader: string = 'Change board members';
+  public formHeader: string = 'Change board name';
   public nameInput: string = 'New name';
   public isCreating: boolean = false;
 

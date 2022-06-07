@@ -25,9 +25,16 @@ $boardPadding: 42px 30px;
 }
 
 .board__title {
+  display: flex;
+  align-items: center;
+  grid-gap: 5px;
   margin: 0;
   font: $mainHeaderFont;
   color: $mainTextColor;
+}
+
+mat-icon {
+  cursor: pointer;
 }
 
 .board__members {
@@ -72,5 +79,4 @@ button {
   .board__members {
     display: none
   }
-
 }

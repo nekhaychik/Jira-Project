@@ -48,7 +48,7 @@ export class CrudService {
             {
               id: id,
               ...data,
-            }
+            } as T
             : null;
         })
       )
