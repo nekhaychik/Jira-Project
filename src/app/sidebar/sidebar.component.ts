@@ -57,6 +57,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
     return index;
   }
 
+  public deleteBoard(id: string): void {
+    this.subscriptionList.push(
+      this.crudService.deleteObject(Collection.BOARDS, id).subscribe()
+    );
+  }
+
   public ngOnDestroy(): void {
     this.subscriptionList.forEach((s: Subscription) => s.unsubscribe());
   }
