@@ -13,6 +13,12 @@ $sidebarBackground: #FFFFFF;
   padding: $boardPadding;
 }
 
+.board__name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .board__title {
   font: $mainHeaderFont;
   color: $mainTextColor;

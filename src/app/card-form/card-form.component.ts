@@ -4,7 +4,7 @@ import {CardControls} from '../models/controls.enum';
 import {CrudService} from '../services/crud/crud.service';
 import {BoardStore, Card, CardStore, ListStore, UserStore} from '../services/types';
 import {Collection} from '../enums';
-import {Observable, combineLatest, takeWhile, Subscription} from 'rxjs';
+import {Observable, combineLatest, takeWhile, Subscription, tap} from 'rxjs';
 import {UploadService} from '../services/crud/upload.service';
 import firebase from 'firebase/compat';
 import {AuthService} from '../services/auth/auth.service';
@@ -123,10 +123,23 @@ export class CardFormComponent implements OnInit, OnDestroy {
   private getUsers(): void {
     this.users = [];
     this.subscriptionList.push(
-      this.users$.subscribe((users: UserStore[]) => {
-        this.users = users.filter((user: UserStore) => this.board?.membersID.includes(user.uid));
-      })
+      this.users$.pipe(
+        tap((users: UserStore[]) => {
+          this.users = users.filter((user: UserStore) => this.board?.membersID.includes(user.uid));
+          this.isExistAssignee();
+        })
+      ).subscribe()
     );
+  }
+
+  private isExistAssignee(): void {
+    let usersID: string[] = [];
+    this.users.forEach((user: UserStore) => {
+      usersID.push(user.id);
+    });
+    if (this.card && !usersID.includes(this.card.memberID) && this.authUser) {
+      this.card.memberID = this.authUser.uid;
+    }
   }
 
   private getListName(id: string): string {
