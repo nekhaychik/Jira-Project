@@ -41,3 +41,9 @@ export enum Paths {
   authorization = 'authorization',
   statistics = 'statistics'
 }
+
+export enum ValidationErrors {
+  Exist = 'exist',
+  Required = 'required',
+  MaxLength = 'maxlength'
+}
