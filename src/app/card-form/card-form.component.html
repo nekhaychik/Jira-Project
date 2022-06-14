@@ -18,8 +18,15 @@
     <p>
       <mat-form-field appearance="outline">
         <mat-label>Description</mat-label>
-        <textarea (keyup)="isTextValueValid(formControls.description)" matInput placeholder="Description of your task"
-                  [formControlName]="formControls.description" [value]="card?.description"></textarea>
+        <textarea matInput
+                  placeholder="Description of your task"
+                  [formControlName]="formControls.description"
+                  [value]="card?.description"
+                  (keyup)="textValueValid(formControls.description)">
+        </textarea>
+        <mat-error *ngIf="isControlValid(formControls.description)">
+          Max length is 1200
+        </mat-error>
       </mat-form-field>
     </p>
 
@@ -58,7 +65,10 @@
     <p>
       <mat-form-field class="datepicker" appearance="fill">
         <mat-label>Choose a due date</mat-label>
-        <input matInput placeholder="MM/DD/YYYY" [matDatepickerFilter]="myFilter" [matDatepicker]="picker"
+        <input matInput
+               placeholder="MM/DD/YYYY"
+               [matDatepickerFilter]="myFilter"
+               [matDatepicker]="picker"
                [formControlName]="formControls.dueDate">
         <mat-hint>MM/DD/YYYY</mat-hint>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -70,67 +80,52 @@
     </p>
 
     <ng-container *ngIf="isCreating">
-
       <div>
-        <label for="file" [style]="labelStyle">Choose an image</label>
+        <label class="label__add-image" for="file" [style]="labelStyle">
+          <mat-icon>attach_file</mat-icon>
+          Choose an image
+        </label>
         <input
-          [disabled]="isDisable"
+          class="input__add-image"
           type="file"
           id="file"
-          style="display: none"
+          [disabled]="isDisable"
           (change)="onFileSelected($event)"
-          name="image"
           autocomplete="off"
           accept=".jpg, .jpeg, .png"
         />
       </div>
-      <ng-container *ngFor="let image of imageLinks">
+      <ng-container *ngFor="let image of imageLinks; trackBy: trackByFn">
         <div class="card__images-container">
-          <img [src]="image" width="70px" height="70px"/>
+          <img class="card__image" [src]="image" alt=""/>
         </div>
       </ng-container>
-      <progress max="100" [value]="progress"></progress>
+      <progress *ngIf="isDisable" max="100" [value]="progress"></progress>
 
     </ng-container>
 
 
     <div>
-      <div *ngIf="isCreating; then createButton else updateButton"></div>
-
-      <ng-template #createButton>
-        <button
-          mat-dialog-close
-          [disabled]="cardForm.invalid || isDisable" (click)="submitForm()"
-          tuiButton
-          size="l"
-          type="submit"
-          class="tui-form__button"
-        >
-          Submit
-        </button>
-      </ng-template>
-
-      <ng-template #updateButton>
-        <button
-          *ngIf="card"
-          mat-dialog-close
-          [disabled]="cardForm.invalid" (click)="submitUpdatingForm(card.id)"
-          tuiButton
-          size="l"
-          type="submit"
-          class="tui-form__button"
-        >
-          Submit
-        </button>
-      </ng-template>
+      <button
+        tuiButton
+        mat-dialog-close
+        class="tui-form__button"
+        type="submit"
+        [size]="buttonSize"
+        [appearance]="buttonAppearance.Primary"
+        [disabled]="cardForm.invalid || isDisable"
+        (click)="isCreating ? submitForm() : submitUpdatingForm(card.id)"
+      >
+        Submit
+      </button>
 
       <button
-        mat-dialog-close
         tuiButton
-        type="button"
-        appearance="secondary"
-        size="l"
+        mat-dialog-close
         class="tui-form__button"
+        type="button"
+        [size]="buttonSize"
+        [appearance]="buttonAppearance.Secondary"
       >
         Cancel
       </button>

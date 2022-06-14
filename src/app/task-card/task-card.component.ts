@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Collection, Paths, Status} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
-import {CardStore, UserStore} from '../services/types';
+import {BoardStore, CardStore, UserStore} from '../services/types';
 import {Observable, Subscription, switchMap} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {CardFormUpdateComponent} from '../card-form-update/card-form-update.component';
@@ -17,9 +17,11 @@ export class TaskCardComponent implements OnInit, OnDestroy {
 
   @Input()
   public card: CardStore | undefined;
-  readonly subscriptionList: Subscription[] = [];
-  public status: typeof Status = Status;
+  @Input()
+  public board: BoardStore | undefined;
+  private subscriptionList: Subscription[] = [];
   private boardID: string = '';
+  public status: typeof Status = Status;
   public assignee: UserStore | undefined;
   private cards$: Observable<CardStore[]> = this.crudService.handleData(Collection.CARDS);
 
@@ -41,13 +43,6 @@ export class TaskCardComponent implements OnInit, OnDestroy {
   }
 
   private getAssignee(): void {
-    // if (this.card) {
-    //   this.subscriptionList.push(
-    //     this.crudService.getDataDoc<UserStore>(Collection.USERS, this.card.memberID).subscribe((user: UserStore | undefined) => {
-    //       this.assignee = user;
-    //     })
-    //   );
-    // }
     if (this.card) {
       this.subscriptionList.push(
         this.cards$.pipe(
@@ -67,7 +62,7 @@ export class TaskCardComponent implements OnInit, OnDestroy {
   }
 
   public openUpdateCardDialog(card: CardStore): void {
-    this.dialog.open(CardFormUpdateComponent, {data: {card: card, boardID: this.boardID}});
+    this.dialog.open(CardFormUpdateComponent, {data: {card: card, board: this.board, boardID: this.boardID}});
   }
 
   public deleteCard(id: string): void {

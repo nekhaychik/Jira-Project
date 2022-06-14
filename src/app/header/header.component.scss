@@ -12,7 +12,6 @@ header {
 }
 
 .wrapper {
-  //max-width: 1410px;
   height: 90px;
   margin: auto;
   display: flex;
@@ -79,7 +78,7 @@ app-avatar {
 }
 
 @media screen and (max-width: 800px) {
-  .logo__title{
+  .logo__title {
     font: var(--tui-font-heading-3);
   }
 

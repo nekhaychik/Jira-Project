@@ -33,3 +33,18 @@ textarea {
   max-height: 150px;
   overflow-y: scroll;
 }
+
+.label__add-image {
+  padding: 4px 0 18px;
+  display: flex;
+  align-items: center;
+}
+
+.input__add-image {
+  display: none;
+}
+
+.card__image {
+  width: 70px;
+  height: 70px;
+}

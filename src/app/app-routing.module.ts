@@ -12,12 +12,15 @@ import {BoardGuard} from './services/auth/board.guard';
 
 const routes: Routes = [
   {path: '', redirectTo: '/' + Paths.board, pathMatch: 'full'},
+  {path: Paths.authorization, component: AuthComponent},
   {
-    path: Paths.board, canActivate: [AuthGuard], component: MainPageComponent,
+    path: Paths.board,
+    canActivate: [AuthGuard],
+    component: MainPageComponent,
     children: [{
       path: ':id',
-      component: BoardComponent,
       canActivate: [BoardGuard],
+      component: BoardComponent,
       children: [{
         path: ':id',
         component: CardLinkComponent
@@ -25,13 +28,14 @@ const routes: Routes = [
     }
     ]
   },
-  {path: Paths.authorization, component: AuthComponent},
   {
-    path: Paths.statistics, canActivate: [AuthGuard], component: StatisticsComponent,
+    path: Paths.statistics,
+    canActivate: [AuthGuard],
+    component: StatisticsComponent,
     children: [{
       path: ':id',
-      component: BarChartComponent,
-      canActivate: [BoardGuard]
+      canActivate: [BoardGuard],
+      component: BarChartComponent
     }
     ]
   }

@@ -13,9 +13,9 @@ import {Subscription, switchMap} from 'rxjs';
 export class AuthComponent implements OnInit, OnDestroy {
 
   private subscriptionList: Subscription[] = [];
+  private user: firebase.User | null = null;
   public buttonContent: string = 'Log in with Google';
   public buttonSize: Size = Size.l;
-  private user: firebase.User | null = null;
 
   constructor(private router: Router,
               private authService: AuthService) {

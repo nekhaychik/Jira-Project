@@ -3,14 +3,15 @@ import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/form
 import {MembersControls} from '../models/controls.enum';
 import {Observable, Subscription} from 'rxjs';
 import {BoardStore, UserStore} from '../services/types';
-import {Collection} from '../enums';
+import {ButtonAppearance, Collection, Size} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import firebase from 'firebase/compat';
 import {AuthService} from '../services/auth/auth.service';
 
 export interface DialogData {
-  boardID: string
+  boardID: string,
+  board: BoardStore
 }
 
 @Component({
@@ -21,12 +22,12 @@ export interface DialogData {
 export class MembersFormComponent implements OnInit, OnDestroy {
 
   private subscriptionList: Subscription[] = [];
+  private authUser: firebase.User | null = null;
+  public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
   public membersForm: FormGroup = new FormGroup({});
   public formControls: typeof MembersControls = MembersControls;
-  public board: BoardStore | undefined;
-  public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
-  private authUser: firebase.User | null = null;
-  public membersID: string[] = [];
+  public buttonSize: typeof Size = Size;
+  public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
 
   constructor(private crudService: CrudService,
               public dialogRef: MatDialogRef<MembersFormComponent>,
@@ -36,8 +37,7 @@ export class MembersFormComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.getAuthUser();
-    this.getBoard();
-    this.membersForm.addControl(MembersControls.membersID, new FormControl(this.membersID, Validators.required));
+    this.membersForm.addControl(MembersControls.membersID, new FormControl(this.data.board.membersID, Validators.required));
   }
 
   private getAuthUser(): void {
@@ -46,25 +46,6 @@ export class MembersFormComponent implements OnInit, OnDestroy {
         this.authUser = value;
       })
     );
-  }
-
-  private getBoard(): void {
-    this.subscriptionList.push(
-      this.crudService.getDataDoc<BoardStore>(Collection.BOARDS, this.data.boardID).subscribe(
-        (board: BoardStore | undefined) => {
-          this.board = board;
-          if (this.board) {
-            this.getMembersID(this.board);
-          }
-        }
-      )
-    );
-  }
-
-  private getMembersID(board: BoardStore): void {
-    board.membersID.forEach((id: string) => {
-      this.membersID.push(id);
-    });
   }
 
   private addMembers(members: { membersID: string[] }): void {

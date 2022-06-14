@@ -6,7 +6,8 @@ import {ChartDataset} from 'chart.js';
 import {BaseChartDirective} from 'ng2-charts';
 import {Collection} from '../enums';
 import {Subscription} from 'rxjs';
-import {BAR_CHAR_LABEL} from '../constants';
+
+const BAR_CHAR_LABEL = 'Number Of Tasks';
 
 @Component({
   selector: 'app-bar-chart',
@@ -29,8 +30,7 @@ export class BarChartComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   public ngOnInit(): void {
     this.subscriptionList.push(
-      this.route.params.subscribe(
-        (params: Params) => {
+      this.route.params.subscribe((params: Params) => {
           this.boardID = params['id'];
           this.dataHandler(this.boardID);
         }

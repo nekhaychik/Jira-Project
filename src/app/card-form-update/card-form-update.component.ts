@@ -1,9 +1,10 @@
 import {Component, Inject} from '@angular/core';
-import {CardStore} from '../services/types';
+import {BoardStore, CardStore} from '../services/types';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 export interface DialogData {
   card: CardStore,
+  board: BoardStore
   boardID: string
 }
 

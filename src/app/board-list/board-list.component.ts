@@ -1,13 +1,13 @@
-import {Component, OnInit, Input, ViewEncapsulation, OnDestroy} from '@angular/core';
+import {Component, OnInit, Input, ViewEncapsulation, OnDestroy, ViewChild} from '@angular/core';
 import {ButtonAppearance, Collection, Icon, Size} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
-import {CardStore, ListStore} from '../services/types';
+import {BoardStore, CardStore, ListStore} from '../services/types';
 import {MatDialog} from '@angular/material/dialog';
 import {ListFormUpdateComponent} from '../list-form-update/list-form-update.component';
 import {CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {AuthService} from '../services/auth/auth.service';
 import firebase from 'firebase/compat';
-import {Observable, Subscription} from 'rxjs';
+import {Observable, Subscription, switchMap} from 'rxjs';
 
 const SORTING_FIELD: string = 'position';
 
@@ -20,15 +20,18 @@ const SORTING_FIELD: string = 'position';
 export class BoardListComponent implements OnInit, OnDestroy {
 
   @Input()
-  public list: ListStore | null = null;
+  public list: ListStore | undefined;
+  @Input()
+  public board: BoardStore | undefined;
   private subscriptionList: Subscription[] = [];
+  private authUser: firebase.User | null = null;
+  private lists: ListStore[] = [];
+  public cards: CardStore[] = [];
   public icon: typeof Icon = Icon;
   public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
   public buttonSize: Size = Size.m;
-  public listCards: CardStore[] = [];
-  private authUser: firebase.User | null = null;
-  private lists: ListStore[] = [];
   private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
+  private cards$: Observable<CardStore[]> = this.crudService.handleData<CardStore>(Collection.CARDS);
 
   constructor(private crudService: CrudService,
               public dialog: MatDialog,
@@ -43,10 +46,12 @@ export class BoardListComponent implements OnInit, OnDestroy {
 
   private getCards(): void {
     this.subscriptionList.push(
-      this.crudService.handleData<CardStore>(Collection.CARDS).subscribe((cards: CardStore[]) => {
-        this.listCards = cards.filter((card: CardStore) => card.listID === this.list?.id).sort(
-          this.byField(SORTING_FIELD)
-        );
+      this.lists$.pipe(
+        switchMap(() => this.cards$)
+      ).subscribe((cards: CardStore[]) => {
+        this.cards = cards
+          .filter((card: CardStore) => card.listID === this.list?.id)
+          .sort(this.byField(SORTING_FIELD));
       })
     );
   }
@@ -113,11 +118,10 @@ export class BoardListComponent implements OnInit, OnDestroy {
         event.container.data,
         event.previousIndex,
         event.currentIndex
-      );
+      )
       this.addCardHistory(event.container, event.previousContainer, event.item.data);
       this.updateCardPosition(event.previousContainer);
     }
-
     this.updateCardPosition(event.container);
   }
 

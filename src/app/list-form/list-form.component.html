@@ -1,4 +1,4 @@
-<form [formGroup]="createListForm">
+<form [formGroup]="listForm">
 
   <h3 class="tui-form__header tui-form__header_margin-top_none">
     {{formHeader}}
@@ -7,49 +7,41 @@
   <p>
     <mat-form-field appearance="outline">
       <mat-label>List Name</mat-label>
-      <input matInput placeholder="Input list name" [formControlName]="formControls.name" [value]="listName">
-      <mat-error *ngIf="isControlValid(formControls.name)">
-        List name is <strong>required</strong>. Max length is 16
+      <input matInput placeholder="Input list name" [formControlName]="formControls.name" [value]="listName"
+             autocomplete="off">
+      <mat-error *ngIf="isControlValid(formControls.name) && currentError === errors.Required">
+        List name is <strong>required</strong>.
+      </mat-error>
+      <mat-error *ngIf="isControlValid(formControls.name) && currentError === errors.MaxLength">
+        Max length is <strong>16</strong>.
+      </mat-error>
+      <mat-error *ngIf="isControlValid(formControls.name) && currentError === errors.Exist">
+        List name is already <strong>exist</strong>.
       </mat-error>
     </mat-form-field>
   </p>
 
   <div>
-    <div *ngIf="isCreating; then createButton else updateButton"></div>
-
-    <ng-template #createButton>
-      <button
-        mat-dialog-close
-        [disabled]="createListForm.invalid" (click)="submitForm()"
-        tuiButton
-        size="l"
-        type="submit"
-        class="tui-form__button"
-      >
-        Submit
-      </button>
-    </ng-template>
-
-    <ng-template #updateButton>
-      <button
-        mat-dialog-close
-        [disabled]="createListForm.invalid" (click)="submitUpdatingForm(id)"
-        tuiButton
-        size="l"
-        type="submit"
-        class="tui-form__button"
-      >
-        Submit
-      </button>
-    </ng-template>
+    <button
+      tuiButton
+      mat-dialog-close
+      class="tui-form__button"
+      type="submit"
+      [size]="buttonSize"
+      [appearance]="buttonAppearance.Primary"
+      [disabled]="listForm.invalid"
+      (click)="isCreating ? submitForm() : submitUpdatingForm(id)"
+    >
+      Submit
+    </button>
 
     <button
-      mat-dialog-close
       tuiButton
-      type="button"
-      appearance="secondary"
-      size="l"
+      mat-dialog-close
       class="tui-form__button"
+      type="button"
+      [size]="buttonSize"
+      [appearance]="buttonAppearance.Secondary"
     >
       Cancel
     </button>

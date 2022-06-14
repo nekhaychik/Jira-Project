@@ -14,10 +14,3 @@ $boardHeight: calc(100vh - 90px);
   flex-wrap: wrap;
   grid-gap: 8px;
 }
-
-.board__background {
-  position: absolute;
-  width: $boardWidth;
-  height: $boardHeight;
-  z-index: -1;
-}

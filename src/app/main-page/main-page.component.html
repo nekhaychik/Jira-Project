@@ -1,14 +1,18 @@
 <div class="main-container">
-  <mat-drawer-container class="example-container" [hasBackdrop]="true">
+  <mat-drawer-container [hasBackdrop]="true">
     <mat-drawer #drawer mode="over">
-      <app-sidebar></app-sidebar>
+      <app-sidebar [drawer]="drawer"></app-sidebar>
     </mat-drawer>
     <mat-drawer-content>
-      <button tuiButton size="xs" shape="rounded" (click)="drawer.toggle()">
+      <button
+        tuiButton
+        [size]="buttonSize"
+        [shape]="buttonShape.Rounded"
+        (click)="drawer.toggle()">
         <mat-icon>chevron_right</mat-icon>
       </button>
       <div class="board">
-        <img class="board__background" [src]="imagePath" alt="">
+        <img class="board__background" [src]="imagePath" alt="background">
         <router-outlet></router-outlet>
       </div>
     </mat-drawer-content>

@@ -1,5 +1,8 @@
 <ng-container *ngIf="list">
-  <mat-card>
+  <mat-card cdkDropList
+            [cdkDropListData]="cards"
+            (cdkDropListDropped)="drop($event)"
+            [id]="list.id">
     <mat-card-header class="mat-card-header">
       <mat-card-title class="mat-card-title">
         {{list.name}}
@@ -10,7 +13,7 @@
               [appearance]="buttonAppearance.Flat">
       </button>
       <mat-menu #menu="matMenu">
-        <ng-container *ngIf="!listCards.length">
+        <ng-container *ngIf="!cards.length">
           <button mat-menu-item (click)="deleteList(list.id)">
             <mat-icon>delete_outline</mat-icon>
             <span>Delete</span>
@@ -23,13 +26,10 @@
       </mat-menu>
     </mat-card-header>
     <tui-scrollbar [hidden]="true">
-      <mat-card-content cdkDropList
-                        class="card__container"
-                        [cdkDropListData]="listCards"
-                        (cdkDropListDropped)="drop($event)"
-                        [id]="list.id">
-        <ng-container *ngFor="let card of listCards; trackBy: trackByFn">
-          <app-task-card [card]="card"
+      <mat-card-content class="card__container">
+        <ng-container *ngFor="let card of cards; trackBy: trackByFn">
+          <app-task-card [board]="board"
+                         [card]="card"
                          [cdkDragData]="card"
                          cdkDrag>
           </app-task-card>

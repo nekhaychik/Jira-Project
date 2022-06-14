@@ -3,7 +3,7 @@ import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/form
 import {BoardControls} from '../models/controls.enum';
 import {CrudService} from '../services/crud/crud.service';
 import {Board, UserStore} from '../services/types';
-import {Collection} from '../enums';
+import {Collection, Paths} from '../enums';
 import {Observable, Subscription} from 'rxjs';
 import {Router} from '@angular/router';
 import firebase from 'firebase/compat';

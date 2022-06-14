@@ -21,6 +21,7 @@ $statusBlockedColor: var(--tui-warning-fill);
   margin: 10px 0 0;
   background: $cardBackground;
   display: flex;
+  grid-gap: 8px;
   flex-grow: 1;
   flex-direction: column;
   border-radius: .125rem;
@@ -33,21 +34,23 @@ $statusBlockedColor: var(--tui-warning-fill);
   padding: 10px;
 }
 
-.card__title {
+.card__header {
   display: flex;
   font: $cardTextFont;
   justify-content: space-between;
 }
 
-.card__checklist {
+.card__header-icons {
   display: flex;
-  align-items: center;
-  grid-gap: 10px;
-  margin-bottom: 8px;
+  gap: 8px;
 }
 
-.card__checklist-number {
-  margin: 0;
+.card__icon {
+  cursor: pointer;
+}
+
+.card__description {
+  margin-bottom: 10px;
 }
 
 .mat-chip.mat-standard-chip::after {
@@ -74,8 +77,4 @@ $statusBlockedColor: var(--tui-warning-fill);
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-}
-
-.card__description {
-  margin-bottom: 16px;
 }

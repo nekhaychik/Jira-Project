@@ -1,5 +1,5 @@
 import {Component, OnInit, Inject, OnDestroy} from '@angular/core';
-import {CardStore, ListStore, UserStore} from '../services/types';
+import {BoardStore, CardStore, ListStore, UserStore} from '../services/types';
 import {CrudService} from '../services/crud/crud.service';
 import {Collection, Paths} from '../enums';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
@@ -40,6 +40,7 @@ export class FullCardComponent implements OnInit, OnDestroy {
   public imageLink: string = '';
   public progress: string | undefined = '';
   public isDisable: boolean = false;
+  private board: BoardStore | undefined;
 
   constructor(private crudService: CrudService,
               private authService: AuthService,
@@ -50,10 +51,23 @@ export class FullCardComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    this.getBoard();
     this.getAuthUser();
     this.getList();
     this.getMember();
     this.getReporter();
+  }
+
+  public trackByFn(index: number, item: string): number {
+    return index;
+  }
+
+  private getBoard(): void {
+    this.subscriptionList.push(
+      this.crudService.getDataDoc<BoardStore>(Collection.BOARDS, this.data.boardID).subscribe((board: BoardStore | undefined) => {
+        this.board = board;
+      })
+    )
   }
 
   private getAuthUser(): void {
@@ -102,7 +116,7 @@ export class FullCardComponent implements OnInit, OnDestroy {
     if (seconds) {
       return new Date(seconds * ONE_SECOND).toDateString();
     }
-    return 'Not found';
+    return 'Sorry, we don\'t know due date of this card :(';
   }
 
   public deleteCard(id: string): void {
@@ -112,13 +126,13 @@ export class FullCardComponent implements OnInit, OnDestroy {
   }
 
   public openUpdateCardDialog(card: CardStore): void {
-    this.dialog.open(CardFormUpdateComponent, {data: {card: card, boardID: this.data.boardID}});
+    this.dialog.open(CardFormUpdateComponent, {data: {card: card, boardID: this.data.boardID, board: this.board}});
     this.router.navigate([Paths.board + '/' + this.data.boardID]);
   }
 
   public onFileSelected(event: Event): void {
     if (event) {
-      const eventTarget: HTMLInputElement = (<HTMLInputElement>event?.target);
+      const eventTarget: HTMLInputElement = (<HTMLInputElement>event.target);
       if (eventTarget && eventTarget.files) {
         const file: File = eventTarget.files[0];
         this.subscriptionList.push(

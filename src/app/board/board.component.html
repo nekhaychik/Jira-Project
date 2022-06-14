@@ -5,8 +5,10 @@
       <mat-icon (click)="openBoardDialog()">settings</mat-icon>
     </h2>
     <div class="board__members">
-      <ng-container *ngFor="let member of members; trackBy: trackByFn">
-        <app-avatar [name]="member.name" [avatarUrl]="member.avatarUrl"></app-avatar>
+      <ng-container *ngFor="let member of users$ | async">
+        <ng-container *ngIf="membersID.includes(member.id)">
+          <app-avatar [name]="member.name" [avatarUrl]="member.avatarUrl"></app-avatar>
+        </ng-container>
       </ng-container>
       <button tuiIconButton [icon]="icon.IconPlus"
               [style]="buttonSize"
@@ -23,7 +25,7 @@
   <tui-scrollbar [hidden]="true">
     <div class="board__lists" cdkDropListGroup>
       <ng-container *ngFor="let list of lists; trackBy: trackByFn">
-        <div class="board__list" app-board-list [list]="list"></div>
+        <div class="board__list" app-board-list [list]="list" [board]="board"></div>
       </ng-container>
     </div>
   </tui-scrollbar>

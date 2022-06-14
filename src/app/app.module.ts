@@ -7,7 +7,7 @@ import {AngularFireModule} from '@angular/fire/compat';
 import {AngularFireAuthModule} from '@angular/fire/compat/auth';
 import {AngularFirestoreModule} from '@angular/fire/compat/firestore';
 import {AngularFireStorageModule} from '@angular/fire/compat/storage';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 
 import {
@@ -63,9 +63,9 @@ import {BoardFormComponent} from './board-form/board-form.component';
 import {MembersFormComponent} from './members-form/members-form.component';
 import {BoardUpdateComponent} from './board-update/board-update.component';
 import {BarChartComponent} from './bar-chart/bar-chart.component';
-import {PieChartComponent} from './pie-chart/pie-chart.component';
 import {StatisticsComponent} from './statistics/statistics.component';
 import {CardLinkComponent} from './card-link/card-link.component';
+import {FilterPipe} from './filter.pipe';
 
 @NgModule({
   declarations: [
@@ -90,9 +90,9 @@ import {CardLinkComponent} from './card-link/card-link.component';
     MembersFormComponent,
     BoardUpdateComponent,
     BarChartComponent,
-    PieChartComponent,
     StatisticsComponent,
-    CardLinkComponent
+    CardLinkComponent,
+    FilterPipe
   ],
   imports: [
     BrowserModule,
@@ -126,7 +126,8 @@ import {CardLinkComponent} from './card-link/card-link.component';
     TuiSidebarModule,
     TuiActiveZoneModule,
     NgChartsModule,
-    MatSidenavModule
+    MatSidenavModule,
+    FormsModule
   ],
   providers: [{provide: TUI_SANITIZER, useClass: NgDompurifySanitizer}],
   bootstrap: [AppComponent]

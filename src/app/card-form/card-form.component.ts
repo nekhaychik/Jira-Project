@@ -3,7 +3,7 @@ import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/form
 import {CardControls} from '../models/controls.enum';
 import {CrudService} from '../services/crud/crud.service';
 import {BoardStore, Card, CardStore, ListStore, UserStore} from '../services/types';
-import {Collection} from '../enums';
+import {ButtonAppearance, Collection, Size} from '../enums';
 import {Observable, combineLatest, takeWhile, Subscription, tap} from 'rxjs';
 import {UploadService} from '../services/crud/upload.service';
 import firebase from 'firebase/compat';
@@ -19,7 +19,8 @@ import {
 } from '../constants';
 
 export interface DialogData {
-  boardID: string
+  boardID: string,
+  board: BoardStore
 }
 
 const ACTIVE_LABEL: string = 'cursor: pointer; color: #526ed3;';
@@ -39,14 +40,17 @@ export class CardFormComponent implements OnInit, OnDestroy {
   @Input()
   public isCreating: boolean = true;
   @Input()
+  public board: BoardStore | undefined;
+  @Input()
   public boardID: string = '';
+  private subscriptionList: Subscription[] = [];
+  public buttonSize: Size = Size.l;
+  public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
   public isDisable: boolean = false;
   public labelStyle: string = ACTIVE_LABEL;
   public imageLinks: string[] = [];
   public progress: string | undefined = '';
-  private subscriptionList: Subscription[] = [];
   private currentDueDate: string | null = null;
-  private board: BoardStore | undefined;
   public lists: ListStore[] = [];
   private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
   private authUser: firebase.User | null = null;
@@ -74,19 +78,20 @@ export class CardFormComponent implements OnInit, OnDestroy {
     }
     if (this.isCreating) {
       this.boardID = this.data.boardID;
+    } else {
+      this.board = this.data.board;
     }
 
     this.getAuthUser();
-    this.getBoard();
     this.getUsers();
     this.getLists();
 
     this.cardForm.addControl(CardControls.name, new FormControl(this.card?.name, Validators.compose([Validators.required, Validators.maxLength(NAME_MAX_LENGTH)])));
-    this.cardForm.addControl(CardControls.priority, new FormControl(this.card?.priority, Validators.compose([Validators.required, Validators.maxLength(DESCRIPTION_MAX_LENGTH)])));
+    this.cardForm.addControl(CardControls.priority, new FormControl(this.card?.priority, Validators.required));
     this.cardForm.addControl(CardControls.dueDate, new FormControl(this.currentDueDate, Validators.required));
     this.cardForm.addControl(CardControls.list, new FormControl(this.card?.listID, Validators.required));
     this.cardForm.addControl(CardControls.member, new FormControl(this.card?.memberID, Validators.required));
-    this.cardForm.addControl(CardControls.description, new FormControl(this.card?.description));
+    this.cardForm.addControl(CardControls.description, new FormControl(this.card?.description, Validators.maxLength(DESCRIPTION_MAX_LENGTH)));
   }
 
   private getAuthUser(): void {
@@ -97,12 +102,9 @@ export class CardFormComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getBoard(): void {
-    this.subscriptionList.push(
-      this.crudService.getDataDoc<BoardStore>(Collection.BOARDS, this.boardID).subscribe((board: BoardStore | undefined) => {
-        this.board = board;
-      })
-    );
+
+  public trackByFn(index: number, item: string): number {
+    return index;
   }
 
   public myFilter = (d: Date | null): boolean => {
@@ -125,7 +127,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
     this.subscriptionList.push(
       this.users$.pipe(
         tap((users: UserStore[]) => {
-          this.users = users.filter((user: UserStore) => this.board?.membersID.includes(user.uid));
+          this.users = users.filter((user: UserStore) => this.data.board.membersID.includes(user.uid));
           this.isExistAssignee();
         })
       ).subscribe()
@@ -190,9 +192,9 @@ export class CardFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  public submitUpdatingForm(id: string): void {
+  public submitUpdatingForm(id: string | undefined): void {
     let history: string[] = [];
-    if (this.cardForm.valid && this.card) {
+    if (this.cardForm.valid && this.card && id) {
       const card: Card = {
         name: this.cardForm?.controls[CardControls.name].value,
         priority: this.cardForm?.controls[CardControls.priority].value,
@@ -263,7 +265,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  public isTextValueValid(controlName: string): void {
+  public textValueValid(controlName: string): void {
     const control: AbstractControl | undefined = this.cardForm.controls[controlName];
     if (control.value && control.value.match(/^[ ]+$/)) {
       control.setValue(control.value.trim());
@@ -273,7 +275,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
   public isInputControlValid(controlName: string): boolean {
     const control: AbstractControl | undefined = this.cardForm?.controls[controlName];
     if (control) {
-      this.isTextValueValid(controlName);
+      this.textValueValid(controlName);
       return control.invalid && (control.dirty || control.touched);
     } else {
       return false;

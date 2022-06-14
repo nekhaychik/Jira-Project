@@ -1,26 +1,22 @@
-.main-container {
-  display: flex;
-}
-
 @import 'src/styles';
 
 $boardWidth: calc(100vw);
 $boardHeight: calc(100vh - 90px);
 $boardPadding: 42px 30px;
 
-.board {
-  width: $boardWidth;
-  height: $boardHeight;
-}
-
-.open {
-  width: calc(100vw - 280px);
+.main-container {
+  display: flex;
 }
 
 button {
   position: absolute;
   left: -12px;
   top: 20px;
+}
+
+.board {
+  width: $boardWidth;
+  height: $boardHeight;
 }
 
 .board__background {

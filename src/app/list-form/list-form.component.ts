@@ -1,12 +1,13 @@
-import {Component, OnInit, Input, Inject, OnDestroy} from '@angular/core';
+import {Component, Inject, Input, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ListControls} from '../models/controls.enum';
 import {List, ListStore} from '../services/types';
-import {Collection} from '../enums';
+import {ButtonAppearance, Collection, Size, ValidationErrors} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Subscription} from 'rxjs';
 import {NAME_MAX_LENGTH} from '../constants';
+import {nameExistValidator} from '../validators';
 
 export interface DialogData {
   boardID: string
@@ -28,11 +29,15 @@ export class ListFormComponent implements OnInit, OnDestroy {
   @Input()
   public id: string = '';
   @Input()
-  public listName: string | undefined;
+  public listName: string = '';
   private subscriptionList: Subscription[] = [];
-  public createListForm: FormGroup = new FormGroup({});
+  public listForm: FormGroup = new FormGroup({});
   public formControls: typeof ListControls = ListControls;
-  public boardLists: ListStore[] = [];
+  public listsNames: string[] = [];
+  public buttonSize: Size = Size.l;
+  public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
+  public errors: typeof ValidationErrors = ValidationErrors;
+  public currentError: string | undefined;
 
   constructor(private crudService: CrudService,
               public dialogRef: MatDialogRef<ListFormComponent>,
@@ -41,13 +46,14 @@ export class ListFormComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.getLists();
-    this.createListForm.addControl(ListControls.name, new FormControl(this.listName, Validators.compose([Validators.required, Validators.maxLength(NAME_MAX_LENGTH)/*, ValidateNameExist(this.boardLists)*/])));
+    this.listForm.addControl(ListControls.name, new FormControl(this.listName, Validators.compose([Validators.required, Validators.maxLength(NAME_MAX_LENGTH), nameExistValidator(this.listsNames)])));
   }
 
   private getLists(): void {
     this.subscriptionList.push(
       this.crudService.handleData<ListStore>(Collection.LISTS).subscribe((lists: ListStore[]) => {
-        this.boardLists = lists.filter((list: ListStore) => this.data.boardID === list.boardID);
+        const filteredLists = lists.filter((list: ListStore) => this.data.boardID === list.boardID);
+        filteredLists.forEach((list: ListStore) => this.listsNames.push(list.name));
       })
     );
   }
@@ -65,9 +71,9 @@ export class ListFormComponent implements OnInit, OnDestroy {
   }
 
   public submitForm(): void {
-    if (this.createListForm.valid) {
+    if (this.listForm.valid) {
       const list: List = {
-        name: this.createListForm.controls[ListControls.name].value.trim(),
+        name: this.listForm.controls[ListControls.name].value.trim(),
         boardID: this.data.boardID,
         dateCreating: new Date().getTime()
       };
@@ -78,9 +84,9 @@ export class ListFormComponent implements OnInit, OnDestroy {
   }
 
   public submitUpdatingForm(id: string): void {
-    if (this.createListForm.valid) {
+    if (this.listForm.valid) {
       const list: List = {
-        name: this.createListForm.controls[ListControls.name].value.trim(),
+        name: this.listForm.controls[ListControls.name].value.trim(),
       }
       this.updateList(id, list);
     } else {
@@ -89,10 +95,13 @@ export class ListFormComponent implements OnInit, OnDestroy {
   }
 
   public isControlValid(controlName: string): boolean {
-    const control: AbstractControl | undefined = this.createListForm.controls[controlName];
+    const control: AbstractControl | undefined = this.listForm.controls[controlName];
     if (control) {
       if (control.value && control.value.match(/^[ ]+$/)) {
         control.setValue(control.value.trim());
+      }
+      if (control.errors) {
+        this.currentError = Object.keys(control.errors)[0];
       }
       return control.invalid && (control.dirty || control.touched);
     } else {

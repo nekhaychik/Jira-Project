@@ -1,9 +1,11 @@
 <div class="card__wrap">
   <div class="card" *ngIf="card">
-    <mat-card-title class="card__title">
+    <mat-card-title class="card__header">
       {{card.name}}
-      <mat-icon (click)="openUpdateCardDialog(card)">update</mat-icon>
-      <mat-icon (click)="deleteCard(card.id)">delete_outline</mat-icon>
+      <div class="card__header-icons">
+        <mat-icon class="card__icon" (click)="openUpdateCardDialog(card)">update</mat-icon>
+        <mat-icon class="card__icon" (click)="deleteCard(card.id)">delete_outline</mat-icon>
+      </div>
     </mat-card-title>
     <mat-card-content (click)="openFullCard(card)">
       <div class="card__description" *ngIf="card.description">

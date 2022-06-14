@@ -1,6 +1,5 @@
-export const SHORT_DESCRIPTION_MAX_LENGTH = 130;
-export const BAR_CHAR_LABEL = 'Number Of Tasks';
-export const BOARD_NAME_MAX_LENGTH = 12;
+export const SHORT_DESCRIPTION_MAX_LENGTH: number = 130;
+export const BOARD_NAME_MAX_LENGTH: number = 12;
 export const ONE_SECOND: number = 1000;
 export const MS_IN_DAY: number = 60 * 60 * 24 * 1000;
 export const NAME_MAX_LENGTH: number = 16;

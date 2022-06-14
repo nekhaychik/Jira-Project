@@ -7,46 +7,56 @@
           <mat-icon mat-dialog-close (click)="openUpdateCardDialog(data.card)">update</mat-icon>
           <mat-icon mat-dialog-close (click)="deleteCard(data.card.id)">delete_outline</mat-icon>
         </div>
+
         <div class="card__description">
           <h3 class="card__description-title">Description</h3>
           <p class="card__description-content">{{data.card.description}}</p>
         </div>
+
         <div class="card__images">
-          <ng-container *ngFor="let image of data.card.images">
+          <ng-container *ngFor="let image of data.card.images; trackBy: trackByFn">
             <div class="card__images-container">
-              <img [src]="image"/>
+              <img [src]="image" alt=""/>
             </div>
           </ng-container>
         </div>
+
         <div>
-          <label for="file" [style]="labelStyle">Choose an image</label>
+          <label class="label__add-image"
+                 for="file"
+                 [style]="labelStyle">
+            <mat-icon>attach_file</mat-icon>
+            Choose an image
+          </label>
           <input
-            [disabled]="isDisable"
-            style="display: none"
+            class="input__add-image"
             type="file"
             id="file"
+            [disabled]="isDisable"
             (change)="onFileSelected($event)"
-            name="image"
             autocomplete="off"
+            accept=".jpg, .jpeg, .png"
           />
+          <progress *ngIf="isDisable" max="100" [value]="progress"></progress>
         </div>
-        <progress max="100" [value]="progress"></progress>
 
         <div class="card__history">
           <h3 class="card__description-title">History</h3>
           <tui-scrollbar>
             <div class="card__history-content">
-              <p class="card__description-content" *ngFor="let history of data.card.history">{{history}}</p>
+              <p class="card__description-content"
+                 *ngFor="let history of data.card.history; trackBy: trackByFn">{{history}}</p>
             </div>
           </tui-scrollbar>
         </div>
-
       </div>
+
       <div class="card__additional-inform">
-        <div class="card__status">
+        <div class="card__status" *ngIf="list">
           <h3>STATUS</h3>
-          <p>{{list?.name}}</p>
+          <p>{{list.name}}</p>
         </div>
+
         <div class="card__reporter" *ngIf="reporter">
           <h3>REPORTER</h3>
           <div class="card-avatar">
@@ -54,6 +64,7 @@
             <p>{{reporter.name}}</p>
           </div>
         </div>
+
         <div class="card__member" *ngIf="member">
           <h3>ASSIGNEES</h3>
           <div class="card-avatar">
@@ -61,14 +72,17 @@
             <p>{{member.name}}</p>
           </div>
         </div>
+
         <div class="card__priority">
           <h3>PRIORITY</h3>
           <p>{{data.card.priority}}</p>
         </div>
+
         <div class="card__dueDate">
           <h3>DUE DATE</h3>
           <p>{{getDate(data.card.dueDate?.seconds)}}</p>
         </div>
+
         <div class="card__date-inform">
           <p>Created - {{data.card.createDate}}</p>
           <p>Updated - {{data.card.updateDate}}</p>

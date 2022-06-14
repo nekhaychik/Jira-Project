@@ -29,14 +29,20 @@ export class BoardComponent implements OnInit, OnDestroy {
   public icon: typeof Icon = Icon;
   public shape: typeof Shape = Shape;
   private boardID: string = '';
-  public members: UserStore[] = [];
+  public membersID: string[] = [];
   public lists: ListStore[] = [];
   private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
   private boards$: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
+  public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
+  public users: UserStore[] = [];
 
   constructor(private crudService: CrudService,
               public dialog: MatDialog,
               private route: ActivatedRoute) {
+  }
+
+  test(val: ListStore) {
+    console.log(val)
   }
 
   public ngOnInit(): void {
@@ -51,6 +57,8 @@ export class BoardComponent implements OnInit, OnDestroy {
     );
   }
 
+
+
   public trackByFn(index: number, item: ListStore): number {
     return index;
   }
@@ -61,29 +69,12 @@ export class BoardComponent implements OnInit, OnDestroy {
         switchMap(() => this.crudService.getDataDoc<BoardStore>(Collection.BOARDS, boardID)),
         tap((board: BoardStore | undefined) => {
           if (board) {
-            this.getMembers(board);
             this.board = board;
+            this.membersID = this.board.membersID;
           }
         })
       ).subscribe()
     );
-  }
-
-  private getMembers(board: BoardStore): void {
-    this.members = [];
-    board.membersID.forEach((memberID: string) => {
-      this.subscriptionList.push(
-        this.crudService.getDataDoc<UserStore>(Collection.USERS, memberID)
-          .subscribe((user: UserStore | undefined) => {
-              if (user) {
-                if (!this.members.includes(user)) {
-                  this.members.push(user);
-                }
-              }
-            }
-          )
-      );
-    });
   }
 
   private byField(field: string): (a: any, b: any) => (1 | -1) {
@@ -107,7 +98,7 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   public openCardDialog(isButtonDisable: boolean): void {
     if (!isButtonDisable) {
-      this.dialog.open(CardFormComponent, {data: {boardID: this.boardID}});
+      this.dialog.open(CardFormComponent, {data: {boardID: this.boardID, board: this.board}});
     }
   }
 
@@ -118,7 +109,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   public openMembersDialog(): void {
-    this.dialog.open(MembersFormComponent, {data: {boardID: this.boardID}});
+    console.log(this.boardID)
+    this.dialog.open(MembersFormComponent, {data: {boardID: this.boardID, board: this.board}});
   }
 
   public ngOnDestroy(): void {
