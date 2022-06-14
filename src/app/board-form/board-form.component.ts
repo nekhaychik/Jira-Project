@@ -3,7 +3,7 @@ import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/form
 import {BoardControls} from '../models/controls.enum';
 import {CrudService} from '../services/crud/crud.service';
 import {Board, UserStore} from '../services/types';
-import {Collection, Paths} from '../enums';
+import {ButtonAppearance, Collection, Paths, Size} from '../enums';
 import {Observable, Subscription} from 'rxjs';
 import {Router} from '@angular/router';
 import firebase from 'firebase/compat';
@@ -26,6 +26,8 @@ export class BoardFormComponent implements OnInit, OnDestroy {
   public isCreating: boolean = true;
   @Input()
   public boardName: string = '';
+  public buttonSize: typeof Size = Size;
+  public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
   private subscriptionList: Subscription[] = [];
   private authUser: firebase.User | null = null;
   public boardForm: FormGroup = new FormGroup({});

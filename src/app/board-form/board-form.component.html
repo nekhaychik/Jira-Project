@@ -19,8 +19,17 @@
     <p>
       <mat-form-field appearance="fill">
         <mat-label>Board Members</mat-label>
-        <mat-select [formControlName]="formControls.membersID" multiple>
+        <mat-select #select [formControlName]="formControls.membersID" multiple>
           <mat-option *ngFor="let user of (users$ | async)" [value]="user.id">{{user.name}}</mat-option>
+          <button
+            tuiButton
+            class="button__close"
+            [size]="buttonSize.s"
+            [appearance]="buttonAppearance.Primary"
+            (click)="select.close()"
+          >
+            Close
+          </button>
         </mat-select>
       </mat-form-field>
     </p>

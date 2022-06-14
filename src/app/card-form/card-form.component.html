@@ -114,7 +114,7 @@
         [size]="buttonSize"
         [appearance]="buttonAppearance.Primary"
         [disabled]="cardForm.invalid || isDisable"
-        (click)="isCreating ? submitForm() : submitUpdatingForm(card.id)"
+        (click)="isCreating ? submitForm() : submitUpdatingForm(card?.id)"
       >
         Submit
       </button>
