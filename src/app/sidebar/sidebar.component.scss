@@ -13,13 +13,7 @@ $sidebarBackground: #FFFFFF;
   padding: $boardPadding;
 }
 
-.board__name {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.board__title {
+.sidebar__title {
   font: $mainHeaderFont;
   color: $mainTextColor;
   margin: 0 0 44px;
@@ -27,9 +21,15 @@ $sidebarBackground: #FFFFFF;
 
 .sidebar__boards {
   display: flex;
-  max-height: calc(100vh - 250px);
+  max-height: calc(100vh - 250px - 65.8px);
   flex-direction: column;
   grid-gap: 14px;
+}
+
+.sidebar__board-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .sidebar__board-title {

@@ -1,10 +1,11 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Observable, Subscription} from 'rxjs';
 import {BoardStore} from '../services/types';
 import {Collection} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
 import {AuthService} from '../services/auth/auth.service';
 import firebase from 'firebase/compat';
+import {MatDrawer} from '@angular/material/sidenav';
 
 const SORTING_FIELD: string = 'name';
 
@@ -15,8 +16,11 @@ const SORTING_FIELD: string = 'name';
 })
 export class SidebarComponent implements OnInit, OnDestroy {
 
+  @Input()
+  public drawer: MatDrawer | undefined;
   private subscriptionList: Subscription[] = [];
   public boards: BoardStore[] = [];
+  public searchValue: string = '';
   private userAuth: firebase.User | null = null;
   private boards$: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
 
