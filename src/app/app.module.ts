@@ -66,7 +66,6 @@ import {BarChartComponent} from './bar-chart/bar-chart.component';
 import {StatisticsComponent} from './statistics/statistics.component';
 import {CardLinkComponent} from './card-link/card-link.component';
 import {FilterPipe} from './filter.pipe';
-import {SortPipe} from './sort.pipe';
 
 @NgModule({
   declarations: [
@@ -93,8 +92,7 @@ import {SortPipe} from './sort.pipe';
     BarChartComponent,
     StatisticsComponent,
     CardLinkComponent,
-    FilterPipe,
-    SortPipe
+    FilterPipe
   ],
   imports: [
     BrowserModule,
