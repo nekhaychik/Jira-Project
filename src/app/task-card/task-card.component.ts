@@ -7,6 +7,8 @@ import {MatDialog} from '@angular/material/dialog';
 import {CardFormUpdateComponent} from '../card-form-update/card-form-update.component';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {SHORT_DESCRIPTION_MAX_LENGTH} from '../constants';
+import {AuthService} from "../services/auth/auth.service";
+import firebase from "firebase/compat";
 
 @Component({
   selector: 'app-task-card',
@@ -19,38 +21,49 @@ export class TaskCardComponent implements OnInit, OnDestroy {
   public card: CardStore | undefined;
   @Input()
   public board: BoardStore | undefined;
-  private subscriptionList: Subscription[] = [];
-  private boardID: string = '';
   public status: typeof Status = Status;
-  public assignee: UserStore | undefined;
-  private cards$: Observable<CardStore[]> = this.crudService.handleData(Collection.CARDS);
+  private authUser: firebase.User | null = null;
+  private subscriptionList: Subscription[] = [];
+  public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
+  private boards$: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
 
   constructor(private crudService: CrudService,
+              private authService: AuthService,
               private dialog: MatDialog,
-              private route: ActivatedRoute,
               private router: Router) {
   }
 
   public ngOnInit(): void {
-    this.subscriptionList.push(
-      this.route.params.subscribe(
-        (params: Params) => {
-          this.boardID = params['id'];
-        }
-      )
-    );
-    this.getAssignee();
+    this.getAuthUser();
+    this.isExitAssignee();
   }
 
-  private getAssignee(): void {
-    if (this.card) {
+  private getAuthUser(): void {
+    this.subscriptionList.push(
+      this.authService.user$.subscribe((value: firebase.User | null) => {
+        this.authUser = value;
+      })
+    );
+  }
+
+  private isExitAssignee(): void {
+    this.subscriptionList.push(
+      this.boards$.subscribe(() => {
+        if (this.card) {
+          if (!this.board?.membersID.includes(this.card.memberID)) {
+            this.updateAssignee();
+          }
+        }
+      })
+    );
+
+  }
+
+  private updateAssignee(): void {
+    if (this.card && this.authUser) {
       this.subscriptionList.push(
-        this.cards$.pipe(
-          switchMap(() => this.crudService.getDataDoc<UserStore>(Collection.USERS, <string>this.card?.memberID))
-        ).subscribe((user: UserStore | undefined) => {
-          this.assignee = user;
-        })
-      );
+        this.crudService.updateObject(Collection.CARDS, this.card.id, {memberID: this.authUser.uid}).subscribe()
+      )
     }
   }
 
@@ -62,7 +75,7 @@ export class TaskCardComponent implements OnInit, OnDestroy {
   }
 
   public openUpdateCardDialog(card: CardStore): void {
-    this.dialog.open(CardFormUpdateComponent, {data: {card: card, board: this.board, boardID: this.boardID}});
+    this.dialog.open(CardFormUpdateComponent, {data: {card: card, board: this.board}});
   }
 
   public deleteCard(id: string): void {
@@ -72,7 +85,9 @@ export class TaskCardComponent implements OnInit, OnDestroy {
   }
 
   public openFullCard(card: CardStore): void {
-    this.router.navigate([Paths.board + '/' + this.boardID + '/' + card.id]);
+    if (this.board) {
+      this.router.navigate([Paths.board + '/' + this.board.id + '/' + card.id]);
+    }
   }
 
   public ngOnDestroy(): void {

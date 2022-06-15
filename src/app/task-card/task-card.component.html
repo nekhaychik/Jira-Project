@@ -19,8 +19,8 @@
             {{card.priority}}
           </mat-chip>
         </mat-chip-list>
-        <ng-container *ngIf="assignee">
-          <app-avatar [name]="assignee.name" [avatarUrl]="assignee.avatarURL"></app-avatar>
+        <ng-container *ngFor="let user of (users$ | async)">
+          <app-avatar *ngIf="user.id === card.memberID" [name]="user.name" [avatarUrl]="user.avatarURL"></app-avatar>
         </ng-container>
       </div>
     </mat-card-content>

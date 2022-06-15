@@ -76,7 +76,6 @@ export class CardFormComponent implements OnInit, OnDestroy {
       this.currentDueDate = new Date(this.card?.dueDate.seconds * ONE_SECOND).toISOString();
     }
 
-    this.getAuthUser();
     this.getUsers();
     this.getLists();
 
@@ -87,15 +86,6 @@ export class CardFormComponent implements OnInit, OnDestroy {
     this.cardForm.addControl(CardControls.member, new FormControl(this.card?.memberID, Validators.required));
     this.cardForm.addControl(CardControls.description, new FormControl(this.card?.description, Validators.maxLength(DESCRIPTION_MAX_LENGTH)));
   }
-
-  private getAuthUser(): void {
-    this.subscriptionList.push(
-      this.authService.user$.subscribe((value: firebase.User | null) => {
-        this.authUser = value;
-      })
-    );
-  }
-
 
   public trackByFn(index: number, item: string): number {
     return index;
@@ -122,20 +112,9 @@ export class CardFormComponent implements OnInit, OnDestroy {
       this.users$.pipe(
         tap((users: UserStore[]) => {
           this.users = users.filter((user: UserStore) => this.data.board.membersID.includes(user.uid));
-          this.isExistAssignee();
         })
       ).subscribe()
     );
-  }
-
-  private isExistAssignee(): void {
-    let usersID: string[] = [];
-    this.users.forEach((user: UserStore) => {
-      usersID.push(user.id);
-    });
-    if (this.card && !usersID.includes(this.card.memberID) && this.authUser) {
-      this.card.memberID = this.authUser.uid;
-    }
   }
 
   private getListName(id: string): string {

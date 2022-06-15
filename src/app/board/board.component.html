@@ -25,7 +25,7 @@
     <app-button [content]="buttonContentCard" (click)="openCardDialog(!lists.length)"
                 [isDisable]="!lists.length"></app-button>
   </div>
-  <tui-scrollbar [hidden]="true">
+  <tui-scrollbar>
     <div class="board__lists" cdkDropListGroup>
       <ng-container *ngFor="let list of lists; trackBy: trackByFn">
         <div class="board__list" app-board-list [list]="list" [board]="board"></div>
