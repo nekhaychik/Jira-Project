@@ -19,7 +19,6 @@ import {
 } from '../constants';
 
 export interface DialogData {
-  boardID: string,
   board: BoardStore
 }
 
@@ -76,11 +75,6 @@ export class CardFormComponent implements OnInit, OnDestroy {
     if (this.card?.dueDate.seconds) {
       this.currentDueDate = new Date(this.card?.dueDate.seconds * ONE_SECOND).toISOString();
     }
-    if (this.isCreating) {
-      this.boardID = this.data.boardID;
-    } else {
-      this.board = this.data.board;
-    }
 
     this.getAuthUser();
     this.getUsers();
@@ -116,7 +110,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
     this.lists = [];
     this.subscriptionList.push(
       this.lists$.subscribe((lists: ListStore[]) => {
-          this.lists = lists.filter((list: ListStore) => list.boardID === this.data.boardID);
+          this.lists = lists.filter((list: ListStore) => list.boardID === this.data.board.id);
         }
       )
     );

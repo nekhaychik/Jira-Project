@@ -64,10 +64,10 @@ export class FullCardComponent implements OnInit, OnDestroy {
 
   private getBoard(): void {
     this.subscriptionList.push(
-      this.crudService.getDataDoc<BoardStore>(Collection.BOARDS, this.data.boardID).subscribe((board: BoardStore | undefined) => {
-        this.board = board;
+      this.crudService.handleData<BoardStore>(Collection.BOARDS).subscribe((boards: BoardStore[]) => {
+        this.board = boards.filter((board: BoardStore) => board.id === this.data.boardID)[0]
       })
-    )
+    );
   }
 
   private getAuthUser(): void {
@@ -126,7 +126,7 @@ export class FullCardComponent implements OnInit, OnDestroy {
   }
 
   public openUpdateCardDialog(card: CardStore): void {
-    this.dialog.open(CardFormUpdateComponent, {data: {card: card, boardID: this.data.boardID, board: this.board}});
+    this.dialog.open(CardFormUpdateComponent, {data: {card: card, board: this.board}});
     this.router.navigate([Paths.board + '/' + this.data.boardID]);
   }
 

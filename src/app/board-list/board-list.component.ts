@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, ViewEncapsulation, OnDestroy, ViewChild} from '@angular/core';
+import {Component, OnInit, Input, ViewEncapsulation, OnDestroy} from '@angular/core';
 import {ButtonAppearance, Collection, Icon, Size} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
 import {BoardStore, CardStore, ListStore} from '../services/types';
@@ -23,13 +23,16 @@ export class BoardListComponent implements OnInit, OnDestroy {
   public list: ListStore | undefined;
   @Input()
   public board: BoardStore | undefined;
-  private subscriptionList: Subscription[] = [];
-  private authUser: firebase.User | null = null;
-  private lists: ListStore[] = [];
-  public cards: CardStore[] = [];
+
   public icon: typeof Icon = Icon;
   public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
   public buttonSize: Size = Size.m;
+
+  private authUser: firebase.User | null = null;
+  private lists: ListStore[] = [];
+  public cards: CardStore[] = [];
+
+  private subscriptionList: Subscription[] = [];
   private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
   private cards$: Observable<CardStore[]> = this.crudService.handleData<CardStore>(Collection.CARDS);
 

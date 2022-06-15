@@ -38,7 +38,7 @@ export type Card = {
 export type User = {
   name: string;
   uid: string;
-  avatarUrl: string | null;
+  avatarURL: string | null;
 };
 
 export type ID = {

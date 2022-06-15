@@ -1,7 +1,7 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MembersControls} from '../models/controls.enum';
-import {Observable, Subscription} from 'rxjs';
+import {Observable, Subscription, switchMap, tap} from 'rxjs';
 import {BoardStore, UserStore} from '../services/types';
 import {ButtonAppearance, Collection, Size} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
@@ -10,7 +10,6 @@ import firebase from 'firebase/compat';
 import {AuthService} from '../services/auth/auth.service';
 
 export interface DialogData {
-  boardID: string,
   board: BoardStore
 }
 
@@ -50,7 +49,7 @@ export class MembersFormComponent implements OnInit, OnDestroy {
 
   private addMembers(members: { membersID: string[] }): void {
     this.subscriptionList.push(
-      this.crudService.updateObject(Collection.BOARDS, this.data.boardID, members).subscribe()
+      this.crudService.updateObject(Collection.BOARDS, this.data.board.id, members).subscribe()
     );
   }
 
