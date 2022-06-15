@@ -103,6 +103,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   private getLists(): void {
+    this.lists = [];
     this.subscriptionList.push(
       this.lists$.subscribe((lists: ListStore[]) => {
           this.lists = lists.filter((list: ListStore) => list.boardID === this.boardID)
