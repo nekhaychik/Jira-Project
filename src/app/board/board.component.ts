@@ -1,11 +1,11 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ButtonAppearance, Icon, Shape, Collection} from '../enums';
+import {ButtonAppearance, Icon, Shape, Collection, Paths} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
-import {Observable, Subscription} from 'rxjs';
-import {BoardStore, ListStore, UserStore} from '../services/types';
+import {Observable, Subscription, switchMap, tap} from 'rxjs';
+import {BoardStore, CardStore, ListStore, UserStore} from '../services/types';
 import {ListFormComponent} from '../list-form/list-form.component';
 import {CardFormComponent} from '../card-form/card-form.component';
-import {ActivatedRoute, Params} from '@angular/router';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {BoardUpdateComponent} from '../board-update/board-update.component';
 import {MembersFormComponent} from '../members-form/members-form.component';
@@ -28,23 +28,27 @@ export class BoardComponent implements OnInit, OnDestroy {
   public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
   public icon: typeof Icon = Icon;
   public shape: typeof Shape = Shape;
+  public searchValue: string = '';
 
   public board: BoardStore | undefined;
   private boardID: string = '';
   public membersID: string[] = [];
   public lists: ListStore[] = [];
+  public cards: CardStore[] = [];
   public users: UserStore[] = [];
   public authUser: firebase.User | null = null;
 
   private subscriptionList: Subscription[] = [];
   private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
   private boards$: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
-  public users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
+  private cards$: Observable<CardStore[]> = this.crudService.handleData<CardStore>(Collection.CARDS);
+  private users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
 
   constructor(private crudService: CrudService,
               public dialog: MatDialog,
               private route: ActivatedRoute,
-              private authService: AuthService) {
+              private authService: AuthService,
+              private router: Router) {
   }
 
   public ngOnInit(): void {
@@ -62,7 +66,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     );
   }
 
-  public trackByFn(index: number, item: ListStore | UserStore): number {
+  public trackByFn(index: number, item: ListStore | UserStore | CardStore): number {
     return index;
   }
 
@@ -105,12 +109,29 @@ export class BoardComponent implements OnInit, OnDestroy {
   private getLists(): void {
     this.lists = [];
     this.subscriptionList.push(
-      this.lists$.subscribe((lists: ListStore[]) => {
+      this.lists$.pipe(
+        tap((lists: ListStore[]) => {
           this.lists = lists.filter((list: ListStore) => list.boardID === this.boardID)
             .sort(this.byField(SORTING_FIELD));
-        }
-      )
+        }),
+        switchMap(() => this.cards$),
+        tap(() => this.getCards()),
+      ).subscribe(() => {
+        this.cards.sort(this.byField(SORTING_FIELD_NAME));
+      })
     );
+  }
+
+  private getCards(): void {
+    this.cards = [];
+    this.lists.forEach((list: ListStore) => {
+      this.subscriptionList.push(
+        this.crudService.getDate<CardStore>(Collection.CARDS).subscribe((cards: CardStore[]) => {
+          const tempCards: CardStore[] = cards.filter((card: CardStore) => card.listID === list.id);
+          this.cards.push(...tempCards);
+        })
+      );
+    });
   }
 
   public openListDialog(): void {
@@ -122,6 +143,12 @@ export class BoardComponent implements OnInit, OnDestroy {
   public openCardDialog(isButtonDisable: boolean): void {
     if (!isButtonDisable && this.board) {
       this.dialog.open(CardFormComponent, {data: {board: this.board}});
+    }
+  }
+
+  public openFullCard(card: CardStore): void {
+    if (this.board) {
+      this.router.navigate([Paths.board + '/' + this.board.id + '/' + card.id]);
     }
   }
 

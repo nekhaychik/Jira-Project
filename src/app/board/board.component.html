@@ -6,7 +6,7 @@
     </h2>
     <div class="board__members">
       <ng-container *ngIf="authUser && authUser.displayName">
-                  <app-avatar [name]="authUser.displayName" [avatarUrl]="authUser.photoURL"></app-avatar>
+        <app-avatar [name]="authUser.displayName" [avatarUrl]="authUser.photoURL"></app-avatar>
       </ng-container>
       <ng-container *ngFor="let member of users; trackBy: trackByFn">
         <ng-container *ngIf="membersID.includes(member.id) && member.id !== authUser?.uid">
@@ -24,6 +24,22 @@
     <app-button [content]="buttonContentList" (click)="openListDialog()"></app-button>
     <app-button [content]="buttonContentCard" (click)="openCardDialog(!lists.length)"
                 [isDisable]="!lists.length"></app-button>
+    <mat-form-field class="search-field" floatLabel="never">
+      <mat-label>Enter task name</mat-label>
+      <input matInput type="text"
+             placeholder="Enter a task name"
+             class="search-input"
+             [(ngModel)]="searchValue"
+             [matAutocomplete]="auto">
+      <mat-autocomplete #auto>
+        <ng-container *ngFor="let card of cards | filter:searchValue; trackBy: trackByFn">
+          <mat-option [value]="card.name"
+                      (click)="openFullCard(card)">
+            {{card.name}}
+          </mat-option>
+        </ng-container>
+      </mat-autocomplete>
+    </mat-form-field>
   </div>
   <tui-scrollbar>
     <div class="board__lists" cdkDropListGroup>

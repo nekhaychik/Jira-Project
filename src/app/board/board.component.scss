@@ -2,7 +2,7 @@
 
 $boardWidth: calc(100vw - 375px);
 $boardHeight: calc(100vh - 90px);
-$boardPadding: 42px 30px;
+$boardPadding: 41px 30px 32px;
 
 .board {
   width: $boardWidth;
@@ -40,7 +40,7 @@ mat-icon {
 .board__members {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
   grid-gap: 15px;
 }
@@ -49,7 +49,8 @@ mat-icon {
   display: flex;
   flex-wrap: wrap;
   grid-gap: 15px;
-  padding: 0 30px 42px;
+  padding: 0 30px 32px;
+  align-items: center;
 }
 
 .board__lists {
