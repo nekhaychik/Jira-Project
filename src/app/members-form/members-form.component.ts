@@ -1,8 +1,8 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MembersControls} from '../models/controls.enum';
-import {Observable, Subscription, switchMap, tap} from 'rxjs';
-import {BoardStore, UserStore} from '../services/types';
+import {filter, Observable, Subscription, switchMap, tap} from 'rxjs';
+import {BoardStore, CardStore, ListStore, UserStore} from '../services/types';
 import {ButtonAppearance, Collection, Size} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
@@ -27,6 +27,10 @@ export class MembersFormComponent implements OnInit, OnDestroy {
   public formControls: typeof MembersControls = MembersControls;
   public buttonSize: typeof Size = Size;
   public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
+  private lists: string[] = [];
+  public assignees: string[] = [];
+  private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
+  private cards$: Observable<CardStore[]> = this.crudService.handleData<CardStore>(Collection.CARDS);
 
   constructor(private crudService: CrudService,
               public dialogRef: MatDialogRef<MembersFormComponent>,
@@ -36,6 +40,7 @@ export class MembersFormComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.getAuthUser();
+    this.getAssignees();
     this.membersForm.addControl(MembersControls.membersID, new FormControl(this.data.board.membersID, Validators.required));
   }
 
@@ -45,6 +50,29 @@ export class MembersFormComponent implements OnInit, OnDestroy {
         this.authUser = value;
       })
     );
+  }
+
+  private getAssignees(): void {
+    this.lists = [];
+    this.assignees = [];
+    this.lists$.pipe(
+      tap((lists: ListStore[]) => {
+        lists
+          .filter((list: ListStore) => list.boardID === this.data.board.id)
+          .forEach((list: ListStore) => {
+            this.lists.push(list.id);
+          });
+
+      }),
+      switchMap(() => this.cards$),
+    ).subscribe((cards: CardStore[]) => {
+      cards.forEach((card: CardStore) => {
+        if (this.lists.includes(card.listID)) {
+          this.assignees.push(card.memberID)
+        }
+      })
+      console.log(this.assignees)
+    })
   }
 
   private addMembers(members: { membersID: string[] }): void {
