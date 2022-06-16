@@ -6,6 +6,7 @@
     <mat-drawer-content>
       <button
         tuiButton
+        class="button__sidebar"
         [size]="buttonSize"
         [shape]="buttonShape.Rounded"
         (click)="drawer.toggle()">
@@ -13,7 +14,9 @@
       </button>
       <div class="board">
         <img class="board__background" [src]="imagePath" alt="background">
-        <router-outlet></router-outlet>
+        <tui-scrollbar class="main-scroll" [hidden]="true">
+          <router-outlet></router-outlet>
+        </tui-scrollbar>
       </div>
     </mat-drawer-content>
   </mat-drawer-container>

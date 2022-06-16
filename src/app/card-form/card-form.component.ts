@@ -76,6 +76,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
       this.currentDueDate = new Date(this.card?.dueDate.seconds * ONE_SECOND).toISOString();
     }
 
+    this.getAuthUser();
     this.getUsers();
     this.getLists();
 
@@ -95,6 +96,14 @@ export class CardFormComponent implements OnInit, OnDestroy {
     const day: number = (d || new Date()).getTime();
     return day >= new Date().getTime() - MS_IN_DAY;
   };
+
+  private getAuthUser(): void {
+    this.subscriptionList.push(
+      this.authService.user$.subscribe((value: firebase.User | null) => {
+        this.authUser = value;
+      })
+    );
+  }
 
   private getLists(): void {
     this.lists = [];

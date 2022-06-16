@@ -10,6 +10,7 @@ $boardPadding: 42px 30px;
 
 button {
   position: absolute;
+  z-index: 999;
   left: -12px;
   top: 20px;
 }
@@ -26,4 +27,7 @@ button {
   z-index: -1;
 }
 
-
+.main-scroll {
+  height: inherit;
+  max-height: none;
+}
