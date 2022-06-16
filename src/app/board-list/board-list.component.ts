@@ -31,6 +31,7 @@ export class BoardListComponent implements OnInit, OnDestroy {
   private authUser: firebase.User | null = null;
   private lists: ListStore[] = [];
   public cards: CardStore[] = [];
+  public numberOfTasks: number = 0;
 
   private subscriptionList: Subscription[] = [];
   private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
@@ -55,6 +56,7 @@ export class BoardListComponent implements OnInit, OnDestroy {
         this.cards = cards
           .filter((card: CardStore) => card.listID === this.list?.id)
           .sort(this.byField(SORTING_FIELD));
+        this.numberOfTasks = this.cards.length;
       })
     );
   }

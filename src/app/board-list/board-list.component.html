@@ -7,11 +7,18 @@
       <mat-card-title class="mat-card-title">
         {{list.name}}
       </mat-card-title>
-      <button tuiIconButton [matMenuTriggerFor]="menu"
-              [icon]="icon.IconMoreVertLarge"
-              [size]="buttonSize"
-              [appearance]="buttonAppearance.Flat">
-      </button>
+      <div class="header__right-group">
+        <ng-container *ngIf="numberOfTasks">
+          <mat-card-subtitle class="mat-card-subtitle">
+            {{numberOfTasks}}
+          </mat-card-subtitle>
+        </ng-container>
+        <button tuiIconButton [matMenuTriggerFor]="menu"
+                [icon]="icon.IconMoreVertLarge"
+                [size]="buttonSize"
+                [appearance]="buttonAppearance.Flat">
+        </button>
+      </div>
       <mat-menu #menu="matMenu">
         <ng-container *ngIf="!cards.length">
           <button mat-menu-item (click)="deleteList(list.id)">

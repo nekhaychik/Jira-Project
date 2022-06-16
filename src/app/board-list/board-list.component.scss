@@ -41,9 +41,14 @@
   padding-bottom: 10px;
 }
 
-:root .mat-card-header .mat-card-title {
+:root .mat-card-header .mat-card-title,
+:root .mat-card-header .mat-card-subtitle {
   margin-bottom: 0;
   font-size: 24px;
+}
+
+:root .mat-card-header .mat-card-subtitle:not(:first-child) {
+  margin-top: 0px;
 }
 
 :root .mat-card-header-text {
@@ -53,6 +58,18 @@
 .mat-card-title {
   font: $cardHeaderFont;
   color: $mainTextColor;
+}
+
+.header__right-group {
+  display: flex;
+  grid-gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.mat-card-subtitle {
+  font: var(--tui-font-heading-6);
+  color: var(--tui-link);
 }
 
 tui-scrollbar {
