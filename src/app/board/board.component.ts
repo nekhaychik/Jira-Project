@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ButtonAppearance, Icon, Shape, Collection, Paths} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
-import {Observable, Subscription, switchMap, tap} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {BoardStore, CardStore, ListStore, UserStore} from '../services/types';
 import {ListFormComponent} from '../list-form/list-form.component';
 import {CardFormComponent} from '../card-form/card-form.component';
@@ -34,6 +34,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   private boardID: string = '';
   public membersID: string[] = [];
   public lists: ListStore[] = [];
+  private listsID: string[] = [];
   public cards: CardStore[] = [];
   public users: UserStore[] = [];
   public authUser: firebase.User | null = null;
@@ -61,6 +62,7 @@ export class BoardComponent implements OnInit, OnDestroy {
           this.getMembersID();
           this.getAuthUser();
           this.getUsers();
+          this.getCards();
         }
       )
     );
@@ -109,29 +111,21 @@ export class BoardComponent implements OnInit, OnDestroy {
   private getLists(): void {
     this.lists = [];
     this.subscriptionList.push(
-      this.lists$.pipe(
-        tap((lists: ListStore[]) => {
-          this.lists = lists.filter((list: ListStore) => list.boardID === this.boardID)
-            .sort(this.byField(SORTING_FIELD));
-        }),
-        switchMap(() => this.cards$),
-        tap(() => this.getCards()),
-      ).subscribe(() => {
-        this.cards.sort(this.byField(SORTING_FIELD_NAME));
+      this.lists$.subscribe((lists: ListStore[]) => {
+        this.lists = lists.filter((list: ListStore) => list.boardID === this.boardID)
+          .sort(this.byField(SORTING_FIELD));
+        this.listsID = this.lists.map((list: ListStore) => list.id)
       })
     );
   }
 
   private getCards(): void {
     this.cards = [];
-    this.lists.forEach((list: ListStore) => {
-      this.subscriptionList.push(
-        this.crudService.getDate<CardStore>(Collection.CARDS).subscribe((cards: CardStore[]) => {
-          const tempCards: CardStore[] = cards.filter((card: CardStore) => card.listID === list.id);
-          this.cards.push(...tempCards);
-        })
-      );
-    });
+    this.subscriptionList.push(
+      this.cards$.subscribe((cards: CardStore[]) => {
+        this.cards = cards.filter((card: CardStore) => this.listsID.includes(card.listID));
+      })
+    )
   }
 
   public openListDialog(): void {
