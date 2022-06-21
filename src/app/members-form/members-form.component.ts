@@ -55,6 +55,7 @@ export class MembersFormComponent implements OnInit, OnDestroy {
   private getAssignees(): void {
     this.lists = [];
     this.assignees = [];
+
     this.lists$.pipe(
       tap((lists: ListStore[]) => {
         lists
@@ -62,7 +63,6 @@ export class MembersFormComponent implements OnInit, OnDestroy {
           .forEach((list: ListStore) => {
             this.lists.push(list.id);
           });
-
       }),
       switchMap(() => this.cards$),
     ).subscribe((cards: CardStore[]) => {
@@ -71,7 +71,6 @@ export class MembersFormComponent implements OnInit, OnDestroy {
           this.assignees.push(card.memberID)
         }
       })
-      console.log(this.assignees)
     })
   }
 

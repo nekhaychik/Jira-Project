@@ -4,7 +4,7 @@ import {CrudService} from '../services/crud/crud.service';
 import {Collection, Paths} from '../enums';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {CardFormUpdateComponent} from '../card-form-update/card-form-update.component';
-import {combineLatest, Subscription, takeWhile} from 'rxjs';
+import {combineLatest, Observable, Subscription, takeWhile} from 'rxjs';
 import {UploadService} from '../services/crud/upload.service';
 import firebase from 'firebase/compat';
 import {AuthService} from '../services/auth/auth.service';
@@ -34,17 +34,19 @@ const DISPLAY_BLOCK: string = 'display: block;';
 export class FullCardComponent implements OnInit, OnDestroy {
 
   private subscriptionList: Subscription[] = [];
+  private board: BoardStore | undefined;
   public list: ListStore | undefined;
   public member: UserStore | undefined;
   public reporter: UserStore | undefined;
   private authUser: firebase.User | null = null;
+  private boards$: Observable<BoardStore[]> = this.crudService.handleData<BoardStore>(Collection.BOARDS);
+
   public labelStyle: string = ACTIVE_LABEL;
+  public sizeErrorStyle: string = DISPLAY_NONE;
+  public formatErrorStyle: string = DISPLAY_NONE;
   public imageLink: string = '';
   public progress: string | undefined = '';
   public isDisable: boolean = false;
-  private board: BoardStore | undefined;
-  public sizeErrorStyle: string = DISPLAY_NONE;
-  public formatErrorStyle: string = DISPLAY_NONE;
   public errorsFilesNames: string[] = [];
 
   constructor(private crudService: CrudService,
@@ -69,8 +71,8 @@ export class FullCardComponent implements OnInit, OnDestroy {
 
   private getBoard(): void {
     this.subscriptionList.push(
-      this.crudService.handleData<BoardStore>(Collection.BOARDS).subscribe((boards: BoardStore[]) => {
-        this.board = boards.filter((board: BoardStore) => board.id === this.data.boardID)[0]
+      this.boards$.subscribe((boards: BoardStore[]) => {
+        this.board = boards.filter((board: BoardStore) => board.id === this.data.boardID)[0];
       })
     );
   }
@@ -85,22 +87,20 @@ export class FullCardComponent implements OnInit, OnDestroy {
 
   private getList(): void {
     this.subscriptionList.push(
-      this.crudService.getDataDoc<ListStore>(Collection.LISTS, this.data.card.listID).subscribe(
-        (list: ListStore | undefined) => {
+      this.crudService.getDataDoc<ListStore>(Collection.LISTS, this.data.card.listID)
+        .subscribe((list: ListStore | undefined) => {
           this.list = list;
-        }
-      )
+        })
     );
   }
 
   private getMember(): void {
     if (this.data.card.memberID) {
       this.subscriptionList.push(
-        this.crudService.getDataDoc<UserStore>(Collection.USERS, this.data.card.memberID).subscribe(
-          (user: UserStore | undefined) => {
+        this.crudService.getDataDoc<UserStore>(Collection.USERS, this.data.card.memberID)
+          .subscribe((user: UserStore | undefined) => {
             this.member = user;
-          }
-        )
+          })
       );
     }
   }
@@ -108,11 +108,10 @@ export class FullCardComponent implements OnInit, OnDestroy {
   private getReporter(): void {
     if (this.data.card.reporterID) {
       this.subscriptionList.push(
-        this.crudService.getDataDoc<UserStore>(Collection.USERS, this.data.card.reporterID).subscribe(
-          (user: UserStore | undefined) => {
+        this.crudService.getDataDoc<UserStore>(Collection.USERS, this.data.card.reporterID)
+          .subscribe((user: UserStore | undefined) => {
             this.reporter = user;
-          }
-        )
+          })
       );
     }
   }
@@ -144,11 +143,13 @@ export class FullCardComponent implements OnInit, OnDestroy {
           let error: boolean = false;
           const format: string | undefined = file.name.split('.').pop()?.toLowerCase();
           const size: number = file.size;
+
           if (format && !CORRECT_FORMATS.includes(format)) {
             error = true;
             this.formatErrorStyle = DISPLAY_BLOCK;
             this.errorsFilesNames.push(file.name);
           }
+
           if (size > MB_5) {
             error = true;
             this.sizeErrorStyle = DISPLAY_BLOCK;
@@ -156,6 +157,7 @@ export class FullCardComponent implements OnInit, OnDestroy {
               this.errorsFilesNames.push(file.name);
             }
           }
+
           if (!error) {
             this.subscriptionList.push(
               combineLatest(this.uploadService.uploadFileAndGetMetadata(MEDIA_FOLDER_PATH, file))
@@ -178,7 +180,7 @@ export class FullCardComponent implements OnInit, OnDestroy {
                 })
             );
           }
-        })
+        });
       }
     }
   }
@@ -208,13 +210,15 @@ export class FullCardComponent implements OnInit, OnDestroy {
     this.progress = '';
     this.imageLink = '';
     const cardID: string = this.data.card.id;
+
     this.subscriptionList.push(
-      this.crudService.getDataDoc<CardStore>(Collection.CARDS, this.data.card.id).subscribe((card: CardStore | undefined) => {
-        if (card) {
-          this.data.card = card;
-          this.data.card.id = cardID;
-        }
-      })
+      this.crudService.getDataDoc<CardStore>(Collection.CARDS, this.data.card.id)
+        .subscribe((card: CardStore | undefined) => {
+          if (card) {
+            this.data.card = card;
+            this.data.card.id = cardID;
+          }
+        })
     );
   }
 

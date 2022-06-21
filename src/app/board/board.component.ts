@@ -114,7 +114,7 @@ export class BoardComponent implements OnInit, OnDestroy {
       this.lists$.subscribe((lists: ListStore[]) => {
         this.lists = lists.filter((list: ListStore) => list.boardID === this.boardID)
           .sort(this.byField(SORTING_FIELD));
-        this.listsID = this.lists.map((list: ListStore) => list.id)
+        this.listsID = this.lists.map((list: ListStore) => list.id);
       })
     );
   }
@@ -154,7 +154,7 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   public openMembersDialog(): void {
     if (this.board) {
-      this.dialog.open(MembersFormComponent, {data: {boardID: this.board.id, board: this.board}});
+      this.dialog.open(MembersFormComponent, {data: {board: this.board}});
     }
   }
 

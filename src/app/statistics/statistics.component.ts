@@ -42,6 +42,10 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     return index;
   }
 
+  public byField(field: string): (a: any, b: any) => (1 | -1) {
+    return (a: any, b: any) => a[field] > b[field] ? 1 : -1;
+  }
+
   private getBoards(): void {
     this.subscriptionList.push(
       this.allBoards$.subscribe((boards: BoardStore[]) => {

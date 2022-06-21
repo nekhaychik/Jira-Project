@@ -23,7 +23,9 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.subscriptionList.push(
-      this.authService.user$.subscribe((value: firebase.User | null) => this.user = value)
+      this.authService.user$.subscribe((value: firebase.User | null) =>
+        this.user = value
+      )
     );
   }
 

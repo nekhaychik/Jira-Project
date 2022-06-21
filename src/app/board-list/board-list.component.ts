@@ -51,7 +51,7 @@ export class BoardListComponent implements OnInit, OnDestroy {
   private getCards(): void {
     this.subscriptionList.push(
       this.lists$.pipe(
-        switchMap(() => this.cards$)
+        switchMap(() => this.cards$),
       ).subscribe((cards: CardStore[]) => {
         this.cards = cards
           .filter((card: CardStore) => card.listID === this.list?.id)

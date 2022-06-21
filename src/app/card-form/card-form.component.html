@@ -8,7 +8,7 @@
     <p>
       <mat-form-field appearance="outline">
         <mat-label>Card Name</mat-label>
-        <input matInput placeholder="Input card name" [formControlName]="formControls.name" [value]="card?.name">
+        <input matInput autocomplete="off" placeholder="Input card name" [formControlName]="formControls.name" [value]="card?.name">
         <mat-error *ngIf="isInputControlValid(formControls.name)">
           Card name is required. Max length is 16
         </mat-error>
@@ -66,6 +66,7 @@
       <mat-form-field class="datepicker" appearance="fill">
         <mat-label>Choose a due date</mat-label>
         <input matInput
+               autocomplete="off"
                placeholder="MM/DD/YYYY"
                [matDatepickerFilter]="myFilter"
                [matDatepicker]="picker"

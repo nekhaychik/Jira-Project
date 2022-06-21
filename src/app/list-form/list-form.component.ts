@@ -5,7 +5,7 @@ import {List, ListStore} from '../services/types';
 import {ButtonAppearance, Collection, Size, ValidationErrors} from '../enums';
 import {CrudService} from '../services/crud/crud.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {NAME_MAX_LENGTH} from '../constants';
 import {nameExistValidator} from '../validators';
 
@@ -30,14 +30,18 @@ export class ListFormComponent implements OnInit, OnDestroy {
   public id: string = '';
   @Input()
   public listName: string = '';
-  private subscriptionList: Subscription[] = [];
+
   public listForm: FormGroup = new FormGroup({});
   public formControls: typeof ListControls = ListControls;
+
   public listsNames: string[] = [];
   public buttonSize: Size = Size.l;
   public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
   public errors: typeof ValidationErrors = ValidationErrors;
   public currentError: string | undefined;
+
+  private subscriptionList: Subscription[] = [];
+  private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
 
   constructor(private crudService: CrudService,
               public dialogRef: MatDialogRef<ListFormComponent>,
@@ -51,7 +55,7 @@ export class ListFormComponent implements OnInit, OnDestroy {
 
   private getLists(): void {
     this.subscriptionList.push(
-      this.crudService.handleData<ListStore>(Collection.LISTS).subscribe((lists: ListStore[]) => {
+      this.lists$.subscribe((lists: ListStore[]) => {
         const filteredLists = lists.filter((list: ListStore) => this.data.boardID === list.boardID);
         filteredLists.forEach((list: ListStore) => this.listsNames.push(list.name));
       })

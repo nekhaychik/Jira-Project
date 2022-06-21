@@ -38,6 +38,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatGridListModule} from '@angular/material/grid-list';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 import {NgChartsModule} from 'ng2-charts';
 
@@ -66,7 +67,6 @@ import {BarChartComponent} from './bar-chart/bar-chart.component';
 import {StatisticsComponent} from './statistics/statistics.component';
 import {CardLinkComponent} from './card-link/card-link.component';
 import {FilterPipe} from './filter.pipe';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -95,42 +95,42 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     CardLinkComponent,
     FilterPipe
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        TuiRootModule,
-        BrowserAnimationsModule,
-        TuiDialogModule,
-        TuiNotificationsModule,
-        TuiLinkModule,
-        TuiButtonModule,
-        TuiAvatarModule,
-        MatCardModule,
-        MatChipsModule,
-        MatIconModule,
-        TuiScrollbarModule,
-        AngularFireModule.initializeApp(environment.firebaseConfig),
-        AngularFireAuthModule,
-        AngularFirestoreModule,
-        AngularFireStorageModule,
-        MatMenuModule,
-        MatDialogModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatTooltipModule,
-        DragDropModule,
-        MatGridListModule,
-        TuiSidebarModule,
-        TuiActiveZoneModule,
-        NgChartsModule,
-        MatSidenavModule,
-        FormsModule,
-        MatAutocompleteModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    TuiRootModule,
+    BrowserAnimationsModule,
+    TuiDialogModule,
+    TuiNotificationsModule,
+    TuiLinkModule,
+    TuiButtonModule,
+    TuiAvatarModule,
+    MatCardModule,
+    MatChipsModule,
+    MatIconModule,
+    TuiScrollbarModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
+    AngularFireStorageModule,
+    MatMenuModule,
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatTooltipModule,
+    DragDropModule,
+    MatGridListModule,
+    TuiSidebarModule,
+    TuiActiveZoneModule,
+    NgChartsModule,
+    MatSidenavModule,
+    FormsModule,
+    MatAutocompleteModule
+  ],
   providers: [{provide: TUI_SANITIZER, useClass: NgDompurifySanitizer}],
   bootstrap: [AppComponent]
 })

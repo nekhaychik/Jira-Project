@@ -7,7 +7,7 @@
   <p>
     <mat-form-field appearance="outline">
       <mat-label>Board Name</mat-label>
-      <input matInput placeholder="Input board name" [formControlName]="formControls.name">
+      <input matInput placeholder="Input board name" autocomplete="off" [formControlName]="formControls.name">
       <mat-error *ngIf="isControlValid(formControls.name)">
         Board name is <strong>required</strong>. Max length is 16
       </mat-error>
@@ -36,43 +36,26 @@
   </ng-container>
 
   <div>
-    <div *ngIf="isCreating; then createButton else updateButton"></div>
-
-    <ng-template #createButton>
       <button
-        mat-dialog-close
-        [disabled]="boardForm.invalid"
-        (click)="submitForm()"
         tuiButton
-        size="l"
-        type="submit"
+        mat-dialog-close
         class="tui-form__button"
-      >
-        Submit
-      </button>
-    </ng-template>
-
-    <ng-template #updateButton>
-      <button
-        mat-dialog-close
-        [disabled]="boardForm.invalid"
-        (click)="submitUpdatingForm()"
-        tuiButton
-        size="l"
         type="submit"
-        class="tui-form__button update"
+        [size]="buttonSize.l"
+        [appearance]="buttonAppearance.Primary"
+        [disabled]="boardForm.invalid"
+        (click)="isCreating ? submitForm() : submitUpdatingForm()"
       >
         Submit
       </button>
-    </ng-template>
 
     <button
-      mat-dialog-close
       tuiButton
-      type="button"
-      appearance="secondary"
-      size="l"
+      mat-dialog-close
       class="tui-form__button"
+      type="button"
+      [size]="buttonSize.l"
+      [appearance]="buttonAppearance.Secondary"
     >
       Cancel
     </button>

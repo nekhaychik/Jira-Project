@@ -1,7 +1,7 @@
 <div class="sidebar" *ngIf="drawer">
   <h2 class="sidebar__title">Your boards</h2>
   <mat-form-field appearance="fill">
-    <input matInput [(ngModel)]="searchValue" placeholder="Search a board">
+    <input matInput autocomplete="off" [(ngModel)]="searchValue" placeholder="Search a board">
   </mat-form-field>
   <tui-scrollbar [hidden]="true">
     <div class="sidebar__boards">

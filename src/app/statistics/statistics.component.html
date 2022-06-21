@@ -1,7 +1,7 @@
 <div class="statistics">
   <h2>Choose a board</h2>
   <div class="statistics__buttons">
-    <ng-container *ngFor="let board of boards; trackBy: trackByFn">
+    <ng-container *ngFor="let board of boards.sort(byField('name')); trackBy: trackByFn">
       <button tuiButton
               [size]="buttonSize"
               (click)="navigate(board.id)">
