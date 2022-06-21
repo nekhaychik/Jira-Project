@@ -35,7 +35,7 @@ textarea {
 }
 
 .label__add-image {
-  padding: 4px 0 18px;
+  padding: 4px 0 10px;
   display: flex;
   align-items: center;
 }
@@ -47,4 +47,41 @@ textarea {
 .card__image {
   width: 70px;
   height: 70px;
+}
+
+.image__error {
+  margin: 10px 0 10px;
+  color: #f44336;
+}
+
+.result__container {
+  margin-bottom: 10px;
+}
+
+.success__container,
+.error__container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 3px;
+}
+
+.success__text {
+  margin: 0;
+  color: var(--tui-success-fill);
+  display: flex;
+  align-items: center;
+  grid-gap: 3px;
+  max-width: 350px;
+  word-break: break-all;
+}
+
+.error__text {
+  margin: 0;
+  color: #f44336;
+  display: flex;
+  align-items: center;
+  grid-gap: 3px;
+  max-width: 350px;
+  word-break: break-all;
 }

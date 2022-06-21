@@ -15,7 +15,8 @@ import {
   MEDIA_FOLDER_PATH,
   MS_IN_DAY,
   NAME_MAX_LENGTH,
-  ONE_SECOND
+  ONE_SECOND,
+  CORRECT_FORMATS, MB_5
 } from '../constants';
 
 export interface DialogData {
@@ -24,6 +25,8 @@ export interface DialogData {
 
 const ACTIVE_LABEL: string = 'cursor: pointer; color: #526ed3;';
 const NOT_ACTIVE_LABEL: string = 'cursor: default; color: gray;';
+const DISPLAY_NONE: string = 'display: none;';
+const DISPLAY_BLOCK: string = 'display: block;';
 
 @Component({
   selector: 'app-card-form',
@@ -42,18 +45,24 @@ export class CardFormComponent implements OnInit, OnDestroy {
   public board: BoardStore | undefined;
   @Input()
   public boardID: string = '';
-  private subscriptionList: Subscription[] = [];
+
   public buttonSize: Size = Size.l;
   public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
   public isDisable: boolean = false;
   public labelStyle: string = ACTIVE_LABEL;
-  public imageLinks: string[] = [];
+  public formatErrorStyle: string = DISPLAY_NONE;
+  public sizeErrorStyle: string = DISPLAY_NONE;
+  private imageLinks: string[] = [];
+  public errorsFilesNames: string[] = [];
+  public filesNames: string[] = [];
   public progress: string | undefined = '';
   private currentDueDate: string | null = null;
+
+  private subscriptionList: Subscription[] = [];
   public lists: ListStore[] = [];
-  private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
-  private authUser: firebase.User | null = null;
   public users: UserStore[] = [];
+  private authUser: firebase.User | null = null;
+  private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
   private users$: Observable<UserStore[]> = this.crudService.handleData<UserStore>(Collection.USERS);
   //add to firestore
   public priorities: string[] = [
@@ -61,6 +70,7 @@ export class CardFormComponent implements OnInit, OnDestroy {
     'critical',
     'blocked'
   ];
+
   public cardForm: FormGroup = new FormGroup({});
   public formControls: typeof CardControls = CardControls;
 
@@ -277,26 +287,46 @@ export class CardFormComponent implements OnInit, OnDestroy {
     if (event) {
       const eventTarget: HTMLInputElement = (<HTMLInputElement>event?.target);
       if (eventTarget && eventTarget.files) {
-        const file: File = eventTarget.files[0];
-        this.subscriptionList.push(
-          combineLatest(this.uploadService.uploadFileAndGetMetadata(MEDIA_FOLDER_PATH, file))
-            .pipe(
-              takeWhile(([, link]) => {
-                return !link;
-              }, true),
-            )
-            .subscribe(([percent, link]) => {
-              this.progress = percent;
-              if (link !== null) {
-                this.labelStyle = ACTIVE_LABEL;
-                this.isDisable = false;
-                this.imageLinks.push(link);
-              } else {
-                this.labelStyle = NOT_ACTIVE_LABEL;
-                this.isDisable = true;
-              }
-            })
-        );
+        let files: File[] = Array.from(eventTarget.files);
+        files.forEach((file: File) => {
+          const size: number = file.size;
+          const format: string | undefined = file.name.split('.').pop()?.toLowerCase();
+          let error: boolean = false;
+          if (size > MB_5) {
+            error = true;
+            this.sizeErrorStyle = DISPLAY_BLOCK;
+            this.errorsFilesNames.push(file.name)
+          }
+          if (format && !CORRECT_FORMATS.includes(format)) {
+            error = true;
+            this.formatErrorStyle = DISPLAY_BLOCK;
+            if (!this.errorsFilesNames.includes(file.name)) {
+              this.errorsFilesNames.push(file.name);
+            }
+          }
+          if (!error) {
+            this.subscriptionList.push(
+              combineLatest(this.uploadService.uploadFileAndGetMetadata(MEDIA_FOLDER_PATH, file))
+                .pipe(
+                  takeWhile(([, link]) => {
+                    return !link;
+                  }, true),
+                )
+                .subscribe(([percent, link]) => {
+                  this.progress = percent;
+                  if (link !== null) {
+                    this.labelStyle = ACTIVE_LABEL;
+                    this.isDisable = false;
+                    this.filesNames.push(file.name);
+                    this.imageLinks.push(link);
+                  } else {
+                    this.labelStyle = NOT_ACTIVE_LABEL;
+                    this.isDisable = true;
+                  }
+                })
+            );
+          }
+        });
       }
     }
   }

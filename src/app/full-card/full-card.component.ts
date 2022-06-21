@@ -9,7 +9,7 @@ import {UploadService} from '../services/crud/upload.service';
 import firebase from 'firebase/compat';
 import {AuthService} from '../services/auth/auth.service';
 import {Router} from '@angular/router';
-import {MEDIA_FOLDER_PATH, ONE_SECOND} from '../constants';
+import {CORRECT_FORMATS, MB_5, MEDIA_FOLDER_PATH, ONE_SECOND} from '../constants';
 
 export interface DialogData {
   card: CardStore,
@@ -23,6 +23,8 @@ type Image = {
 
 const ACTIVE_LABEL: string = 'cursor: pointer; color: #526ed3;';
 const NOT_ACTIVE_LABEL: string = 'cursor: default; color: gray;';
+const DISPLAY_NONE: string = 'display: none;';
+const DISPLAY_BLOCK: string = 'display: block;';
 
 @Component({
   selector: 'app-full-card',
@@ -41,6 +43,9 @@ export class FullCardComponent implements OnInit, OnDestroy {
   public progress: string | undefined = '';
   public isDisable: boolean = false;
   private board: BoardStore | undefined;
+  public sizeErrorStyle: string = DISPLAY_NONE;
+  public formatErrorStyle: string = DISPLAY_NONE;
+  public errorsFilesNames: string[] = [];
 
   constructor(private crudService: CrudService,
               private authService: AuthService,
@@ -134,27 +139,46 @@ export class FullCardComponent implements OnInit, OnDestroy {
     if (event) {
       const eventTarget: HTMLInputElement = (<HTMLInputElement>event.target);
       if (eventTarget && eventTarget.files) {
-        const file: File = eventTarget.files[0];
-        this.subscriptionList.push(
-          combineLatest(this.uploadService.uploadFileAndGetMetadata(MEDIA_FOLDER_PATH, file))
-            .pipe(
-              takeWhile(([, link]) => {
-                return !link;
-              }, true),
-            )
-            .subscribe(([percent, link]) => {
-              this.progress = percent;
-              if (link === null) {
-                this.isDisable = true;
-                this.labelStyle = NOT_ACTIVE_LABEL;
-              } else {
-                this.imageLink = link;
-                this.isDisable = false;
-                this.labelStyle = ACTIVE_LABEL;
-              }
-              this.addImageToDB();
-            })
-        );
+        let files: File[] = Array.from(eventTarget.files);
+        files.forEach((file: File) => {
+          let error: boolean = false;
+          const format: string | undefined = file.name.split('.').pop()?.toLowerCase();
+          const size: number = file.size;
+          if (format && !CORRECT_FORMATS.includes(format)) {
+            error = true;
+            this.formatErrorStyle = DISPLAY_BLOCK;
+            this.errorsFilesNames.push(file.name);
+          }
+          if (size > MB_5) {
+            error = true;
+            this.sizeErrorStyle = DISPLAY_BLOCK;
+            if (!this.errorsFilesNames.includes(file.name)) {
+              this.errorsFilesNames.push(file.name);
+            }
+          }
+          if (!error) {
+            this.subscriptionList.push(
+              combineLatest(this.uploadService.uploadFileAndGetMetadata(MEDIA_FOLDER_PATH, file))
+                .pipe(
+                  takeWhile(([, link]) => {
+                    return !link;
+                  }, true),
+                )
+                .subscribe(([percent, link]) => {
+                  this.progress = percent;
+                  if (link === null) {
+                    this.isDisable = true;
+                    this.labelStyle = NOT_ACTIVE_LABEL;
+                  } else {
+                    this.imageLink = link;
+                    this.isDisable = false;
+                    this.labelStyle = ACTIVE_LABEL;
+                  }
+                  this.addImageToDB();
+                })
+            );
+          }
+        })
       }
     }
   }
@@ -165,12 +189,12 @@ export class FullCardComponent implements OnInit, OnDestroy {
       if (this.data.card.images) {
         newImage = {
           images: [...this.data.card.images, this.imageLink],
-          history: [this.authUser?.displayName + ' added image(s)', ...this.data.card.history]
+          history: [this.authUser?.displayName + ' added image', ...this.data.card.history]
         }
       } else {
         newImage = {
           images: [this.imageLink],
-          history: [this.authUser?.displayName + ' added image(s)', ...this.data.card.history]
+          history: [this.authUser?.displayName + ' added image', ...this.data.card.history]
         }
       }
       this.subscriptionList.push(

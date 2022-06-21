@@ -83,7 +83,7 @@
       <div>
         <label class="label__add-image" for="file" [style]="labelStyle">
           <mat-icon>attach_file</mat-icon>
-          Choose an image
+          Choose image(s)
         </label>
         <input
           class="input__add-image"
@@ -93,17 +93,34 @@
           (change)="onFileSelected($event)"
           autocomplete="off"
           accept=".jpg, .jpeg, .png"
+          multiple
         />
       </div>
-      <ng-container *ngFor="let image of imageLinks; trackBy: trackByFn">
-        <div class="card__images-container">
-          <img class="card__image" [src]="image" alt=""/>
-        </div>
-      </ng-container>
+
+      <div class="result__container">
+        <ng-container *ngFor="let name of filesNames; trackBy: trackByFn">
+          <div class="success__container">
+            <p class="success__text">
+              <mat-icon>done</mat-icon>
+              {{name}}</p>
+          </div>
+        </ng-container>
+
+        <ng-container *ngFor="let name of errorsFilesNames; trackBy: trackByFn">
+          <div class="error__container">
+            <p class="error__text">
+              <mat-icon>error_outline</mat-icon>
+              {{name}}
+            </p>
+          </div>
+        </ng-container>
+      </div>
+
       <progress *ngIf="isDisable" max="100" [value]="progress"></progress>
 
+      <p class="image__error" [style]="formatErrorStyle">You can only upload JPEG, JPG and PNG formats</p>
+      <p class="image__error" [style]="sizeErrorStyle">You can upload images up to 5MB in size</p>
     </ng-container>
-
 
     <div>
       <button

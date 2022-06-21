@@ -6,3 +6,5 @@ export const NAME_MAX_LENGTH: number = 16;
 export const DESCRIPTION_MAX_LENGTH: number = 1200;
 export const FIRST_POSITION: number = 1;
 export const MEDIA_FOLDER_PATH: string = 'task-images';
+export const CORRECT_FORMATS: string[] = ['jpg', 'jpeg', 'png'];
+export const MB_5: number = 5242880;
