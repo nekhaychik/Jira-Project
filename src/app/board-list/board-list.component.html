@@ -30,6 +30,11 @@
           <mat-icon>title</mat-icon>
           <span>Rename</span>
         </button>
+        <ng-container *ngIf="list.createdBy">
+          <button mat-menu-item disabled>
+            <span>Creator: {{list.createdBy}}</span>
+          </button>
+        </ng-container>
       </mat-menu>
     </mat-card-header>
     <tui-scrollbar [hidden]="true">

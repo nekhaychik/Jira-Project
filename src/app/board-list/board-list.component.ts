@@ -43,6 +43,7 @@ export class BoardListComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    console.log(this.list)
     this.getCards();
     this.getAuthUser();
     this.getLists();

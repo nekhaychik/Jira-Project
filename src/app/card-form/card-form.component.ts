@@ -104,7 +104,8 @@ export class CardFormComponent implements OnInit, OnDestroy {
 
   public myFilter = (d: Date | null): boolean => {
     const day: number = (d || new Date()).getTime();
-    return day >= new Date().getTime() - MS_IN_DAY;
+    const lastDay: number = new Date(2025, 1, 1).getTime();
+    return (day >= new Date().getTime() - MS_IN_DAY && day <= lastDay);
   };
 
   private getAuthUser(): void {

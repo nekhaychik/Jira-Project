@@ -8,6 +8,8 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Observable, Subscription} from 'rxjs';
 import {NAME_MAX_LENGTH} from '../constants';
 import {nameExistValidator} from '../validators';
+import {AuthService} from '../services/auth/auth.service';
+import firebase from 'firebase/compat/app';
 
 export interface DialogData {
   boardID: string
@@ -39,18 +41,29 @@ export class ListFormComponent implements OnInit, OnDestroy {
   public buttonAppearance: typeof ButtonAppearance = ButtonAppearance;
   public errors: typeof ValidationErrors = ValidationErrors;
   public currentError: string | undefined;
+  public authUser: firebase.User | null = null;
 
   private subscriptionList: Subscription[] = [];
   private lists$: Observable<ListStore[]> = this.crudService.handleData<ListStore>(Collection.LISTS);
 
   constructor(private crudService: CrudService,
               public dialogRef: MatDialogRef<ListFormComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+              @Inject(MAT_DIALOG_DATA) public data: DialogData,
+              private authService: AuthService) {
   }
 
   public ngOnInit(): void {
+    this.getAuthUser();
     this.getLists();
     this.listForm.addControl(ListControls.name, new FormControl(this.listName, Validators.compose([Validators.required, Validators.maxLength(NAME_MAX_LENGTH), nameExistValidator(this.listsNames)])));
+  }
+
+  private getAuthUser(): void {
+    this.subscriptionList.push(
+      this.authService.user$.subscribe((value: firebase.User | null) => {
+        this.authUser = value;
+      })
+    );
   }
 
   private getLists(): void {
@@ -79,7 +92,8 @@ export class ListFormComponent implements OnInit, OnDestroy {
       const list: List = {
         name: this.listForm.controls[ListControls.name].value.trim(),
         boardID: this.data.boardID,
-        dateCreating: new Date().getTime()
+        dateCreating: new Date().getTime(),
+        createdBy: this.authUser?.displayName
       };
       this.addList(list);
     } else {
